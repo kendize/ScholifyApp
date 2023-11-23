@@ -5,8 +5,15 @@
     <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
     <NoWarn>$(NoWarn),1591</NoWarn>
   </PropertyGroup>
-  <ItemGroup />
   <ItemGroup>
+    <Compile Update="Presentation\CreateUser.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Presentation\CreateUser.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Presentation\PupilWindow.xaml">
       <SubType>Designer</SubType>
     </Page>

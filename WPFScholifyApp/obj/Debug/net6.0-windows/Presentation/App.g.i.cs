@@ -53,7 +53,7 @@ namespace WPFScholifyApp {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/WPFScholifyApp;V1.0.0.0;component/presentation/app.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/WPFScholifyApp;component/presentation/app.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\Presentation\App.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

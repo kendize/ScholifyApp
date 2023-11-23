@@ -12,9 +12,11 @@ namespace WPFScholifyApp.BLL
     public class UserService
     {
         private IGenericRepository<User> userRepository;
+        private IGenericRepository<Pupil> pupilRepository;
 
-        public UserService(IGenericRepository<User> userRepos)
+        public UserService(IGenericRepository<User> userRepos, IGenericRepository<Pupil> pupilRepos)
         {
+            this.pupilRepository = pupilRepos;
             this.userRepository = userRepos;
         }
 
@@ -68,6 +70,21 @@ namespace WPFScholifyApp.BLL
             {
                 throw new InvalidOperationException("Entity not found");
             }
+        }
+
+        public User AddUser(User user, Pupil pupil)
+        {
+            this.userRepository.Insert(user);
+            this.pupilRepository.Insert(pupil);
+            this.userRepository.Save();
+            this.pupilRepository.Save();
+            return user;
+        }
+
+        public void DeleteUser(int userId)
+        {
+            this.userRepository.Delete(userId);
+            this.userRepository.Save();
         }
     }
 }

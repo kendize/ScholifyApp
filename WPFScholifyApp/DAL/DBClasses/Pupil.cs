@@ -14,6 +14,8 @@ namespace WPFScholifyApp.DAL.DBClasses
 
         public virtual User? User { get; set; }
 
+        public int ClassId { get; set; }
+
         public virtual Class? Class { get; set; }
 
         public virtual ICollection<Parents>? Parents { get; set; }

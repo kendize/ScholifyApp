@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\Ярослава\source\repos\WPFScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\
+E:\Zoriana\Outsource\WPFScholifyApp\obj\Debug\net6.0-windows\
 WPFScholifyApp
 none
 false
 TRACE;DEBUG;NET;NET6_0;NETCOREAPP
 
-6557119872
+7-1583663418
 
-301768317139
-2261504445559
-Presentation\AdminWindow.xaml;Presentation\App.xaml;Presentation\MainWindow.xaml;Presentation\ParentsWindow.xaml;Presentation\PupilWindow.xaml;Presentation\TeacherWindow.xaml;
+321866661243
+226845712954
+Presentation\AdminWindow.xaml;Presentation\App.xaml;Presentation\CreateUser.xaml;Presentation\MainWindow.xaml;Presentation\ParentsWindow.xaml;Presentation\PupilWindow.xaml;Presentation\TeacherWindow.xaml;
 
-True
+False
 

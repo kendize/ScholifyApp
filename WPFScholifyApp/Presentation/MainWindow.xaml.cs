@@ -29,7 +29,7 @@ namespace WPFScholifyApp
             if (role != null)
             {
                 string selectedRole = role.ToString() !;
-                UserService userService = new UserService(new GenericRepository<User>());
+                UserService userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>());
                 User authenticatedUser = userService.Authenticate(email, password, selectedRole);
                 User authenticatedEmail = userService.AuthenticateEmail(email);
                 User authenticatedPassword = userService.AuthenticatePassword(password);

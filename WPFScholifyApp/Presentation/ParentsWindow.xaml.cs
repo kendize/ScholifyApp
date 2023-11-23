@@ -61,7 +61,7 @@ namespace WPFScholifyApp
             };
             this.InfoPanel.Children.Add(titleLabel);
 
-            UserService userService = new UserService(new GenericRepository<User>());
+            UserService userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>());
             string name = this.FirstNameTextBlock.Text;
             string surname = this.LastNameTextBlock.Text;
             User parents = userService.GetInfoByNameSurname(name, surname);

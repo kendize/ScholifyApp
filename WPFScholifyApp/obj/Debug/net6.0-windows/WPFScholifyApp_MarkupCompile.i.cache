@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET6_0;NETCOREAPP
 
-6557119872
+7-1583663418
 
-31239035548
+34-2108704384
 226845712954
-Presentation\AdminWindow.xaml;Presentation\App.xaml;Presentation\MainWindow.xaml;Presentation\ParentsWindow.xaml;Presentation\PupilWindow.xaml;Presentation\TeacherWindow.xaml;
+Presentation\AdminWindow.xaml;Presentation\App.xaml;Presentation\CreateUser.xaml;Presentation\MainWindow.xaml;Presentation\ParentsWindow.xaml;Presentation\PupilWindow.xaml;Presentation\TeacherWindow.xaml;
 
 True
 
