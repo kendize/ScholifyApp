@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>WPFScholifyApp</name>
+    </assembly>
+    <members>
+        <member name="T:WPFScholifyApp.Migrations.InitialSchoolDB">
+            <inheritdoc />
+        </member>
+        <member name="M:WPFScholifyApp.Migrations.InitialSchoolDB.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:WPFScholifyApp.Migrations.InitialSchoolDB.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:WPFScholifyApp.Migrations.InitialSchoolDB.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:WPFScholifyApp.Migrations.ScheduleMigration">
+            <inheritdoc />
+        </member>
+        <member name="M:WPFScholifyApp.Migrations.ScheduleMigration.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:WPFScholifyApp.Migrations.ScheduleMigration.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:WPFScholifyApp.Migrations.ScheduleMigration.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:WPFScholifyApp.Migrations.NewMigration">
+            <inheritdoc />
+        </member>
+        <member name="M:WPFScholifyApp.Migrations.NewMigration.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:WPFScholifyApp.Migrations.NewMigration.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:WPFScholifyApp.Migrations.NewMigration.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:WPFScholifyApp.AdminWindow">
+            <summary>
+            Interaction logic for AdminWindow.xaml.
+            </summary>
+            <summary>
+            AdminWindow
+            </summary>
+        </member>
+        <member name="M:WPFScholifyApp.AdminWindow.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:WPFScholifyApp.App">
+            <summary>
+            Interaction logic for App.xaml.
+            </summary>
+            <summary>
+            App
+            </summary>
+        </member>
+        <member name="M:WPFScholifyApp.App.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:WPFScholifyApp.MainWindow">
+            <summary>
+            Interaction logic for MainWindow.xaml.
+            </summary>
+            <summary>
+            MainWindow
+            </summary>
+        </member>
+        <member name="M:WPFScholifyApp.MainWindow.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:WPFScholifyApp.ParentsWindow">
+            <summary>
+            Interaction logic for ParentsWindow.xaml.
+            </summary>
+            <summary>
+            ParentsWindow
+            </summary>
+        </member>
+        <member name="M:WPFScholifyApp.ParentsWindow.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:WPFScholifyApp.PupilWindow">
+            <summary>
+            Interaction logic for PupilWindow.xaml.
+            </summary>
+            <summary>
+            PupilWindow
+            </summary>
+        </member>
+        <member name="M:WPFScholifyApp.PupilWindow.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:WPFScholifyApp.TeacherWindow">
+            <summary>
+            Interaction logic for TeacherWindow.xaml.
+            </summary>
+            <summary>
+            TeacherWindow
+            </summary>
+        </member>
+        <member name="M:WPFScholifyApp.TeacherWindow.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+    </members>
+</doc>

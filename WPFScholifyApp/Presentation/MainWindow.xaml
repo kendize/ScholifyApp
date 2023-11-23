@@ -1,0 +1,26 @@
+﻿<Window x:Class="WPFScholifyApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPFScholifyApp"
+        mc:Ignorable="d"
+        Title="Scholify" Height="400" Width="425" Background="DarkBlue">
+    <Grid>
+        <Image Source="C:\Users\Ярослава\source\repos\WPFScholifyApp\WPFScholifyApp\Presentation\images.png" HorizontalAlignment="Center" VerticalAlignment="Top" Width="112" Height="112" Margin="0,39,0,0"/>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,155,0,0" Height="200" Width="405">
+            <Label Content="Електронна пошта" Foreground="White" Width="119"/>
+            <TextBox x:Name="EmailTextBox" Width="200" Margin="0,5,0,5"/>
+            <Label Content="Пароль" Foreground="White" Width="56"/>
+            <PasswordBox x:Name="PasswordBox" Width="200" Margin="0,5,0,5"/>
+            <Label Content="Роль" Foreground="White" Width="42"/>
+            <ComboBox x:Name="RoleComboBox" Width="150" Foreground="DarkBlue" Background="White" RenderTransformOrigin="0.513,0.619">
+                <ComboBoxItem Content="вчитель"/>
+                <ComboBoxItem Content="учень"/>
+                <ComboBoxItem Content="батьки"/>
+                <ComboBoxItem Content="адмін"/>
+            </ComboBox>
+            <Button Content="Вхід" Background="White" Click="RegisterButton_Click" Width="84" Height="29" Margin="310,10,0,0"/>
+        </StackPanel>
+    </Grid>
+</Window>
