@@ -8,15 +8,18 @@
         Title="Scholify" Height="450" Width="800" Background="DarkBlue">
     <Viewbox Stretch="Uniform">
         <Grid RenderTransformOrigin="0.61,0.727" Width="1841">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="31*"/>
+                <RowDefinition Height="17*"/>
+            </Grid.RowDefinitions>
             <Image Source="C:\Users\Ярослава\source\repos\WPFScholifyApp\WPFScholifyApp\Presentation\imagesavatar.jpg" HorizontalAlignment="Left" VerticalAlignment="Top" Width="196" Height="148" Margin="164,76,0,0"/>
             <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left" Width="348" Height="118" Margin="69,252,0,0" >
                 <TextBlock x:Name="FirstNameTextBlock" VerticalAlignment="Top" HorizontalAlignment="Center" Foreground="White" FontSize="30"/>
                 <TextBlock x:Name="LastNameTextBlock" VerticalAlignment="Top" HorizontalAlignment="Center"  Foreground="White" FontSize="30"/>
             </StackPanel>
             <StackPanel VerticalAlignment="Top" HorizontalAlignment="Left" Width="416" Height="480" Margin="30,407,0,0" >
-                <Button Content="Журнал" FontSize="30" Click="JournalButton_Click" Margin="0 70 0 0" Height="90" Foreground="DarkBlue" Background="White" BorderBrush="DarkBlue"/>
-                <Button Content="Приватна інформація" FontSize="30" Click="PrivateInfoButton_Click" Margin="0 20 0 0" Height="90" Foreground="DarkBlue" Background="White" BorderBrush="DarkBlue"/>
-                <Button Content="Чат" FontSize="30" Click="ChatButton_Click" Margin="0 20 0 5" Height="90" Foreground="DarkBlue" Background="White" BorderBrush="DarkBlue"/>
+                <Button Content="Журнал" FontSize="30" Click="JournalButton_Click" Height="90" Foreground="DarkBlue" Background="White" BorderBrush="DarkBlue"/>
+                <Button Content="Приватна інформація" FontSize="30" Click="PrivateInfoButton_Click" Height="108" Foreground="DarkBlue" Background="White" BorderBrush="DarkBlue"/>
             </StackPanel >
             <StackPanel x:Name="InfoPanel" VerticalAlignment="Center" HorizontalAlignment="Left" Background="White" Height="1023" Margin="486,0,0,0" Width="1372" RenderTransformOrigin="0.503,0.796">
             </StackPanel>
