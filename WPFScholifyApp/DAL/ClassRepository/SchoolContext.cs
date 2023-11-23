@@ -16,7 +16,7 @@ namespace WPFScholifyApp.DAL.ClassRepository
         }
 
         public SchoolContext()
-        {
+        {EntityFrameworkDesignServicesBuilder
             this.Database.EnsureCreated();
         }
 
