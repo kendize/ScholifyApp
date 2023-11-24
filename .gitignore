@@ -4,5 +4,10 @@
 *.editorconfig
 *.cache
 *.cache
-obj/
-obj/Debug/
+obj/ -f
+obj/Debug/ -f
+*.dll
+*.v2
+vs/
+obj/Debug/net6.0-windows/ -f
+obj/Debug/net6.0-windows/Presentation/ -f
