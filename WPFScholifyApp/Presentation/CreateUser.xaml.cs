@@ -29,23 +29,20 @@ namespace WPFScholifyApp.Presentation
         private IGenericRepository<User> userRepository;
         private IGenericRepository<Pupil> pupilRepository;
         private UserService userService;
+        private AdminWindow adminWindow;
 
         public int ClassId { get; set; }
 
         public string TestFirstName { get; set; } = string.Empty;
 
-        public CreateUser(IGenericRepository<User> userRepos, IGenericRepository<Pupil> pupilRepos)
+        public CreateUser(IGenericRepository<User> userRepos, IGenericRepository<Pupil> pupilRepos, AdminWindow adminWindow)
         {
             this.pupilRepository = pupilRepos;
             this.userRepository = userRepos;
             this.userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>());
             this.InitializeComponent();
             this.Zoriana.Content = this.TestFirstName;
-        }
-
-        private void Cancel(object sender, RoutedEventArgs e)
-        {
-            this.Close();
+            this.adminWindow = adminWindow;
         }
 
         private void SaveUser(object sender, RoutedEventArgs e)
@@ -59,7 +56,6 @@ namespace WPFScholifyApp.Presentation
             string adress = this.Adress.Text;
             string phoneNumber = this.PhoneNumber.Text;
             var role = ((ComboBoxItem)this.RoleComboBox.SelectedItem).Content == null ? ((ComboBoxItem)this.RoleComboBox.SelectedItem).Content : "учень";
-            this.Close();
 
             var user = new User
             {
@@ -82,6 +78,14 @@ namespace WPFScholifyApp.Presentation
             };
 
             this.userService.AddUser(user, pupil);
+            this.Close();
+            this.adminWindow.RightPanel.Children.Clear();
+            this.adminWindow.ShowAllPupilsForClassId(this.ClassId);
+        }
+
+        private void Cancel(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }

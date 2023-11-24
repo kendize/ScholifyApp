@@ -4,7 +4,7 @@
 winexe
 C#
 .cs
-E:\Zoriana\Outsource\WPFScholifyApp\obj\Debug\net6.0-windows\
+D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\
 WPFScholifyApp
 none
 false
@@ -13,7 +13,7 @@ TRACE;DEBUG;NET;NET6_0;NETCOREAPP
 101098955485
 
 36-1210996715
-226845712954
+226858285298
 Presentation\AdminWindow.xaml;Presentation\App.xaml;Presentation\CreateSubject.xaml;Presentation\CreateTeacher.xaml;Presentation\CreateUser.xaml;Presentation\LookTeacher.xaml;Presentation\MainWindow.xaml;Presentation\ParentsWindow.xaml;Presentation\PupilWindow.xaml;Presentation\TeacherWindow.xaml;
 
 False

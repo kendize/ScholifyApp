@@ -28,11 +28,13 @@ namespace WPFScholifyApp.Presentation
     {
         private IGenericRepository<User> userRepository;
         private TeacherService teacherService;
+        private AdminWindow adminWindow;
 
-        public CreateTeacher(IGenericRepository<User> userRepos)
+        public CreateTeacher(IGenericRepository<User> userRepos, AdminWindow adminWindow)
         {
             this.userRepository = userRepos;
             this.teacherService = new TeacherService(new GenericRepository<User>());
+            this.adminWindow = adminWindow;
             this.InitializeComponent();
         }
 
@@ -50,7 +52,6 @@ namespace WPFScholifyApp.Presentation
             string adress = this.Adress.Text;
             string phoneNumber = this.PhoneNumber.Text;
             var role = ((ComboBoxItem)this.RoleComboBox.SelectedItem).Content == null ? ((ComboBoxItem)this.RoleComboBox.SelectedItem).Content : "вчитель";
-            this.Close();
 
             var user = new User
             {
@@ -68,6 +69,8 @@ namespace WPFScholifyApp.Presentation
             };
 
             this.teacherService.AddTeacher(user);
+            this.Close();
+            this.adminWindow.ShowAllTeachers();
         }
 
         private void Cancel(object sender, RoutedEventArgs e)
