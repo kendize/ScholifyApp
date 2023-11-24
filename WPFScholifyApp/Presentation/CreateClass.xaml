@@ -1,0 +1,28 @@
+﻿<Window x:Class="WPFScholifyApp.Presentation.CreateClass"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPFScholifyApp.Presentation"
+        mc:Ignorable="d"
+        Title="CreateClass"  Height="450" Width="800">
+    <Grid>
+        <StackPanel>
+            <Label Width="92" Content="Назва Класу"/>
+            <TextBox x:Name="ClassName" Width="385"/>
+            <Label/>
+            <Button Click="SaveSubject" Content="Додати Новий Клас" Height="36" Width="382"/>
+            <Label Height="18" RenderTransformOrigin="0.5,0.5" Width="385">
+                <Label.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleY="-1"/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Label.RenderTransform>
+            </Label>
+            <Button Click="Cancel" Content="Відмінити" Height="30" Width="377"/>
+        </StackPanel>
+    </Grid>
+</Window>

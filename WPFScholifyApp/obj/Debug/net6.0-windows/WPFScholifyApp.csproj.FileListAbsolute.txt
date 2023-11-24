@@ -158,3 +158,5 @@ E:\Zoriana\Outsource\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\LookTe
 E:\Zoriana\Outsource\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\LookTeacher.baml
 E:\Zoriana\Outsource\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\LookUsers.g.cs
 E:\Zoriana\Outsource\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\LookUsers.baml
+E:\Zoriana\Outsource\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\CreateClass.g.cs
+E:\Zoriana\Outsource\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\CreateClass.baml

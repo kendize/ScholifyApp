@@ -36,6 +36,7 @@ namespace WPFScholifyApp
         private IGenericRepository<Pupil> pupilRepository;
         private IGenericRepository<Subject> subjectRepository;
         private IGenericRepository<Teacher> teacherRepository;
+        private IGenericRepository<Class> classRepository;
 
         public AdminWindow()
         {
@@ -43,6 +44,7 @@ namespace WPFScholifyApp
             this.subjectRepository = new GenericRepository<Subject>();
             this.pupilRepository = new GenericRepository<Pupil>();
             this.teacherRepository = new GenericRepository<Teacher>();
+            this.classRepository = new GenericRepository<Class>();
             this.userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>());
             this.adminService = new AdminService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>());
             this.InitializeComponent();
@@ -59,6 +61,11 @@ namespace WPFScholifyApp
                 button.Click += new RoutedEventHandler(this.SpecificClassButton_Click);
                 this.InfoPanel.Children.Add(button);
             }
+
+            var createButton = new Button { Content = "Додати клас", Height = 60, Width = 300, FontSize = 30, };
+            createButton.Click += new RoutedEventHandler(this.AddClass);
+            this.InfoPanel.Children.Add(createButton);
+            this.InfoPanel.UpdateLayout();
         }
 
         private void TeachersButton_Click(object sender, RoutedEventArgs e)
@@ -203,6 +210,14 @@ namespace WPFScholifyApp
             createPanel.TeacherId = (int)subjectButton.Tag;
             createPanel.Show();
             this.PupilsPanel.UpdateLayout(); // воно не робе
+        }
+
+        private void AddClass(object sender, RoutedEventArgs e)
+        {
+            var subjectButton = (Button)sender;
+            var createPanel = new CreateClass(this.classRepository);
+            createPanel.Show();
+            this.InfoPanel.UpdateLayout(); // воно не робе
         }
 
         private void DeleteSubject(object sender, RoutedEventArgs e)
