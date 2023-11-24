@@ -17,23 +17,26 @@
         <StackPanel Grid.ColumnSpan="5">
 
             <Label Width="67" Content="Email"/>
-            <Label x:Name="Email" Width="385"></Label>
+            <TextBox x:Name="Email" Width="385" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <Label Width="92" Content="Password"/>
-            <Label x:Name="Password" Width="385"></Label>
+            <TextBox x:Name="Password" Width="385" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <Label Width="92" Content="FirstName"/>
-            <Label x:Name="FirstName" Width="385"></Label>
+            <TextBox x:Name="FirstName" Width="385" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <Label Width="92" Content="MiddleName"/>
-            <Label x:Name="MiddleName" Width="385" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></Label>
+            <TextBox x:Name="MiddleName" Width="385" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <Label Width="92" Content="LastName"/>
-            <Label x:Name="LastName" Width="385" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></Label>
+            <TextBox x:Name="LastName" Width="385" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <Label Width="92" Content="Gender"/>
-            <Label x:Name="Gender" Width="385"></Label>
+            <TextBox x:Name="Gender" Width="385" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Label Width="92" Content="Birthday"/>
+            <TextBox x:Name="Birthday" Width="385" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <Label Width="92" Content="Adress"/>
-            <Label x:Name="Adress" Width="385"></Label>
+            <TextBox x:Name="Adress" Width="385" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <Label Width="92" Content="PhoneNumber"/>
-            <Label x:Name="PhoneNumber" Width="385"></Label>
-            <Button Click="SaveUser" Content="Зберегти"/>
-            <Button Click="Cancel" Content="Відмінити"/>
+            <TextBox x:Name="PhoneNumber" Width="385" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Label/>
+            <Button Click="SaveUser" Content="Зберегти" Height="32"/>
+            <Button Click="Cancel" Content="Відмінити" Height="33"/>
         </StackPanel>
 
     </Grid>

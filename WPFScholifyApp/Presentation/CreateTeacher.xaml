@@ -14,7 +14,7 @@
             <ColumnDefinition Width="19*"/>
             <ColumnDefinition Width="5*"/>
         </Grid.ColumnDefinitions>
-        <StackPanel Grid.ColumnSpan="5">
+        <StackPanel Grid.ColumnSpan="5" Margin="0,0,0,-32">
 
             <Label Width="67" Content="Email"/>
             <TextBox x:Name="Email" Width="385"/>
@@ -28,6 +28,8 @@
             <TextBox x:Name="LastName" Width="385"/>
             <Label Width="92" Content="Gender"/>
             <TextBox x:Name="Gender" Width="385"/>
+            <Label Width="92" Content="Birthday"/>
+            <DatePicker x:Name="Birthday"></DatePicker>
             <Label Width="92" Content="Adress"/>
             <TextBox x:Name="Adress" Width="385"/>
             <Label Width="92" Content="PhoneNumber"/>

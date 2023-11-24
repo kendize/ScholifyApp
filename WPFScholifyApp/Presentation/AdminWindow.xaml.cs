@@ -145,8 +145,8 @@ namespace WPFScholifyApp
             var createButton = (Button)sender;
             var createPanel = new LookTeacher(this.userRepository);
             var teacher = this.adminService.GetAllTeacher().FirstOrDefault(x => x.Id == (int)createButton.Tag);
-            createPanel.FirstName.Content = teacher!.FirstName!.ToString();
-            createPanel.LastName.Content = teacher!.LastName!.ToString();
+            createPanel.FirstName.Text = teacher!.FirstName!.ToString();
+            createPanel.LastName.Text = teacher!.LastName!.ToString();
             createPanel.Show();
             this.InfoPanel.UpdateLayout(); // воно не робе
         }
