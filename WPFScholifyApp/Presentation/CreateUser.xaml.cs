@@ -40,7 +40,6 @@ namespace WPFScholifyApp.Presentation
             this.userRepository = userRepos;
             this.userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>());
             this.InitializeComponent();
-            this.Zoriana.Content = this.TestFirstName;
         }
 
         private void Cancel(object sender, RoutedEventArgs e)
@@ -56,6 +55,7 @@ namespace WPFScholifyApp.Presentation
             string middleName = this.MiddleName.Text;
             string lastName = this.LastName.Text;
             string gender = this.Gender.Text;
+            DateTime birthday = this.Birthday.DisplayDate.ToUniversalTime();
             string adress = this.Adress.Text;
             string phoneNumber = this.PhoneNumber.Text;
             var role = ((ComboBoxItem)this.RoleComboBox.SelectedItem).Content == null ? ((ComboBoxItem)this.RoleComboBox.SelectedItem).Content : "учень";
@@ -70,6 +70,7 @@ namespace WPFScholifyApp.Presentation
                 MiddleName = middleName,
                 LastName = lastName,
                 Gender = gender,
+                Birthday = birthday,
                 Address = adress,
                 PhoneNumber = phoneNumber,
                 Role = role.ToString(),

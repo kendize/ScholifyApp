@@ -118,6 +118,19 @@
             InitializeComponent
             </summary>
         </member>
+        <member name="T:WPFScholifyApp.Presentation.LookUsers">
+            <summary>
+            Interaction logic for LookUsers.xaml.
+            </summary>
+            <summary>
+            LookUsers
+            </summary>
+        </member>
+        <member name="M:WPFScholifyApp.Presentation.LookUsers.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
         <member name="T:WPFScholifyApp.MainWindow">
             <summary>
             Interaction logic for MainWindow.xaml.

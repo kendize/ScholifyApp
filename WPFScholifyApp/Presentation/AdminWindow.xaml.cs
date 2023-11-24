@@ -71,11 +71,11 @@ namespace WPFScholifyApp
                 var button = new Button { Content = $"{t!.FirstName} {t!.LastName}", Height = 60, Width = 300, FontSize = 30, Tag = t.Id };
                 button.Click += new RoutedEventHandler(this.SpecificTeacherButton_Click);
                 this.InfoPanel.Children.Add(button);
+                var deleteButton = new Button { Content = $"Delete {t!.FirstName} {t!.LastName}", Height = 60, Width = 300, FontSize = 30, Tag = t.Id };
+                deleteButton.Click += new RoutedEventHandler(this.DeleteUser);
                 var lookButton = new Button { Content = "look", Height = 60, Width = 300, FontSize = 30, Tag = t.Id };
                 lookButton.Click += new RoutedEventHandler(this.LookTeacher);
                 this.InfoPanel.Children.Add(lookButton);
-                var deleteButton = new Button { Content = $"Delete {t!.FirstName} {t!.LastName}", Height = 60, Width = 300, FontSize = 30, Tag = t.Id };
-                deleteButton.Click += new RoutedEventHandler(this.DeleteUser);
             }
 
             var createButton = new Button { Content = "Додати Вчителя", Height = 60, Width = 300, FontSize = 30, };
@@ -95,8 +95,10 @@ namespace WPFScholifyApp
                 var pupilButton = new Button { Content = $"{p!.FirstName} {p!.LastName}", Height = 60, Width = 300, FontSize = 30, };
                 var deleteButton = new Button { Content = $"Delete {p!.FirstName} {p!.LastName}", Height = 60, Width = 300, FontSize = 30, Tag = p.Id };
                 deleteButton.Click += new RoutedEventHandler(this.DeleteTeacher);
-
+                var lookButton = new Button { Content = "Look", Height = 60, Width = 300, FontSize = 30, Tag = p.Id };
+                lookButton.Click += new RoutedEventHandler(this.LookUsers);
                 this.PupilsPanel.Children.Add(pupilButton);
+                this.PupilsPanel.Children.Add(lookButton);
                 this.PupilsPanel.Children.Add(deleteButton);
             }
 
@@ -145,8 +147,37 @@ namespace WPFScholifyApp
             var createButton = (Button)sender;
             var createPanel = new LookTeacher(this.userRepository);
             var teacher = this.adminService.GetAllTeacher().FirstOrDefault(x => x.Id == (int)createButton.Tag);
+            createPanel.Email.Text = teacher!.Email!.ToString();
+            createPanel.Password.Text = teacher!.Password!.ToString();
             createPanel.FirstName.Text = teacher!.FirstName!.ToString();
             createPanel.LastName.Text = teacher!.LastName!.ToString();
+            createPanel.MiddleName.Text = teacher!.MiddleName!.ToString();
+            createPanel.Gender.Text = teacher!.Gender!.ToString();
+            createPanel.Birthday.Text = teacher!.Birthday!.ToString();
+            createPanel.Adress.Text = teacher!.Address!.ToString();
+            createPanel.PhoneNumber.Text = teacher!.PhoneNumber!.ToString();
+
+            createPanel.Show();
+            this.InfoPanel.UpdateLayout(); // воно не робе
+        }
+
+        private void LookUsers(object sender, RoutedEventArgs e)
+        {
+            var createButton = (Button)sender;
+
+            var createPanel = new LookUsers(this.userRepository, this.pupilRepository);
+
+            var pupils = this.adminService.GetAllPupils().FirstOrDefault(x => x.Id == (int)createButton.Tag);
+            createPanel.Email.Text = pupils!.Email!.ToString();
+            createPanel.Password.Text = pupils!.Password!.ToString();
+            createPanel.FirstName.Text = pupils!.FirstName!.ToString();
+            createPanel.LastName.Text = pupils!.LastName!.ToString();
+            createPanel.MiddleName.Text = pupils!.MiddleName!.ToString();
+            createPanel.Gender.Text = pupils!.Gender!.ToString();
+            createPanel.Birthday.Text = pupils!.Birthday!.ToString();
+            createPanel.Adress.Text = pupils!.Address!.ToString();
+            createPanel.PhoneNumber.Text = pupils!.PhoneNumber!.ToString();
+
             createPanel.Show();
             this.InfoPanel.UpdateLayout(); // воно не робе
         }

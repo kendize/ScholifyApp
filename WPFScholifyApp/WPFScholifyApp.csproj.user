@@ -18,6 +18,9 @@
     <Compile Update="Presentation\LookTeacher.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Presentation\LookUsers.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Presentation\CreateSubject.xaml">
@@ -30,6 +33,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Presentation\LookTeacher.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Presentation\LookUsers.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Presentation\PupilWindow.xaml">

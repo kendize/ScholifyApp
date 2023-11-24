@@ -45,8 +45,6 @@ namespace WPFScholifyApp.Presentation
             string lastName = this.LastName.Text;
             string gender = this.Gender.Text;
             DateTime birthday = this.Birthday.DisplayDate.ToUniversalTime();
-
-            // string birthday = this.Birthday.Text;
             string adress = this.Adress.Text;
             string phoneNumber = this.PhoneNumber.Text;
             var role = ((ComboBoxItem)this.RoleComboBox.SelectedItem).Content == null ? ((ComboBoxItem)this.RoleComboBox.SelectedItem).Content : "вчитель";

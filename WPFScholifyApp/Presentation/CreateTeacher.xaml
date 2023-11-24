@@ -5,8 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFScholifyApp.Presentation"
         mc:Ignorable="d"
-        Title="CreateTeacher" Height="450" Width="800">
-    <Grid>
+        Title="CreateTeacher" Height="535" Width="800">
+    <Grid Height="760" VerticalAlignment="Top">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="604*"/>
+            <RowDefinition Height="65*"/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="6*"/>
             <ColumnDefinition Width="570*"/>
@@ -14,7 +18,7 @@
             <ColumnDefinition Width="19*"/>
             <ColumnDefinition Width="5*"/>
         </Grid.ColumnDefinitions>
-        <StackPanel Grid.ColumnSpan="5" Margin="0,0,0,-32">
+        <StackPanel Grid.ColumnSpan="5" Margin="-52,0,0,149">
 
             <Label Width="67" Content="Email"/>
             <TextBox x:Name="Email" Width="385"/>
@@ -29,19 +33,22 @@
             <Label Width="92" Content="Gender"/>
             <TextBox x:Name="Gender" Width="385"/>
             <Label Width="92" Content="Birthday"/>
-            <DatePicker x:Name="Birthday"></DatePicker>
+            <DatePicker x:Name="Birthday" Height="26" Width="388"></DatePicker>
             <Label Width="92" Content="Adress"/>
             <TextBox x:Name="Adress" Width="385"/>
             <Label Width="92" Content="PhoneNumber"/>
             <TextBox x:Name="PhoneNumber" Width="385"/>
+            <Label/>
             <ComboBox x:Name="RoleComboBox" Width="150" Foreground="DarkBlue" Background="White" RenderTransformOrigin="0.513,0.619">
                 <ComboBoxItem Content="вчитель"/>
                 <ComboBoxItem Content="учень"/>
                 <ComboBoxItem Content="батьки"/>
                 <ComboBoxItem Content="адмін"/>
             </ComboBox>
-            <Button Click="SaveUser" Content="Додати Нового користувача"/>
-            <Button Click="Cancel" Content="Відмінити"/>
+            <Label/>
+            <Button Click="SaveUser" Content="Додати Нового користувача" Width="503" Height="30"/>
+            <Label/>
+            <Button Click="Cancel" Content="Відмінити" Height="28" Width="498"/>
         </StackPanel>
     </Grid>
 </Window>
