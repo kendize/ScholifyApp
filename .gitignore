@@ -1,0 +1,9 @@
+
+*.vsidx
+*.lref
+*.editorconfig
+*.editorconfig
+*.cache
+*.cache
+obj/
+obj/Debug/
