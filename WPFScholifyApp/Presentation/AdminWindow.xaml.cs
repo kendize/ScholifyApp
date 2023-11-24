@@ -31,15 +31,20 @@ namespace WPFScholifyApp
         private AdminService adminService;
         private UserService userService;
         private Class? testclass;
+        private User? testteacher;
         private IGenericRepository<User> userRepository;
         private IGenericRepository<Pupil> pupilRepository;
+        private IGenericRepository<Subject> subjectRepository;
+        private IGenericRepository<Teacher> teacherRepository;
 
         public AdminWindow()
         {
             this.userRepository = new GenericRepository<User>();
+            this.subjectRepository = new GenericRepository<Subject>();
             this.pupilRepository = new GenericRepository<Pupil>();
+            this.teacherRepository = new GenericRepository<Teacher>();
             this.userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>());
-            this.adminService = new AdminService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>());
+            this.adminService = new AdminService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>());
             this.InitializeComponent();
         }
 
@@ -57,11 +62,12 @@ namespace WPFScholifyApp
 
         private void TeachersButton_Click(object sender, RoutedEventArgs e)
         {
+            this.InfoPanel.Children.Clear();
             var teacher = this.adminService.GetAllTeacher();
-            foreach (var c in teacher)
+            foreach (var t in teacher)
             {
-                var button = new Button { Content = c.Teacher, Height = 60, Width = 300, FontSize = 30, };
-                button.Click += new RoutedEventHandler(this.SpecificClassButton_Click);
+                var button = new Button { Content = $"{t!.FirstName} {t!.LastName}", Height = 60, Width = 300, FontSize = 30, Tag = t.Id };
+                button.Click += new RoutedEventHandler(this.SpecificTeacherButton_Click);
                 this.InfoPanel.Children.Add(button);
             }
         }
@@ -88,19 +94,58 @@ namespace WPFScholifyApp
             this.PupilsPanel.Children.Add(createButton);
         }
 
+        public void SpecificTeacherButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.PupilsPanel.Children.Clear();
+            var teacherButton = (Button)sender;
+            this.testteacher = this.adminService.GetAllTeacher().FirstOrDefault(x => x.Id == (int)teacherButton.Tag);
+            var subjects = this.adminService.GetAllSubjectsForTeacher((int)teacherButton.Tag);
+            foreach (var p in subjects)
+            {
+                var subjectButton = new Button { Content = $"{p!.SubjectName}", Height = 60, Width = 300, FontSize = 30, };
+                var deleteButton = new Button { Content = $"Delete {p!.SubjectName}", Height = 60, Width = 300, FontSize = 30, Tag = p.Id };
+                deleteButton.Click += new RoutedEventHandler(this.DeleteSubject);
+
+                this.PupilsPanel.Children.Add(subjectButton);
+                this.PupilsPanel.Children.Add(deleteButton);
+            }
+
+            var createButton = new Button { Content = "Додати Предмет", Tag = (int)teacherButton.Tag, Height = 60, Width = 300, FontSize = 30, };
+
+            createButton.Click += new RoutedEventHandler(this.AddSubject);
+            this.PupilsPanel.Children.Add(createButton);
+        }
+
         private void AddUser(object sender, RoutedEventArgs e)
         {
             var createButton = (Button)sender;
             var createPanel = new CreateUser(this.userRepository, this.pupilRepository);
             createPanel.ClassId = (int)createButton.Tag;
             createPanel.Show();
-            this.PupilsPanel.UpdateLayout();
+            this.PupilsPanel.UpdateLayout(); // воно не робе
         }
 
         private void DeleteUser(object sender, RoutedEventArgs e)
         {
             var deleteButton = (Button)sender;
             this.userService.DeleteUser((int)deleteButton.Tag);
+            this.PupilsPanel.UpdateLayout(); // воно не робе
+        }
+
+        private void AddSubject(object sender, RoutedEventArgs e)
+        {
+            var subjectButton = (Button)sender;
+            var createPanel = new CreateSubject(this.teacherRepository, this.subjectRepository);
+            createPanel.TeacherId = (int)subjectButton.Tag;
+            createPanel.Show();
+            this.PupilsPanel.UpdateLayout(); // воно не робе
+        }
+
+        private void DeleteSubject(object sender, RoutedEventArgs e)
+        {
+            var deleteButton = (Button)sender;
+            this.teacherRepository.Delete(this.teacherRepository.GetAll().FirstOrDefault(x => x.UserId == this.testteacher!.Id && x.SubjectId == (int)deleteButton.Tag) !.Id);
+            this.subjectRepository.Delete((int)deleteButton.Tag);
             this.PupilsPanel.UpdateLayout();
         }
 

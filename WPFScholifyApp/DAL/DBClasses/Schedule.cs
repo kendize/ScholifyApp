@@ -17,5 +17,9 @@ namespace WPFScholifyApp.DAL.DBClasses
         public virtual LessonTime? LessonTime { get; set; }
 
         public virtual Subject? Subject { get; set; }
+
+        public int TeacherId { get; internal set; }
+
+        public int ClassId { get; internal set; }
     }
 }

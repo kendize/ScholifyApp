@@ -23,8 +23,9 @@ namespace WPFScholifyApp.BLL
         private IGenericRepository<Pupil> pupilRepository;
         private IGenericRepository<Admin> adminRepository;
         private IGenericRepository<Parents> parentsRepository;
+        private IGenericRepository<Subject> subjectRepository;
 
-        public AdminService(IGenericRepository<User> userRepos, IGenericRepository<Class> classRepository, IGenericRepository<Teacher> teacherRepository, IGenericRepository<Pupil> pupilRepository, IGenericRepository<Admin> adminRepository, IGenericRepository<Parents> parentsRepository)
+        public AdminService(IGenericRepository<User> userRepos, IGenericRepository<Class> classRepository, IGenericRepository<Teacher> teacherRepository, IGenericRepository<Pupil> pupilRepository, IGenericRepository<Admin> adminRepository, IGenericRepository<Parents> parentsRepository, IGenericRepository<Subject> subjectRepository)
         {
             this.userRepository = userRepos;
             this.classRepository = classRepository;
@@ -32,6 +33,7 @@ namespace WPFScholifyApp.BLL
             this.parentsRepository = parentsRepository;
             this.pupilRepository = pupilRepository;
             this.adminRepository = adminRepository;
+            this.subjectRepository = subjectRepository;
         }
 
         public List<Class> GetAllClasses()
@@ -67,6 +69,14 @@ namespace WPFScholifyApp.BLL
 
             var userPupils = pupilsWithUsers.Select(pupil => pupil.User).ToList();
             return userPupils;
+        }
+
+        public List<Subject?> GetAllSubjectsForTeacher(int teacherId)
+        {
+            var subjectsWithTeachers = this.subjectRepository.GetAllq()
+                .Include(x => x.Teachers)
+                .Where(x => x.Teachers.Select(y => y.UserId).Contains(teacherId)).ToList();
+            return subjectsWithTeachers!;
         }
 
         public User Authenticate(string email, string password, string role)
