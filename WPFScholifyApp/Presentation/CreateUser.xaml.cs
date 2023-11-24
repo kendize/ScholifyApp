@@ -32,12 +32,15 @@ namespace WPFScholifyApp.Presentation
 
         public int ClassId { get; set; }
 
+        public string TestFirstName { get; set; } = string.Empty;
+
         public CreateUser(IGenericRepository<User> userRepos, IGenericRepository<Pupil> pupilRepos)
         {
             this.pupilRepository = pupilRepos;
             this.userRepository = userRepos;
             this.userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>());
             this.InitializeComponent();
+            this.Zoriana.Content = this.TestFirstName;
         }
 
         private void Cancel(object sender, RoutedEventArgs e)

@@ -79,6 +79,19 @@
             InitializeComponent
             </summary>
         </member>
+        <member name="T:WPFScholifyApp.Presentation.CreateTeacher">
+            <summary>
+            Interaction logic for CreateTecher.xaml.
+            </summary>
+            <summary>
+            CreateTeacher
+            </summary>
+        </member>
+        <member name="M:WPFScholifyApp.Presentation.CreateTeacher.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
         <member name="T:WPFScholifyApp.Presentation.CreateUser">
             <summary>
             Interaction logic for CreateUser.xaml.
@@ -88,6 +101,19 @@
             </summary>
         </member>
         <member name="M:WPFScholifyApp.Presentation.CreateUser.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:WPFScholifyApp.Presentation.LookTeacher">
+            <summary>
+            Interaction logic for LookTeacher.xaml.
+            </summary>
+            <summary>
+            LookTeacher
+            </summary>
+        </member>
+        <member name="M:WPFScholifyApp.Presentation.LookTeacher.InitializeComponent">
             <summary>
             InitializeComponent
             </summary>

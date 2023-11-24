@@ -152,3 +152,7 @@ E:\Zoriana\Outsource\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\Create
 E:\Zoriana\Outsource\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\CreateUser.baml
 E:\Zoriana\Outsource\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\CreateSubject.g.cs
 E:\Zoriana\Outsource\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\CreateSubject.baml
+E:\Zoriana\Outsource\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\CreateTeacher.g.cs
+E:\Zoriana\Outsource\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\CreateTeacher.baml
+E:\Zoriana\Outsource\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\LookTeacher.g.cs
+E:\Zoriana\Outsource\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\LookTeacher.baml
