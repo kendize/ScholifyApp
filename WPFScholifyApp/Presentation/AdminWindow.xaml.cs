@@ -37,6 +37,7 @@ namespace WPFScholifyApp
         private IGenericRepository<Subject> subjectRepository;
         private IGenericRepository<Teacher> teacherRepository;
         private int selectedClassId;
+        private IGenericRepository<Class> classRepository;
 
         // private int selectedPupilId;
         // private int selectedTeacherId;
@@ -48,6 +49,7 @@ namespace WPFScholifyApp
             this.subjectRepository = new GenericRepository<Subject>();
             this.pupilRepository = new GenericRepository<Pupil>();
             this.teacherRepository = new GenericRepository<Teacher>();
+            this.classRepository = new GenericRepository<Class>();
             this.userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>());
             this.adminService = new AdminService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>());
             this.InitializeComponent();
@@ -120,6 +122,11 @@ namespace WPFScholifyApp
                 this.RightPanel.Children.Add(pupilButton);
                 this.RightPanel.Children.Add(deleteButton);
             }
+
+            var createButton = new Button { Content = "Додати клас", Height = 60, Width = 300, FontSize = 30, };
+            createButton.Click += new RoutedEventHandler(this.AddClass);
+            this.InfoPanel.Children.Add(createButton);
+            this.InfoPanel.UpdateLayout();
         }
 
         // Метод який викликається при натисканні кнопки "Додати Учня"
@@ -160,7 +167,11 @@ namespace WPFScholifyApp
                 var deleteButton = new Button { Content = $"Delete {t!.FirstName} {t!.LastName}", Height = 60, Width = 300, FontSize = 30, Tag = t.Id };
                 deleteButton.Click += new RoutedEventHandler(this.DeleteTeacher);
             }
-
+            
+            var createButton = new Button { Content = "Додати Вчителя", Height = 60, Width = 300, FontSize = 30, };
+            createButton.Click += new RoutedEventHandler(this.AddTeacher);
+            this.InfoPanel.Children.Add(createButton);
+            this.InfoPanel.UpdateLayout();
             this.RightPanel.UpdateLayout();
             this.LeftPanel.UpdateLayout();
         }
@@ -195,8 +206,37 @@ namespace WPFScholifyApp
             var createButton = (Button)sender;
             var createPanel = new LookTeacher(this.userRepository);
             var teacher = this.adminService.GetAllTeacher().FirstOrDefault(x => x.Id == (int)createButton.Tag);
+            createPanel.Email.Text = teacher!.Email!.ToString();
+            createPanel.Password.Text = teacher!.Password!.ToString();
             createPanel.FirstName.Text = teacher!.FirstName!.ToString();
             createPanel.LastName.Text = teacher!.LastName!.ToString();
+            createPanel.MiddleName.Text = teacher!.MiddleName!.ToString();
+            createPanel.Gender.Text = teacher!.Gender!.ToString();
+            createPanel.Birthday.Text = teacher!.Birthday!.ToString();
+            createPanel.Adress.Text = teacher!.Address!.ToString();
+            createPanel.PhoneNumber.Text = teacher!.PhoneNumber!.ToString();
+
+            createPanel.Show();
+            this.InfoPanel.UpdateLayout(); // воно не робе
+        }
+
+        private void LookUsers(object sender, RoutedEventArgs e)
+        {
+            var createButton = (Button)sender;
+
+            var createPanel = new LookUsers(this.userRepository, this.pupilRepository);
+
+            var pupils = this.adminService.GetAllPupils().FirstOrDefault(x => x.Id == (int)createButton.Tag);
+            createPanel.Email.Text = pupils!.Email!.ToString();
+            createPanel.Password.Text = pupils!.Password!.ToString();
+            createPanel.FirstName.Text = pupils!.FirstName!.ToString();
+            createPanel.LastName.Text = pupils!.LastName!.ToString();
+            createPanel.MiddleName.Text = pupils!.MiddleName!.ToString();
+            createPanel.Gender.Text = pupils!.Gender!.ToString();
+            createPanel.Birthday.Text = pupils!.Birthday!.ToString();
+            createPanel.Adress.Text = pupils!.Address!.ToString();
+            createPanel.PhoneNumber.Text = pupils!.PhoneNumber!.ToString();
+
             createPanel.Show();
             this.LeftPanel.UpdateLayout(); // воно не робе
         }
@@ -226,6 +266,14 @@ namespace WPFScholifyApp
             createPanel.TeacherId = (int)subjectButton.Tag;
             createPanel.Show();
             this.RightPanel.UpdateLayout(); // воно не робе
+        }
+
+        private void AddClass(object sender, RoutedEventArgs e)
+        {
+            var subjectButton = (Button)sender;
+            var createPanel = new CreateClass(this.classRepository);
+            createPanel.Show();
+            this.InfoPanel.UpdateLayout(); // воно не робе
         }
 
         private void DeleteSubject(object sender, RoutedEventArgs e)

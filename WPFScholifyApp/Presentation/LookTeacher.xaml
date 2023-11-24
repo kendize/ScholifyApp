@@ -5,8 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFScholifyApp.Presentation"
         mc:Ignorable="d"
-        Title="LookTeacher" Height="450" Width="800">
-    <Grid>
+        Title="LookTeacher" Height="535" Width="800">
+    <Grid Margin="0,0,0,-16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="169*"/>
+            <RowDefinition Height="0*"/>
+            <RowDefinition Height="0*"/>
+            <RowDefinition Height="4*"/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="6*"/>
             <ColumnDefinition Width="770*"/>
@@ -14,7 +20,7 @@
             <ColumnDefinition Width="19*"/>
             <ColumnDefinition Width="5*"/>
         </Grid.ColumnDefinitions>
-        <StackPanel Grid.ColumnSpan="5">
+        <StackPanel Grid.ColumnSpan="5" Margin="0,0,0,10">
 
             <Label Width="67" Content="Email"/>
             <TextBox x:Name="Email" Width="385" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -29,14 +35,24 @@
             <Label Width="92" Content="Gender"/>
             <TextBox x:Name="Gender" Width="385" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <Label Width="92" Content="Birthday"/>
-            <TextBox x:Name="Birthday" Width="385" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <DatePicker x:Name="Birthday" Height="26" Width="388"></DatePicker>
             <Label Width="92" Content="Adress"/>
             <TextBox x:Name="Adress" Width="385" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <Label Width="92" Content="PhoneNumber"/>
             <TextBox x:Name="PhoneNumber" Width="385" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <Label/>
-            <Button Click="SaveUser" Content="Зберегти" Height="32"/>
-            <Button Click="Cancel" Content="Відмінити" Height="33"/>
+            <Button Click="SaveUser" Content="Зберегти" Height="32" Width="385"/>
+            <Label Height="10" RenderTransformOrigin="0.5,0.5">
+                <Label.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleY="-1"/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Label.RenderTransform>
+            </Label>
+            <Button Click="Cancel" Content="Відмінити" Height="33" Width="388"/>
         </StackPanel>
 
     </Grid>

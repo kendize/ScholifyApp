@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFScholifyApp.Presentation"
         mc:Ignorable="d"
-        Title="CreateUser" Height="450" Width="800">
-    <Grid>
+            Title="CreateUser" Height="535" Width="800">
+    <Grid Height="760" VerticalAlignment="Top">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="6*"/>
             <ColumnDefinition Width="570*"/>
@@ -14,7 +14,7 @@
             <ColumnDefinition Width="19*"/>
             <ColumnDefinition Width="5*"/>
         </Grid.ColumnDefinitions>
-        <StackPanel Grid.ColumnSpan="5">
+        <StackPanel Grid.ColumnSpan="5" Margin="0,0,0,-46">
 
             <Label Width="67" Content="Email"/>
             <TextBox x:Name="Email" Width="385"/>
@@ -28,18 +28,23 @@
             <TextBox x:Name="LastName" Width="385"/>
             <Label Width="92" Content="Gender"/>
             <TextBox x:Name="Gender" Width="385"/>
+            <Label Width="92" Content="Birthday"/>
+            <DatePicker x:Name="Birthday" Height="26" Width="388"></DatePicker>
             <Label Width="92" Content="Adress"/>
             <TextBox x:Name="Adress" Width="385"/>
             <Label Width="92" Content="PhoneNumber"/>
             <TextBox x:Name="PhoneNumber" Width="385"/>
+            <Label/>
             <ComboBox x:Name="RoleComboBox" Width="150" Foreground="DarkBlue" Background="White" RenderTransformOrigin="0.513,0.619">
                 <ComboBoxItem Content="вчитель"/>
                 <ComboBoxItem Content="учень"/>
                 <ComboBoxItem Content="батьки"/>
                 <ComboBoxItem Content="адмін"/>
             </ComboBox>
-            <Button Click="SaveUser" Content="Додати Нового користувача"/>
-            <Button Click="Cancel" Content="Відмінити"/>
+            <Label/>
+            <Button Click="SaveUser" Content="Додати Нового користувача" Height="19" Width="389"/>
+            <Label/>
+            <Button Click="Cancel" Content="Відмінити" Height="25" Width="385"/>
             <Label x:Name="Zoriana"></Label>
         </StackPanel>
 

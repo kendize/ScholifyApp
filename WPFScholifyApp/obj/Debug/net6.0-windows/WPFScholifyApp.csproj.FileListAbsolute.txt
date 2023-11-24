@@ -239,3 +239,7 @@ D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\refint\WPFScholifyAp
 D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\WPFScholifyApp.pdb
 D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\WPFScholifyApp.genruntimeconfig.cache
 D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\ref\WPFScholifyApp.dll
+E:\Zoriana\Outsource\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\LookUsers.g.cs
+E:\Zoriana\Outsource\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\LookUsers.baml
+E:\Zoriana\Outsource\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\CreateClass.g.cs
+E:\Zoriana\Outsource\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\CreateClass.baml

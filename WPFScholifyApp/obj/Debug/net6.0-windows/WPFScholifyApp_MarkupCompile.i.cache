@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET6_0;NETCOREAPP
 
-101098955485
+121968111134
 
-38-891395046
+40-167064029
 226858285298
-Presentation\AdminWindow.xaml;Presentation\App.xaml;Presentation\CreateSubject.xaml;Presentation\CreateTeacher.xaml;Presentation\CreateUser.xaml;Presentation\LookTeacher.xaml;Presentation\MainWindow.xaml;Presentation\ParentsWindow.xaml;Presentation\PupilWindow.xaml;Presentation\TeacherWindow.xaml;
+Presentation\AdminWindow.xaml;Presentation\App.xaml;Presentation\CreateClass.xaml;Presentation\CreateSubject.xaml;Presentation\CreateTeacher.xaml;Presentation\CreateUser.xaml;Presentation\LookTeacher.xaml;Presentation\LookUsers.xaml;Presentation\MainWindow.xaml;Presentation\ParentsWindow.xaml;Presentation\PupilWindow.xaml;Presentation\TeacherWindow.xaml;
 
-True
+False
 

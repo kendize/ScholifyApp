@@ -48,6 +48,12 @@ namespace WPFScholifyApp.BLL
             return admines;
         }
 
+        public List<User> GetAllPupils()
+        {
+            var pupils = this.userRepository.GetAll().Where(x => x.Role == "учень").ToList();
+            return pupils;
+        }
+
         public List<User> GetAllTeacher()
         {
             var teacher = this.userRepository.GetAll().Where(x => x.Role == "вчитель").ToList();

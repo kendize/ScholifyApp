@@ -1,0 +1,58 @@
+﻿<Window x:Class="WPFScholifyApp.Presentation.LookUsers"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPFScholifyApp.Presentation"
+        mc:Ignorable="d"
+            Title="LookUsers" Height="535" Width="800">
+    <Grid Margin="0,0,0,-16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="169*"/>
+            <RowDefinition Height="0*"/>
+            <RowDefinition Height="0*"/>
+            <RowDefinition Height="4*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="6*"/>
+            <ColumnDefinition Width="770*"/>
+            <ColumnDefinition Width="0*"/>
+            <ColumnDefinition Width="19*"/>
+            <ColumnDefinition Width="5*"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.ColumnSpan="5" Margin="0,0,0,10">
+
+            <Label Width="67" Content="Email"/>
+            <TextBox x:Name="Email" Width="385" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Label Width="92" Content="Password"/>
+            <TextBox x:Name="Password" Width="385" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Label Width="92" Content="FirstName"/>
+            <TextBox x:Name="FirstName" Width="385" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Label Width="92" Content="MiddleName"/>
+            <TextBox x:Name="MiddleName" Width="385" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Label Width="92" Content="LastName"/>
+            <TextBox x:Name="LastName" Width="385" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Label Width="92" Content="Gender"/>
+            <TextBox x:Name="Gender" Width="385" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Label Width="92" Content="Birthday"/>
+            <DatePicker x:Name="Birthday" Height="26" Width="388"></DatePicker>
+            <Label Width="92" Content="Adress"/>
+            <TextBox x:Name="Adress" Width="385" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Label Width="92" Content="PhoneNumber"/>
+            <TextBox x:Name="PhoneNumber" Width="385" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Label/>
+            <Button Click="SaveUser" Content="Зберегти" Height="32" Width="385"/>
+            <Label Height="10" RenderTransformOrigin="0.5,0.5">
+                <Label.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleY="-1"/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Label.RenderTransform>
+            </Label>
+            <Button Click="Cancel" Content="Відмінити" Height="33" Width="388"/>
+        </StackPanel>
+    </Grid>
+</Window>
