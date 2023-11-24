@@ -125,8 +125,8 @@ namespace WPFScholifyApp
 
             var createButton = new Button { Content = "Додати клас", Height = 60, Width = 300, FontSize = 30, };
             createButton.Click += new RoutedEventHandler(this.AddClass);
-            this.InfoPanel.Children.Add(createButton);
-            this.InfoPanel.UpdateLayout();
+            this.LeftPanel.Children.Add(createButton);
+            this.LeftPanel.UpdateLayout();
         }
 
         // Метод який викликається при натисканні кнопки "Додати Учня"
@@ -167,11 +167,11 @@ namespace WPFScholifyApp
                 var deleteButton = new Button { Content = $"Delete {t!.FirstName} {t!.LastName}", Height = 60, Width = 300, FontSize = 30, Tag = t.Id };
                 deleteButton.Click += new RoutedEventHandler(this.DeleteTeacher);
             }
-            
+
             var createButton = new Button { Content = "Додати Вчителя", Height = 60, Width = 300, FontSize = 30, };
             createButton.Click += new RoutedEventHandler(this.AddTeacher);
-            this.InfoPanel.Children.Add(createButton);
-            this.InfoPanel.UpdateLayout();
+            this.LeftPanel.Children.Add(createButton);
+            this.LeftPanel.UpdateLayout();
             this.RightPanel.UpdateLayout();
             this.LeftPanel.UpdateLayout();
         }
@@ -217,7 +217,7 @@ namespace WPFScholifyApp
             createPanel.PhoneNumber.Text = teacher!.PhoneNumber!.ToString();
 
             createPanel.Show();
-            this.InfoPanel.UpdateLayout(); // воно не робе
+            this.LeftPanel.UpdateLayout(); // воно не робе
         }
 
         private void LookUsers(object sender, RoutedEventArgs e)
@@ -273,7 +273,7 @@ namespace WPFScholifyApp
             var subjectButton = (Button)sender;
             var createPanel = new CreateClass(this.classRepository);
             createPanel.Show();
-            this.InfoPanel.UpdateLayout(); // воно не робе
+            this.LeftPanel.UpdateLayout(); // воно не робе
         }
 
         private void DeleteSubject(object sender, RoutedEventArgs e)
