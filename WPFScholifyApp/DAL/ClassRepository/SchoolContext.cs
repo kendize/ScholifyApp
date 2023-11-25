@@ -67,8 +67,9 @@ namespace WPFScholifyApp.DAL.ClassRepository
                 new User { Id = 1, Email = "1", Password = "1", FirstName = "AdminName", LastName = "AdminLastname", Role = "адмін" },
                 new User { Id = 2, Email = "user1@example.com", Password = "1", FirstName = "Марія", LastName = "Галушко", MiddleName = "Вікторівна", Role = "вчитель" },
                 new User { Id = 3, Email = "user2@example.com", Password = "1", FirstName = "Ігор", LastName = "Гнатюк", MiddleName = "Іванович", Role = "вчитель" },
-                new User { Id = 4, Email = "user3@example.com", Password = "1", FirstName = "Олег", LastName = "Винник", MiddleName = "Павлович", Role = "вчитель" });
-
+                new User { Id = 4, Email = "user3@example.com", Password = "1", FirstName = "Олег", LastName = "Винник", MiddleName = "Павлович", Birthday = new DateTime(2023, 11, 25).ToUniversalTime(), Role = "вчитель" },
+                new User { Id = 5, Email = "2", Password = "2", FirstName = "Михайло", LastName = "Іващенко", MiddleName = "Святославович", Gender = "чоловік", Address = "м.Житомир,вул Перемоги, 56", PhoneNumber = "0685495126", Role = "учень" },
+                new User { Id = 6, Email = "3", Password = "3", FirstName = "Світлана", MiddleName = "Василівна", LastName = "Романюк", Gender = "жінка", Birthday = new DateTime(2023, 11, 25).ToUniversalTime(), Address = "м.Харків вул.Миру,8", PhoneNumber ="0635472856", Role = "батьки"});
             modelBuilder.Entity<Admin>().HasData(
                 new Admin { Id = 1 });
 

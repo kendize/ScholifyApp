@@ -35,6 +35,7 @@ namespace WPFScholifyApp
         private IGenericRepository<Subject> subjectRepository;
         private IGenericRepository<Teacher> teacherRepository;
         private IGenericRepository<Class> classRepository;
+        private IGenericRepository<Advertisement> advertisementsRepository;
         private int selectedClassId;
         private int selectedTeacherId;
 
@@ -48,8 +49,9 @@ namespace WPFScholifyApp
             this.pupilRepository = new GenericRepository<Pupil>();
             this.teacherRepository = new GenericRepository<Teacher>();
             this.classRepository = new GenericRepository<Class>();
+            this.advertisementsRepository = new GenericRepository<Advertisement>();
             this.userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>());
-            this.adminService = new AdminService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>());
+            this.adminService = new AdminService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Advertisement>());
             this.InitializeComponent();
         }
 
@@ -109,10 +111,10 @@ namespace WPFScholifyApp
 
             foreach (var p in pupils)
             {
-                var pupilButton = new Button { Content = $"{p!.FirstName} {p!.LastName}", Height = 60, Width = 300, FontSize = 30, };
+                var pupilButton = new Button { Content = $"{p!.FirstName} {p!.LastName}", Height = 60, Width = 300, FontSize = 30, Tag = p.Id };
+                pupilButton.Click += new RoutedEventHandler(this.LookUsers);
                 var deleteButton = new Button { Content = $"Delete {p!.FirstName} {p!.LastName}", Height = 60, Width = 300, FontSize = 30, Tag = p.Id };
                 deleteButton.Click += new RoutedEventHandler(this.DeletePupil);
-
                 this.RightPanel.Children.Add(pupilButton);
                 this.RightPanel.Children.Add(deleteButton);
             }
@@ -224,7 +226,7 @@ namespace WPFScholifyApp
             createPanel.PhoneNumber.Text = teacher!.PhoneNumber?.ToString();
 
             createPanel.Show();
-            this.LeftPanel.UpdateLayout(); // воно не робе
+            this.LeftPanel.UpdateLayout(); 
         }
 
         private void LookUsers(object sender, RoutedEventArgs e)

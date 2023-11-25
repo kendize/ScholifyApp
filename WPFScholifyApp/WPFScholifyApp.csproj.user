@@ -6,6 +6,9 @@
     <NoWarn>$(NoWarn),1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Update="Presentation\CreateAdvertisements.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Presentation\CreateClass.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -26,6 +29,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Update="Presentation\CreateAdvertisements.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Presentation\CreateClass.xaml">
       <SubType>Designer</SubType>
     </Page>

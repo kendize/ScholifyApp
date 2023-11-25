@@ -22,8 +22,16 @@ namespace WPFScholifyApp
     /// </summary>
     public partial class PupilWindow : Window
     {
+        private AdminService adminService;
+        private UserService userService;
+        private AdvertisementService advertisementService;
+        public int selectedClassId;
+        
         public PupilWindow()
         {
+            this.adminService = new AdminService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Advertisement>());
+            this.userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>());
+            this.advertisementService = new AdvertisementService(new GenericRepository<Advertisement>(), new GenericRepository<Class>());
             this.InitializeComponent();
         }
 
@@ -37,7 +45,7 @@ namespace WPFScholifyApp
 
         private void PrivateInfoButton_Click(object sender, RoutedEventArgs e)
         {
-            this.InfoPanel.Children.Clear();
+            DeleteFromPupilsPanel();
 
             TextBlock titleLabel = new TextBlock
             {
@@ -45,9 +53,9 @@ namespace WPFScholifyApp
                 FontSize = 50,
                 Foreground = new SolidColorBrush(Colors.DarkBlue),
                 FontWeight = FontWeights.Bold,
-                Margin = new Thickness(410, 30, 0, 10),
+                Margin = new Thickness(430, 30, 0, 10),
             };
-            this.InfoPanel.Children.Add(titleLabel);
+            this.Panel.Children.Add(titleLabel);
 
             UserService userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>());
             string name = this.FirstNameTextBlock.Text;
@@ -64,24 +72,51 @@ namespace WPFScholifyApp
                     Foreground = new SolidColorBrush(Colors.DarkBlue),
                     Margin = new Thickness(430, 90, 0, 10),
                 };
-                this.InfoPanel.Children.Add(studentInfo);
+                this.Panel.Children.Add(studentInfo);
             }
         }
 
         private void JournalButton_Click(object sender, RoutedEventArgs e)
         {
+            DeleteFromPupilsPanel();
         }
 
         private void ScheduleButton_Click(object sender, RoutedEventArgs e)
         {
+            DeleteFromPupilsPanel();
         }
 
         private void AnnouncementsButton_Click(object sender, RoutedEventArgs e)
         {
+            DeleteFromPupilsPanel();
+            ////AdvertisementService advertisementService = new AdvertisementService(new GenericRepository<Advertisement>(), new GenericRepository<Class>());
+            ////var advertisement = this.advertisementService.GetAllAdvertisementsForClassId(this.selectedClassId).FirstOrDefault(x => x.Id == (int).Tag);
+            ////if (advertisement != null)
+            ////{
+            ////    TextBlock advertisementInfo = new TextBlock
+            ////    {
+
+            ////        Text = $"Тема:\t {advertisement.Name}\n\n Вміст:\t {advertisement.Description}",
+            ////        FontSize = 40,
+            ////        Foreground = new SolidColorBrush(Colors.DarkBlue),
+            ////        Margin = new Thickness(180, 90, 0, 10),
+            ////    };
+            ////    this.Panel.Children.Add(advertisementInfo);
+            ////}
+
+            UpdatePupilsPanel();
+
         }
 
-        private void ChatButton_Click(object sender, RoutedEventArgs e)
+        public void DeleteFromPupilsPanel()
         {
+            this.Panel.Children.Clear();
+        }
+
+        public void UpdatePupilsPanel()
+        {
+            this.Panel.UpdateLayout();
         }
     }
 }
+

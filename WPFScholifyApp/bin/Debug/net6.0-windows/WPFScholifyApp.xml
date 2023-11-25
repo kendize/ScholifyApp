@@ -66,6 +66,19 @@
             InitializeComponent
             </summary>
         </member>
+        <member name="T:WPFScholifyApp.Presentation.CreateAdvertisements">
+            <summary>
+            Interaction logic for CreateAdvertisements.xaml
+            </summary>
+            <summary>
+            CreateAdvertisements
+            </summary>
+        </member>
+        <member name="M:WPFScholifyApp.Presentation.CreateAdvertisements.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
         <member name="T:WPFScholifyApp.Presentation.CreateClass">
             <summary>
             Interaction logic for CreateClass.xaml.
