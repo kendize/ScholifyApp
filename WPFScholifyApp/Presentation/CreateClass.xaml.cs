@@ -26,11 +26,13 @@ namespace WPFScholifyApp.Presentation
     public partial class CreateClass : Window
     {
         private IGenericRepository<Class> classRepository;
+        private AdminWindow adminWindow;
 
-        public CreateClass(IGenericRepository<Class> classRepos)
+        public CreateClass(IGenericRepository<Class> classRepos, AdminWindow adminWindow)
         {
             this.classRepository = classRepos;
             this.InitializeComponent();
+            this.adminWindow = adminWindow;
         }
 
         private void SaveSubject(object sender, RoutedEventArgs e)
@@ -43,6 +45,7 @@ namespace WPFScholifyApp.Presentation
                 ClassName = className,
             };
 
+            this.adminWindow.LeftPanel.Children.Clear();
             this.classRepository.Insert(clases);
             this.classRepository.Save();
         }

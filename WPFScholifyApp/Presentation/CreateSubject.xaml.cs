@@ -28,25 +28,26 @@ namespace WPFScholifyApp.Presentation
     {
         private IGenericRepository<Teacher> teacherRepository;
         private IGenericRepository<Subject> subjectRepository;
+        private AdminWindow adminWindow;
 
         public int TeacherId { get; set; }
 
-        public CreateSubject(IGenericRepository<Teacher> teacherRepos, IGenericRepository<Subject> subjectRepos)
+        public CreateSubject(IGenericRepository<Teacher> teacherRepos, IGenericRepository<Subject> subjectRepos, IGenericRepository<User> userRepository, AdminWindow adminWindow)
         {
             this.teacherRepository = teacherRepos;
             this.subjectRepository = subjectRepos;
+            this.adminWindow = adminWindow;
             this.InitializeComponent();
         }
 
         private void SaveSubject(object sender, RoutedEventArgs e)
         {
             string subjectName = this.SubjectName.Text;
-            this.Close();
             var teacher = new Teacher
             {
-                Id = this.teacherRepository.GetAll().Select(x => x.Id).Max() + 1,
+                Id = (this.teacherRepository.GetAll().OrderByDescending(x => x.Id).FirstOrDefault()?.Id ?? 0) + 1,
                 UserId = this.TeacherId,
-                SubjectId = this.subjectRepository.GetAll().Select(x => x.Id).Max() + 1,
+                SubjectId = (this.subjectRepository.GetAll().OrderByDescending(x => x.Id).FirstOrDefault()?.Id ?? 0) + 1,
             };
 
             var subject = new Subject
@@ -59,6 +60,10 @@ namespace WPFScholifyApp.Presentation
             this.subjectRepository.Save();
             this.teacherRepository.Insert(teacher);
             this.teacherRepository.Save();
+            this.adminWindow.RightPanel.Children.Clear();
+            this.adminWindow.RightAction.Children.Clear();
+            this.adminWindow.ShowAllSubjectsForTeacher(this.TeacherId);
+            this.Close();
         }
 
         private void Cancel(object sender, RoutedEventArgs e)

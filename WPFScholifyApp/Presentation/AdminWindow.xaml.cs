@@ -30,17 +30,16 @@ namespace WPFScholifyApp
     {
         private AdminService adminService;
         private UserService userService;
-        private Class? testclass;
         private User? testteacher;
         private IGenericRepository<User> userRepository;
         private IGenericRepository<Pupil> pupilRepository;
         private IGenericRepository<Subject> subjectRepository;
         private IGenericRepository<Teacher> teacherRepository;
-        private int selectedClassId;
         private IGenericRepository<Class> classRepository;
+        private int selectedClassId;
+        private int selectedTeacherId;
 
         // private int selectedPupilId;
-        // private int selectedTeacherId;
         // private int selectedSubjectId;
         // private int selectedParentId;
         public AdminWindow()
@@ -61,9 +60,11 @@ namespace WPFScholifyApp
             this.selectedClassId = 0;
             this.RightPanel.Children.Clear();
             this.LeftPanel.Children.Clear();
+            this.LeftAction.Children.Clear();
             this.ShowAllClasses();
             this.LeftPanel.UpdateLayout();
             this.RightPanel.UpdateLayout();
+            this.RightAction.UpdateLayout();
         }
 
         // Метод для виведення списку кнопок з усіма класами
@@ -78,14 +79,13 @@ namespace WPFScholifyApp
                 this.LeftPanel.Children.Add(button);
             }
 
-            var createButton = new Button
-            {
-                Content = "Створити Клас",
-                Margin = new Thickness { Bottom = 1000 },
-            };
-
-            // createButton.Click += new RoutedEventHandler();
-            // this.LeftPanel.Children.Add()
+            // var createButton = new Button
+            // {
+            //    Content = "Створити Клас",
+            //    VerticalAlignment = VerticalAlignment.Bottom,
+            // };
+            // createButton.Click += new RoutedEventHandler(this.AddClass);
+            // this.LeftAction.Children.Add(createButton);
         }
 
         // Метод який викликається при натисканні кнопки обраного класу серед списку класів на панелі Адміністратора
@@ -100,18 +100,14 @@ namespace WPFScholifyApp
             this.RightPanel.Children.Clear();
             this.ShowAllPupilsForClassId(this.selectedClassId);
             this.RightPanel.UpdateLayout();
-
-            // Додамо в кінці кнопку додати нового учня
-            var createButton = new Button { Content = "Додати Учня", Tag = (int)classButton.Tag, Height = 60, Width = 300, FontSize = 30, };
-            createButton.Click += new RoutedEventHandler(this.AddUser);
-            this.RightPanel.Children.Add(createButton);
-            this.RightPanel.UpdateLayout();
         }
 
         // Метод для виведення списку кнопок з усіма учнями для обраного класу
         public void ShowAllPupilsForClassId(int classId)
         {
-            this.testclass = this.adminService.GetAllClasses().FirstOrDefault(x => x.Id == this.selectedClassId);
+            this.RightAction.Children.Clear();
+            this.RightPanel.Children.Clear();
+            this.selectedClassId = classId;
             var pupils = this.adminService.GetAllPupilsForClass(classId);
             foreach (var p in pupils)
             {
@@ -123,18 +119,20 @@ namespace WPFScholifyApp
                 this.RightPanel.Children.Add(deleteButton);
             }
 
-            var createButton = new Button { Content = "Додати клас", Height = 60, Width = 300, FontSize = 30, };
-            createButton.Click += new RoutedEventHandler(this.AddClass);
-            this.LeftPanel.Children.Add(createButton);
+            // Після виведення всіх учнів для обраного класу додамо кнопку "Додати Учня"
+            var createButton = new Button { Content = "Додати Учня", Height = 60, Width = 300, FontSize = 30, Tag = classId };
+            createButton.Click += new RoutedEventHandler(this.AddPupil);
+            this.RightAction.Children.Add(createButton);
             this.LeftPanel.UpdateLayout();
+            this.RightAction.UpdateLayout();
         }
 
         // Метод який викликається при натисканні кнопки "Додати Учня"
-        private void AddUser(object sender, RoutedEventArgs e)
+        private void AddPupil(object sender, RoutedEventArgs e)
         {
             var createButton = (Button)sender;
             var createPanel = new CreateUser(this.userRepository, this.pupilRepository, this);
-            createPanel.ClassId = (int)createButton.Tag;
+            createPanel.ClassId = this.selectedClassId;
             createPanel.Show();
         }
 
@@ -153,6 +151,7 @@ namespace WPFScholifyApp
         // Метод для виведення списку кнопок з усіма вчителями
         public void ShowAllTeachers()
         {
+            this.LeftAction.Children.Clear();
             this.LeftPanel.Children.Clear();
             this.RightPanel.Children.Clear();
             var teacher = this.adminService.GetAllTeacher();
@@ -170,8 +169,8 @@ namespace WPFScholifyApp
 
             var createButton = new Button { Content = "Додати Вчителя", Height = 60, Width = 300, FontSize = 30, };
             createButton.Click += new RoutedEventHandler(this.AddTeacher);
-            this.LeftPanel.Children.Add(createButton);
-            this.LeftPanel.UpdateLayout();
+            this.LeftAction.Children.Add(createButton);
+            this.LeftAction.UpdateLayout();
             this.RightPanel.UpdateLayout();
             this.LeftPanel.UpdateLayout();
         }
@@ -180,8 +179,16 @@ namespace WPFScholifyApp
         public void SpecificTeacherButton_Click(object sender, RoutedEventArgs e)
         {
             var teacherButton = (Button)sender;
-            this.testteacher = this.adminService.GetAllTeacher().FirstOrDefault(x => x.Id == (int)teacherButton.Tag);
-            var subjects = this.adminService.GetAllSubjectsForTeacher((int)teacherButton.Tag);
+            this.selectedTeacherId = (int)teacherButton.Tag;
+            this.ShowAllSubjectsForTeacher(this.selectedTeacherId);
+        }
+
+        public void ShowAllSubjectsForTeacher(int teacherId)
+        {
+            this.RightPanel.Children.Clear();
+            this.RightAction.Children.Clear();
+            this.testteacher = this.adminService.GetAllTeacher().FirstOrDefault(x => x.Id == teacherId);
+            var subjects = this.adminService.GetAllSubjectsForTeacher(teacherId);
             foreach (var p in subjects)
             {
                 var subjectButton = new Button { Content = $"{p!.SubjectName}", Height = 60, Width = 300, FontSize = 30, };
@@ -191,13 +198,23 @@ namespace WPFScholifyApp
                 this.RightPanel.Children.Add(subjectButton);
                 this.RightPanel.Children.Add(deleteButton);
             }
+
+            var createButton = new Button { Content = "Додати предмет викладачу", Height = 60, Width = 300, FontSize = 30, Tag = teacherId };
+            createButton.Click += new RoutedEventHandler(this.AddSubjectToTeacher);
+
+            this.RightAction.Children.Add(createButton);
+            this.RightAction.UpdateLayout();
+        }
+
+        private void CreateButton_Click(object sender, RoutedEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private void AddTeacher(object sender, RoutedEventArgs e)
         {
             var createButton = (Button)sender;
             var createPanel = new CreateTeacher(this.userRepository, this);
-            createPanel.Owner = this;
             createPanel.Show();
         }
 
@@ -206,15 +223,15 @@ namespace WPFScholifyApp
             var createButton = (Button)sender;
             var createPanel = new LookTeacher(this.userRepository);
             var teacher = this.adminService.GetAllTeacher().FirstOrDefault(x => x.Id == (int)createButton.Tag);
-            createPanel.Email.Text = teacher!.Email!.ToString();
-            createPanel.Password.Text = teacher!.Password!.ToString();
-            createPanel.FirstName.Text = teacher!.FirstName!.ToString();
-            createPanel.LastName.Text = teacher!.LastName!.ToString();
-            createPanel.MiddleName.Text = teacher!.MiddleName!.ToString();
-            createPanel.Gender.Text = teacher!.Gender!.ToString();
-            createPanel.Birthday.Text = teacher!.Birthday!.ToString();
-            createPanel.Adress.Text = teacher!.Address!.ToString();
-            createPanel.PhoneNumber.Text = teacher!.PhoneNumber!.ToString();
+            createPanel.Email.Text = teacher!.Email?.ToString();
+            createPanel.Password.Text = teacher!.Password?.ToString();
+            createPanel.FirstName.Text = teacher!.FirstName?.ToString();
+            createPanel.LastName.Text = teacher!.LastName?.ToString();
+            createPanel.MiddleName.Text = teacher!.MiddleName?.ToString();
+            createPanel.Gender.Text = teacher!.Gender?.ToString();
+            createPanel.Birthday.Text = teacher!.Birthday?.ToString();
+            createPanel.Adress.Text = teacher!.Address?.ToString();
+            createPanel.PhoneNumber.Text = teacher!.PhoneNumber?.ToString();
 
             createPanel.Show();
             this.LeftPanel.UpdateLayout(); // воно не робе
@@ -244,13 +261,13 @@ namespace WPFScholifyApp
         private void DeletePupil(object sender, RoutedEventArgs e)
         {
             var deleteButton = (Button)sender;
-            this.userService.DeleteUser((int)deleteButton.Tag);
+            this.userService.DeletePupil((int)deleteButton.Tag);
             this.RightPanel.Children.Clear();
             this.LeftPanel.Children.Clear();
             this.ShowAllClasses();
             this.ShowAllPupilsForClassId(this.selectedClassId);
-            this.LeftPanel.UpdateLayout();
             this.RightPanel.UpdateLayout();
+            this.LeftPanel.UpdateLayout();
         }
 
         private void DeleteTeacher(object sender, RoutedEventArgs e)
@@ -259,19 +276,20 @@ namespace WPFScholifyApp
             this.userService.DeleteUser((int)deleteButton.Tag);
         }
 
-        private void AddSubject(object sender, RoutedEventArgs e)
+        private void AddSubjectToTeacher(object sender, RoutedEventArgs e)
         {
             var subjectButton = (Button)sender;
-            var createPanel = new CreateSubject(this.teacherRepository, this.subjectRepository);
-            createPanel.TeacherId = (int)subjectButton.Tag;
+            var createPanel = new CreateSubject(this.teacherRepository, this.subjectRepository, this.userRepository, this);
+            createPanel.TeacherId = this.selectedTeacherId;
             createPanel.Show();
-            this.RightPanel.UpdateLayout(); // воно не робе
+            this.RightPanel.UpdateLayout();
+            this.RightAction.UpdateLayout();
         }
 
         private void AddClass(object sender, RoutedEventArgs e)
         {
             var subjectButton = (Button)sender;
-            var createPanel = new CreateClass(this.classRepository);
+            var createPanel = new CreateClass(this.classRepository, this);
             createPanel.Show();
             this.LeftPanel.UpdateLayout(); // воно не робе
         }
@@ -279,9 +297,14 @@ namespace WPFScholifyApp
         private void DeleteSubject(object sender, RoutedEventArgs e)
         {
             var deleteButton = (Button)sender;
-            this.teacherRepository.Delete(this.teacherRepository.GetAll().FirstOrDefault(x => x.UserId == this.testteacher!.Id && x.SubjectId == (int)deleteButton.Tag) !.Id);
+            this.teacherRepository.Delete(this.teacherRepository.GetAll().FirstOrDefault(x => x.UserId == this.selectedTeacherId && x.SubjectId == (int)deleteButton.Tag) !.Id);
+            this.teacherRepository.Save();
             this.subjectRepository.Delete((int)deleteButton.Tag);
+            this.subjectRepository.Save();
             this.RightPanel.UpdateLayout();
+            this.RightPanel.Children.Clear();
+            this.RightAction.Children.Clear();
+            this.ShowAllSubjectsForTeacher(this.selectedTeacherId);
         }
 
         private void ParentsButton_Click(object sender, RoutedEventArgs e)

@@ -19,16 +19,17 @@
                 <Button Content="Батьки" FontSize="30" Click="ParentsButton_Click" Margin="0 20 0 0" Height="70" Foreground="DarkBlue" Background="White" BorderBrush="DarkBlue"/>
                 <Button Content="Розклад" FontSize="30" Click="ScheduleButton_Click" Margin="0 20 0 0" Height="70" Foreground="DarkBlue" Background="White" BorderBrush="DarkBlue"/>
             </StackPanel >
-            <ScrollViewer Margin="486,0,944,0" RenderTransformOrigin="0.358,0.498" Name="leftScroll" CanContentScroll="True" >
+            <ScrollViewer Margin="486,0,944,61" RenderTransformOrigin="0.358,0.498" Name="leftScroll" CanContentScroll="True" >
                 <StackPanel x:Name="LeftPanel" RenderTransformOrigin="0.297,0.786" Background="White">
-                    <Button VerticalAlignment="Top" Height="40" Margin="0,1000,0,0"/>
                 </StackPanel>
             </ScrollViewer>
-
-            <ScrollViewer Margin="934,0,0,0" Name="rightScroll" CanContentScroll="True" >
+            <StackPanel Margin="486,1023,944,-1" Background="White" x:Name="LeftAction">
+            </StackPanel>
+            <ScrollViewer Margin="934,0,0,60" Name="rightScroll" CanContentScroll="True" >
                 <StackPanel x:Name="RightPanel" Background="White" Height="1023" Width="924" RenderTransformOrigin="0.503,0.796"/>
             </ScrollViewer>
-                
+            <StackPanel Background="White" x:Name="RightAction" Margin="934,1023,0,-1">
+            </StackPanel>
             <Button Content="Вихід" FontSize="30" Click="ExitButton_Click" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="141,0,0,37" Foreground="DarkBlue" Background="White" Width="193" Height="55"/>
         </Grid>
     </Viewbox>
