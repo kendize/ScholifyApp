@@ -68,7 +68,10 @@ namespace WPFScholifyApp.Presentation
 
             this.teacherService.AddTeacher(user);
             this.Close();
+
+            this.adminWindow.DeleteFromAdminPanels();
             this.adminWindow.ShowAllTeachers();
+            this.adminWindow.UpdateAdminPanels();
         }
 
         private void Cancel(object sender, RoutedEventArgs e)

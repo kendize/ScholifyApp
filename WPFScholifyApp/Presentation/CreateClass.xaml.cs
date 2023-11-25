@@ -45,9 +45,13 @@ namespace WPFScholifyApp.Presentation
                 ClassName = className,
             };
 
-            this.adminWindow.LeftPanel.Children.Clear();
             this.classRepository.Insert(clases);
             this.classRepository.Save();
+            this.adminWindow.LeftPanel.Children.Clear();
+            this.adminWindow.LeftAction.Children.Clear();
+            this.adminWindow.ShowAllClasses();
+            this.adminWindow.LeftPanel.UpdateLayout();
+            this.adminWindow.LeftAction.UpdateLayout();
         }
 
         private void Cancel(object sender, RoutedEventArgs e)

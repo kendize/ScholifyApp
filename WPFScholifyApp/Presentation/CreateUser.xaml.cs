@@ -81,8 +81,12 @@ namespace WPFScholifyApp.Presentation
 
             this.userService.AddUser(user, pupil);
             this.Close();
-            this.adminWindow.RightPanel.Children.Clear();
+            this.adminWindow.DeleteFromAdminPanels();
+
+            this.adminWindow.ShowAllClasses();
             this.adminWindow.ShowAllPupilsForClassId(this.ClassId);
+
+            this.adminWindow.UpdateAdminPanels();
         }
 
         private void Cancel(object sender, RoutedEventArgs e)
