@@ -31,7 +31,7 @@ namespace WPFScholifyApp.DAL.ClassRepository
 
         public IEnumerable<T> GetAll()
         {
-            return this.table.ToList();
+            return this.table!.ToList();
         }
 
         public IQueryable<T> GetAllq()
@@ -61,7 +61,7 @@ namespace WPFScholifyApp.DAL.ClassRepository
         public void Delete(object id)
         {
             T? existing = this.table?.Find(id);
-            this.table?.Remove(existing);
+            this.table?.Remove(existing!);
         }
 
         public void Save()

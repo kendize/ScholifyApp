@@ -12,6 +12,8 @@ namespace WPFScholifyApp.DAL.DBClasses
 
         public string? ClassName { get; set; }
 
+        public virtual ICollection<Advertisement>? Advertisements { get; set; }
+
         public virtual ICollection<Pupil>? Pupils { get; set; }
 
         public virtual ICollection<Teacher>? Teachers { get; set; }

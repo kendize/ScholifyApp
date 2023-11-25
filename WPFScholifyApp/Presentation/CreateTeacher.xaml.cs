@@ -33,7 +33,7 @@ namespace WPFScholifyApp.Presentation
         public CreateTeacher(IGenericRepository<User> userRepos, AdminWindow adminWindow)
         {
             this.userRepository = userRepos;
-            this.teacherService = new TeacherService(new GenericRepository<User>());
+            this.teacherService = new TeacherService(new GenericRepository<User>(), new GenericRepository<Advertisement>(), new GenericRepository<Class>());
             this.adminWindow = adminWindow;
             this.InitializeComponent();
         }

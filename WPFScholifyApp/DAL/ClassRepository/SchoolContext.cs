@@ -43,6 +43,8 @@ namespace WPFScholifyApp.DAL.ClassRepository
 
         public DbSet<LessonTime>? LessonTimes { get; set; }
 
+        public DbSet<Advertisement> Advertisements { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=ScholifyDBTest;Username=postgres;Password=1234");
@@ -63,9 +65,9 @@ namespace WPFScholifyApp.DAL.ClassRepository
             // Додаємо тестові дані при створені бази даних
             modelBuilder.Entity<User>().HasData(
                 new User { Id = 1, Email = "1", Password = "1", FirstName = "AdminName", LastName = "AdminLastname", Role = "адмін" },
-                new User { Id = 2, Email = "user1@example.com", Password = "password1", FirstName = "John1", LastName = "Teacher", Role = "вчитель" },
-                new User { Id = 3, Email = "user2@example.com", Password = "password1", FirstName = "John2", LastName = "Doe2", Role = "вчитель" },
-                new User { Id = 4, Email = "user3@example.com", Password = "password1", FirstName = "John3", LastName = "Doe3", Role = "вчитель" });
+                new User { Id = 2, Email = "user1@example.com", Password = "1", FirstName = "Марія", LastName = "Галушко", MiddleName = "Вікторівна", Role = "вчитель" },
+                new User { Id = 3, Email = "user2@example.com", Password = "1", FirstName = "Ігор", LastName = "Гнатюк", MiddleName = "Іванович", Role = "вчитель" },
+                new User { Id = 4, Email = "user3@example.com", Password = "1", FirstName = "Олег", LastName = "Винник", MiddleName = "Павлович", Role = "вчитель" });
 
             modelBuilder.Entity<Admin>().HasData(
                 new Admin { Id = 1 });

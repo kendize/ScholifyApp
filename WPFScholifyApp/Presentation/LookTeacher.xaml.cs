@@ -32,7 +32,7 @@ namespace WPFScholifyApp.Presentation
         public LookTeacher(IGenericRepository<User> userRepos)
         {
             this.userRepository = userRepos;
-            this.teacherService = new TeacherService(new GenericRepository<User>());
+            this.teacherService = new TeacherService(new GenericRepository<User>(), new GenericRepository<Advertisement>(), new GenericRepository<Class>());
             this.InitializeComponent();
         }
 

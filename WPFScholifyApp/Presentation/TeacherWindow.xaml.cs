@@ -26,8 +26,14 @@ namespace WPFScholifyApp
     /// </summary>
     public partial class TeacherWindow : Window
     {
+        private AdminService adminService;
+        private TeacherService teacherService;
+        public int selectedClassId;
+
         public TeacherWindow()
         {
+            this.adminService = new AdminService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>());
+            this.teacherService = new TeacherService(new GenericRepository<User>(), new GenericRepository<Advertisement>(), new GenericRepository<Class>());
             this.InitializeComponent();
         }
 
@@ -35,17 +41,60 @@ namespace WPFScholifyApp
         {
         }
 
-        private void ScheduleButton_Click(object sender, RoutedEventArgs e)
+        public void ScheduleButton_Click(object sender, RoutedEventArgs e)
         {
         }
 
-        private void AnnouncementsButton_Click(object sender, RoutedEventArgs e)
+        public void AnnouncementsButton_Click(object sender, RoutedEventArgs e)
         {
+            ShowAllClasses();
+        }
+
+        public void SpecificClassButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Знайдемо ClassId з Tag кнопки, на яку ми натискали
+            var classButton = (Button)sender;
+            this.selectedClassId = (int)classButton.Tag;
+
+            // Додамо кнопки з учнями
+            this.ShowAllAdvertisementsForClassId(this.selectedClassId);
+        }
+
+        public void ShowAllClasses()
+        {
+            this.DeleteFromTeacherPanel();
+
+            var classes = this.adminService.GetAllClasses();
+
+            foreach (var c in classes)
+            {
+                var button = new Button { Content = c.ClassName, Height = 60, Width = 300, FontSize = 30, Tag = c.Id };
+                button.Click += new RoutedEventHandler(this.SpecificClassButton_Click);
+                this.InfoPanel.Children.Add(button);
+            }
+
+            this.UpdateTeacherPanel();
+        }
+
+        public void ShowAllAdvertisementsForClassId(int Id)
+        {
+            this.DeleteFromTeacherPanel();
+
+            var advertisements = this.teacherService.GetAllAdvertisementsForClassId(Id);
+
+            foreach (var ad in advertisements)
+            {
+                var textbox = new TextBox { Text = ad.Description, FontSize = 30 };
+                this.InfoPanel.Children.Add(textbox);
+            }
+            this.UpdateTeacherPanel();
+
         }
 
         private void PrivateInfoButton_Click(object sender, RoutedEventArgs e)
         {
-            this.InfoPanel.Children.Clear();
+            this.DeleteFromTeacherPanel();
+
             TextBlock titleLabel = new TextBlock
             {
                 Text = "Приватна інформація",
@@ -73,6 +122,8 @@ namespace WPFScholifyApp
                 };
                 this.InfoPanel.Children.Add(studentInfo);
             }
+
+            this.UpdateTeacherPanel();
         }
 
         private void ChatButton_Click(object sender, RoutedEventArgs e)
@@ -89,6 +140,16 @@ namespace WPFScholifyApp
 
         private void ClassJournalButton_Click(object sender, RoutedEventArgs e)
         {
+        }
+
+        public void DeleteFromTeacherPanel()
+        {
+            this.InfoPanel.Children.Clear();
+        }
+
+        public void UpdateTeacherPanel()
+        {
+            this.InfoPanel.UpdateLayout();
         }
     }
 }

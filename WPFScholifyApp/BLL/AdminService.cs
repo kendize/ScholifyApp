@@ -81,7 +81,7 @@ namespace WPFScholifyApp.BLL
         {
             var subjectsWithTeachers = this.subjectRepository.GetAllq()
                 .Include(x => x.Teachers)
-                .Where(x => x.Teachers.Select(y => y.UserId).Contains(teacherId)).ToList();
+                .Where(x => x.Teachers!.Select(y => y.UserId).Contains(teacherId)).ToList();
             return subjectsWithTeachers!;
         }
 
