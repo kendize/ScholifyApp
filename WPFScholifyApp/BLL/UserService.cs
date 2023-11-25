@@ -81,7 +81,7 @@ namespace WPFScholifyApp.BLL
             return user;
         }
 
-        public void DeleteUser(int userId)
+        public void DeletePupil(int userId)
         {
             this.userRepository.Delete(userId);
             this.userRepository.Save();

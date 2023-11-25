@@ -11,3 +11,8 @@ obj/Debug/ -f
 vs/
 obj/Debug/net6.0-windows/ -f
 obj/Debug/net6.0-windows/Presentation/ -f
+*.resources
+WPFScholifyApp/obj/Debug/net6.0-windows/WPFScholifyApp_jwsquxgm_wpftmp.csproj.BuildWithSkipAnalyzers
+WPFScholifyApp/obj/
+WPFScholifyApp/obj/Debug/
+*.pdb

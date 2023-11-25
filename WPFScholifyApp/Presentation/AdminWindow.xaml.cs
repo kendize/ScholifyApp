@@ -273,7 +273,7 @@ namespace WPFScholifyApp
         private void DeleteTeacher(object sender, RoutedEventArgs e)
         {
             var deleteButton = (Button)sender;
-            this.userService.DeleteUser((int)deleteButton.Tag);
+            this.userService.DeletePupil((int)deleteButton.Tag);
         }
 
         private void AddSubjectToTeacher(object sender, RoutedEventArgs e)
