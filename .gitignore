@@ -14,6 +14,31 @@ obj/Debug/net6.0-windows/Presentation/ -f
 *.resources
 WPFScholifyApp/obj/Debug/net6.0-windows/WPFScholifyApp_jwsquxgm_wpftmp.csproj.BuildWithSkipAnalyzers
 WPFScholifyApp/obj/
-WPFScholifyApp/obj/Debug/
+WPFScholifyApp/obj/Debug/ -f
 *.pdb
 *.bin
+WPFScholifyApp/obj/Debug/net6.0-windows/Presentation/TeacherWindow.g.i.cs
+WPFScholifyApp/obj/Debug/net6.0-windows/Presentation/PupilWindow.g.i.cs
+WPFScholifyApp/obj/Debug/net6.0-windows/Presentation/ParentsWindow.g.i.cs
+WPFScholifyApp/obj/Debug/net6.0-windows/Presentation/MainWindow.g.i.cs
+WPFScholifyApp/obj/Debug/net6.0-windows/Presentation/LookUsers.g.i.cs
+WPFScholifyApp/obj/Debug/net6.0-windows/Presentation/LookTeacher.g.i.cs
+WPFScholifyApp/obj/Debug/net6.0-windows/Presentation/CreateUser.g.i.cs
+WPFScholifyApp/obj/Debug/net6.0-windows/Presentation/CreateTeacher.g.i.cs
+WPFScholifyApp/obj/Debug/net6.0-windows/Presentation/CreateSubject.g.i.cs
+WPFScholifyApp/obj/Debug/net6.0-windows/Presentation/CreateClass.g.i.cs
+WPFScholifyApp/obj/Debug/net6.0-windows/Presentation/App.g.i.cs
+WPFScholifyApp/obj/Debug/net6.0-windows/Presentation/AdminWindow.g.i.cs
+WPFScholifyApp/obj/Debug/net6.0-windows/Presentation/AdminWindow.g.i.cs
+WPFScholifyApp/obj/Debug/net6.0-windows/Presentation/App.g.i.cs
+WPFScholifyApp/obj/Debug/net6.0-windows/Presentation/CreateClass.g.i.cs
+WPFScholifyApp/obj/Debug/net6.0-windows/Presentation/CreateSubject.g.i.cs
+WPFScholifyApp/obj/Debug/net6.0-windows/Presentation/CreateTeacher.g.i.cs
+WPFScholifyApp/obj/Debug/net6.0-windows/Presentation/CreateUser.g.i.cs
+WPFScholifyApp/obj/Debug/net6.0-windows/Presentation/LookTeacher.g.i.cs
+WPFScholifyApp/obj/Debug/net6.0-windows/Presentation/LookUsers.g.i.cs
+WPFScholifyApp/obj/Debug/net6.0-windows/Presentation/MainWindow.g.i.cs
+WPFScholifyApp/obj/Debug/net6.0-windows/Presentation/ParentsWindow.g.i.cs
+WPFScholifyApp/obj/Debug/net6.0-windows/Presentation/PupilWindow.g.i.cs
+WPFScholifyApp/obj/Debug/net6.0-windows/Presentation/TeacherWindow.g.i.cs
+.vs/ -f
