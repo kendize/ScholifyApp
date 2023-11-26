@@ -81,13 +81,9 @@ namespace WPFScholifyApp.DAL.ClassRepository
             modelBuilder.Entity<Class>().HasData(
                 new Class { Id = 1, ClassName = "11-А" });
 
-
-            modelBuilder.Entity<DayBook>().HasData(
-                new DayBook { Id = 1, Grade = 10, Attendance = "Present", Date = DateTime.UtcNow, ClassId = 1, TeacherId = 1 });
-
             modelBuilder.Entity<Subject>().HasData(
                 new Subject { Id = 1, SubjectName = "Математика", ClassId = 1 });
-
+            
             modelBuilder.Entity<DBClasses.DayOfWeek>().HasData(
                 new DBClasses.DayOfWeek { Id = 1, Day = "27.11.2023", Date = new DateTime(2023, 11, 27).ToUniversalTime() });
 
@@ -104,6 +100,8 @@ namespace WPFScholifyApp.DAL.ClassRepository
             modelBuilder.Entity<Schedule>().HasData(
                 new Schedule { Id = 1, TeacherId = 1, ClassId = 1, LessonTimeId = 1, DayOfWeekId = 1, SubjectId = 1 });
 
+            modelBuilder.Entity<DayBook>().HasData(
+                new DayBook { Id = 1, Grade = 10, PupilId = 5, Attendance = "Present", ScheduleId = 1 });
         }
     }
 
