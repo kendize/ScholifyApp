@@ -4,6 +4,7 @@
 
 namespace WPFScholifyApp
 {
+    using Microsoft.EntityFrameworkCore;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -25,14 +26,17 @@ namespace WPFScholifyApp
         private AdminService adminService;
         private UserService userService;
         private AdvertisementService advertisementService;
-        public int selectedClassId;
+        private IGenericRepository<Pupil> pupilRepository;
+        public User CurrentUser { get; set; }
         
-        public PupilWindow()
+        public PupilWindow(User currentUser, IGenericRepository<Pupil> pupilRepository)
         {
             this.adminService = new AdminService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Advertisement>());
             this.userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>());
-            this.advertisementService = new AdvertisementService(new GenericRepository<Advertisement>(), new GenericRepository<Class>());
+            this.advertisementService = new AdvertisementService(new GenericRepository<Advertisement>(), new GenericRepository<Class>(), new GenericRepository<Pupil>());
             this.InitializeComponent();
+            this.CurrentUser = currentUser;
+            this.pupilRepository = pupilRepository;
         }
 
         private void ExitButton_Click(object sender, RoutedEventArgs e)
@@ -53,7 +57,7 @@ namespace WPFScholifyApp
                 FontSize = 50,
                 Foreground = new SolidColorBrush(Colors.DarkBlue),
                 FontWeight = FontWeights.Bold,
-                Margin = new Thickness(430, 30, 0, 10),
+                Margin = new Thickness(180, 30, 0, 10),
             };
             this.Panel.Children.Add(titleLabel);
 
@@ -70,7 +74,7 @@ namespace WPFScholifyApp
                     $"\n\nДата народження: {pupil.Birthday:dd.MM.yyyy}\n\nАдреса:\t\t {pupil.Address}\n\nТелефон:\t {pupil.PhoneNumber}",
                     FontSize = 40,
                     Foreground = new SolidColorBrush(Colors.DarkBlue),
-                    Margin = new Thickness(430, 90, 0, 10),
+                    Margin = new Thickness(180, 90, 0, 10),
                 };
                 this.Panel.Children.Add(studentInfo);
             }
@@ -89,20 +93,33 @@ namespace WPFScholifyApp
         private void AnnouncementsButton_Click(object sender, RoutedEventArgs e)
         {
             DeleteFromPupilsPanel();
-            ////AdvertisementService advertisementService = new AdvertisementService(new GenericRepository<Advertisement>(), new GenericRepository<Class>());
-            ////var advertisement = this.advertisementService.GetAllAdvertisementsForClassId(this.selectedClassId).FirstOrDefault(x => x.Id == (int).Tag);
-            ////if (advertisement != null)
-            ////{
-            ////    TextBlock advertisementInfo = new TextBlock
-            ////    {
+            var classId = this.pupilRepository.GetAllq().Include(x => x.Class).FirstOrDefault(x => x.Id == CurrentUser.Id)!.ClassId;
+            AdvertisementService advertisementService = new AdvertisementService(new GenericRepository<Advertisement>(), new GenericRepository<Class>(), new GenericRepository<Pupil>());
+            var advertisements = this.advertisementService.GetAdvertisementsForClassId(classId);
+            foreach (var advertisement in advertisements)
+            {
+                if (advertisement != null)
+                {
+                    string advertisementText = $"Тема:\t {advertisement.Name}\n\n Вміст:\t {advertisement.Description}";
+                    List<string> lines = new List<string>();
+                    int charactersPerLine = 110;
+                    for (int i = 0; i < advertisementText.Length; i += charactersPerLine)
+                    {
+                        int length = Math.Min(charactersPerLine, advertisementText.Length - i);
+                        lines.Add(advertisementText.Substring(i, length));
+                    }
 
-            ////        Text = $"Тема:\t {advertisement.Name}\n\n Вміст:\t {advertisement.Description}",
-            ////        FontSize = 40,
-            ////        Foreground = new SolidColorBrush(Colors.DarkBlue),
-            ////        Margin = new Thickness(180, 90, 0, 10),
-            ////    };
-            ////    this.Panel.Children.Add(advertisementInfo);
-            ////}
+                    string wrappedText = string.Join(Environment.NewLine, lines);
+                    TextBlock advertisementInfo = new TextBlock
+                    {
+                        Text = wrappedText,
+                        FontSize = 30,
+                        Foreground = new SolidColorBrush(Colors.DarkBlue),
+                        Margin = new Thickness(90, 80, 0, 5),
+                    };
+                    this.Panel.Children.Add(advertisementInfo);
+                }
+            }
 
             UpdatePupilsPanel();
 

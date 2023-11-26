@@ -15,11 +15,12 @@ namespace WPFScholifyApp.BLL
     {
         private IGenericRepository<Advertisement> advertisementRepository;
         private IGenericRepository<Class> classRepository;
-
-        public AdvertisementService(IGenericRepository<Advertisement> advertisementRepository, IGenericRepository<Class> classRepository)
+        private IGenericRepository<Pupil> pupilRepository;
+        public AdvertisementService(IGenericRepository<Advertisement> advertisementRepository, IGenericRepository<Class> classRepository, IGenericRepository<Pupil> pupilRepository)
         {
             this.advertisementRepository = advertisementRepository;
             this.classRepository = classRepository;
+            this.pupilRepository = pupilRepository;
         }
 
         public Advertisement AddAdvertisement(Advertisement advertisement)
@@ -50,6 +51,13 @@ namespace WPFScholifyApp.BLL
                 .Where(a => a.ClassId == classId).ToList();
 
             return advertisementsForClass!;
+        }
+        public List<Advertisement> GetAdvertisementsForClassId(int classId)
+        {
+            return  this.advertisementRepository.GetAllq()
+            .Include(x => x.Class!)
+            .Where(x => x.Class!.Id != classId)
+            .ToList();
         }
         public void DeletedAvertisementl(int userId)
         {

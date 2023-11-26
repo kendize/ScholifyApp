@@ -38,7 +38,7 @@ namespace WPFScholifyApp
                 {
                     if (selectedRole == "учень")
                     {
-                        PupilWindow pupilWindow = new PupilWindow();
+                        PupilWindow pupilWindow = new PupilWindow(authenticatedUser, new GenericRepository<Pupil>());
                         pupilWindow.FirstNameTextBlock.Text = userService.Authenticate(email, password, selectedRole).FirstName;
                         pupilWindow.LastNameTextBlock.Text = userService.Authenticate(email, password, selectedRole).LastName;
                         pupilWindow.Show();

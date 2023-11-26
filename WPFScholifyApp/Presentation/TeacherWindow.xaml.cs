@@ -36,13 +36,32 @@ namespace WPFScholifyApp
         {
             this.adminService = new AdminService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Advertisement>());
             this.teacherService = new TeacherService(new GenericRepository<User>(), new GenericRepository<Advertisement>(), new GenericRepository<Class>());
-            this.advertisementService = new AdvertisementService(new GenericRepository<Advertisement>(), new GenericRepository<Class>());
+            this.advertisementService = new AdvertisementService(new GenericRepository<Advertisement>(), new GenericRepository<Class>(), new GenericRepository<Pupil>());
             this.InitializeComponent();
         }
 
         private void ParentsButton_Click(object sender, RoutedEventArgs e)
         {
             this.DeleteFromTeacherPanel();
+            ShowAllClassesParents(); 
+
+        }
+
+        public void ShowAllClassesParents()
+        {
+            this.DeleteFromTeacherPanel();
+            this.RightAction.Children.Clear();
+
+            var classes = this.adminService.GetAllClasses();
+
+            foreach (var c in classes)
+            {
+                var button = new Button { Content = c.ClassName, Height = 60, Width = 350, FontSize = 30, Tag = c.Id };
+                button.Click += new RoutedEventHandler(this.SpecificClassButton_Click1);
+                this.LeftPanel.Children.Add(button);
+            }
+            this.UpdateTeacherPanel();
+
         }
 
         public void ScheduleButton_Click(object sender, RoutedEventArgs e)
@@ -65,7 +84,32 @@ namespace WPFScholifyApp
             // Додамо кнопки з учнями
             this.ShowAllAdvertisementsForClassId(this.selectedClassId);
         }
+        public void ShowAllPupilsForClassId(int classId)
+        {
+            this.DeleteFromTeacherPanel();
+            //this.ShowAllClasses();
+            ShowAllClassesParents();
 
+            this.selectedClassId = classId;
+            var pupils = this.adminService.GetAllPupilsForClass(classId);
+
+            foreach (var p in pupils)
+            {
+                var pupilButton = new Button { Content = $"{p!.FirstName} {p!.LastName}", Height = 60, Width = 300, FontSize = 30, Tag = p.Id };
+                pupilButton.Click += new RoutedEventHandler(this.LookPupils);
+                this.RightPanel.Children.Add(pupilButton);
+            }
+            this.UpdateTeacherPanel();
+        }
+
+        public void SpecificClassButton_Click1(object sender, RoutedEventArgs e)
+        {
+            // Знайдемо ClassId з Tag кнопки, на яку ми натискали
+            var classButton = (Button)sender;
+            this.selectedClassId = (int)classButton.Tag;
+            // Додамо кнопки з учнями
+            this.ShowAllPupilsForClassId(this.selectedClassId);
+        }
         public void ShowAllClasses()
         {
             this.DeleteFromTeacherPanel();
@@ -115,7 +159,7 @@ namespace WPFScholifyApp
             this.RightPanel.Children.Clear();
             this.RightAction.Children.Clear();
 
-            AdvertisementService advertisementService = new AdvertisementService(new GenericRepository<Advertisement>(), new GenericRepository<Class>());
+            AdvertisementService advertisementService = new AdvertisementService(new GenericRepository<Advertisement>(), new GenericRepository<Class>(), new GenericRepository<Pupil>());
             var advertisement = this.advertisementService.GetAllAdvertisementsForClassId(this.selectedClassId).FirstOrDefault(x => x.Id == (int)createButton.Tag);
             if (advertisement != null)
             {
@@ -132,7 +176,30 @@ namespace WPFScholifyApp
 
             this.UpdateTeacherPanel();
         }
-         
+        private void LookPupils(object sender, RoutedEventArgs e)
+        {
+            var createButton = (Button)sender;
+            this.RightPanel.Children.Clear();
+            this.RightAction.Children.Clear();
+
+            AdvertisementService advertisementService = new AdvertisementService(new GenericRepository<Advertisement>(), new GenericRepository<Class>(), new GenericRepository<Pupil>());
+            var advertisement = this.advertisementService.GetAllAdvertisementsForClassId(this.selectedClassId).FirstOrDefault(x => x.Id == (int)createButton.Tag);
+            if (advertisement != null)
+            {
+                TextBlock advertisementInfo = new TextBlock
+                {
+
+                    Text = $"Тема:\t {advertisement.Name}\n\n Вміст:\t {advertisement.Description}",
+                    FontSize = 40,
+                    Foreground = new SolidColorBrush(Colors.DarkBlue),
+                    Margin = new Thickness(180, 90, 0, 10),
+                };
+                this.RightPanel.Children.Add(advertisementInfo);
+            }
+
+            this.UpdateTeacherPanel();
+        }
+
         private void DeleteAdvertisements(object sender, RoutedEventArgs e)
         {
             DeleteFromTeacherPanel();
@@ -146,7 +213,7 @@ namespace WPFScholifyApp
         private void AddAdvertisements(object sender, RoutedEventArgs e)
         {
             var createButton = (Button)sender;
-            var createPanel = new CreateAdvertisements(new GenericRepository<Teacher>(), new GenericRepository<Advertisement>(), new GenericRepository<User>(), this, new GenericRepository<Class>());
+            var createPanel = new CreateAdvertisements(new GenericRepository<Teacher>(), new GenericRepository<Advertisement>(), new GenericRepository<User>(), this, new GenericRepository<Class>(), new GenericRepository<Pupil>());
             createPanel.ClassId = this.selectedClassId;
             createPanel.Show();
         }

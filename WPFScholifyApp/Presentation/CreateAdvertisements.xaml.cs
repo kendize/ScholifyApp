@@ -25,17 +25,19 @@ namespace WPFScholifyApp.Presentation
         private IGenericRepository<Teacher> teacherRepository;
         private IGenericRepository<Class> classRepository;
         private IGenericRepository<Advertisement> advertisementRepository;
+        private IGenericRepository<Pupil> pupilRepository;
         private TeacherWindow teacherWindow;
         private AdvertisementService advertisementService;
         public int ClassId { get; set; }
 
-        public CreateAdvertisements(IGenericRepository<Teacher> teacherRepos, IGenericRepository<Advertisement> advertisementRepos, IGenericRepository<User> userRepository, TeacherWindow teacherWindow, IGenericRepository<Class>  classRepository)
+        public CreateAdvertisements(IGenericRepository<Teacher> teacherRepos, IGenericRepository<Advertisement> advertisementRepos, IGenericRepository<User> userRepository, TeacherWindow teacherWindow, IGenericRepository<Class>  classRepository, IGenericRepository<Pupil> pupilRepository)
         {
             this.teacherRepository = teacherRepos;
             this.classRepository = classRepository;
             this.advertisementRepository = advertisementRepos;
             this.teacherWindow = teacherWindow;
-            this.advertisementService = new AdvertisementService(advertisementRepos, classRepository);
+            this.pupilRepository = pupilRepository;
+            this.advertisementService = new AdvertisementService(advertisementRepos, classRepository, pupilRepository);
             this.InitializeComponent();
         }
 
@@ -64,5 +66,6 @@ namespace WPFScholifyApp.Presentation
             this.teacherWindow.ShowAllAdvertisementsForClassId(ClassId);
             this.teacherWindow.UpdateTeacherPanel();
         }
+
     }
 }
