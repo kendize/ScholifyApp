@@ -13,15 +13,28 @@ namespace WPFScholifyApp.BLL
 
     public class TeacherService
     {
-        private IGenericRepository<User> userRepository;
         private IGenericRepository<Advertisement> advertisementRepository;
         private IGenericRepository<Class> classRepository;
 
-        public TeacherService(IGenericRepository<User> userRepos, IGenericRepository<Advertisement> advertisementRepository, IGenericRepository<Class> classRepository)
+        private IGenericRepository<Teacher> teacherRepository;
+        private IGenericRepository<Pupil> pupilRepository;
+        private IGenericRepository<Admin> adminRepository;
+        private IGenericRepository<Parents> parentsRepository;
+        private IGenericRepository<Subject> subjectRepository;
+        private IGenericRepository<Schedule> scheduleRepository;
+        private IGenericRepository<User> userRepository;
+
+        public TeacherService(IGenericRepository<Advertisement> advertisementRepository, IGenericRepository<User> userRepos, IGenericRepository<Class> classRepository, IGenericRepository<Teacher> teacherRepository, IGenericRepository<Pupil> pupilRepository, IGenericRepository<Admin> adminRepository, IGenericRepository<Parents> parentsRepository, IGenericRepository<Subject> subjectRepository, IGenericRepository<Schedule> scheduleRepository)
         {
-            this.userRepository = userRepos;
             this.advertisementRepository = advertisementRepository;
+            this.userRepository = userRepos;
             this.classRepository = classRepository;
+            this.teacherRepository = teacherRepository;
+            this.parentsRepository = parentsRepository;
+            this.pupilRepository = pupilRepository;
+            this.adminRepository = adminRepository;
+            this.subjectRepository = subjectRepository;
+            this.scheduleRepository = scheduleRepository;
         }
 
         public User AddTeacher(User user)
@@ -45,6 +58,17 @@ namespace WPFScholifyApp.BLL
                 .Where(a => a.ClassId == classId).ToList();
 
             return advertisementsForClass!;
+        }
+
+        public List<Schedule> GetAllSchedules(int teacherId, int dayOfWeek)
+        {
+            return this.scheduleRepository.GetAllq()
+                .Include(x => x.DayOfWeek)
+                .Include(x => x.Class)
+                .Include(x => x.Teacher)
+                .Include(x => x.LessonTime)
+                .Include(x => x.Subject)
+                .Where(x => x.Teacher!.Id == teacherId && x.DayOfWeekId == dayOfWeek).ToList();
         }
 
     }

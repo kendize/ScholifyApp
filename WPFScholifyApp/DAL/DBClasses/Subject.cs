@@ -15,6 +15,12 @@ namespace WPFScholifyApp.DAL.DBClasses
 
         public string? SubjectName { get; set; }
 
+        [Required]
+        public int ClassId { get; set; }
+
+        [ForeignKey("ClassId")]
+        public Class? Class { get; set; }
+
         public virtual ICollection<DayBook>? DayBooks { get; set; }
 
         public virtual ICollection<Teacher>? Teachers { get; set; }

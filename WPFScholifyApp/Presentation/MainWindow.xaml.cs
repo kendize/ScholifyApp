@@ -38,14 +38,24 @@ namespace WPFScholifyApp
                 {
                     if (selectedRole == "учень")
                     {
-                        PupilWindow pupilWindow = new PupilWindow();
+                        PupilWindow pupilWindow = new PupilWindow(authenticatedUser, new PupilService(
+                            new GenericRepository<User>(), 
+                            new GenericRepository<Class>(), 
+                            new GenericRepository<Teacher>(), 
+                            new GenericRepository<Pupil>(), 
+                            new GenericRepository<Admin>(),
+                            new GenericRepository<Parents>(), 
+                            new GenericRepository<Subject>(),
+                            new GenericRepository<Schedule>()),
+                            new GenericRepository<DAL.DBClasses.DayOfWeek>());
+
                         pupilWindow.FirstNameTextBlock.Text = userService.Authenticate(email, password, selectedRole).FirstName;
                         pupilWindow.LastNameTextBlock.Text = userService.Authenticate(email, password, selectedRole).LastName;
                         pupilWindow.Show();
                     }
                     else if (selectedRole == "вчитель")
                     {
-                        TeacherWindow teacherWindow = new TeacherWindow();
+                        TeacherWindow teacherWindow = new TeacherWindow(authenticatedUser, new GenericRepository<DAL.DBClasses.DayOfWeek>(), new GenericRepository<Teacher>());
                         teacherWindow.FirstNameTextBlock.Text = userService.Authenticate(email, password, selectedRole).FirstName;
                         teacherWindow.LastNameTextBlock.Text = userService.Authenticate(email, password, selectedRole).LastName;
                         teacherWindow.Show();

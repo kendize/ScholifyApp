@@ -4,6 +4,7 @@
 
 namespace WPFScholifyApp
 {
+    using Microsoft.EntityFrameworkCore;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -22,6 +23,7 @@ namespace WPFScholifyApp
     using WPFScholifyApp.DAL.ClassRepository;
     using WPFScholifyApp.DAL.DBClasses;
     using WPFScholifyApp.Presentation;
+    using DayOfWeek = DAL.DBClasses.DayOfWeek;
 
     /// <summary>
     /// Interaction logic for AdminWindow.xaml.
@@ -30,19 +32,26 @@ namespace WPFScholifyApp
     {
         private AdminService adminService;
         private UserService userService;
+        private ScheduleService scheduleService;
         private IGenericRepository<User> userRepository;
         private IGenericRepository<Pupil> pupilRepository;
         private IGenericRepository<Subject> subjectRepository;
         private IGenericRepository<Teacher> teacherRepository;
         private IGenericRepository<Class> classRepository;
+        private IGenericRepository<Schedule> scheduleRepository;
+        private IGenericRepository<DayOfWeek> dayOfWeekRepository;
+        private IGenericRepository<LessonTime> lessonTimeRepository;
         private int selectedClassId;
         private int selectedTeacherId;
+        private int selectedSubjectId;
 
         // private int selectedPupilId;
-        // private int selectedSubjectId;
         // private int selectedParentId;
         public AdminWindow()
         {
+            this.scheduleRepository = new GenericRepository<Schedule>();
+            this.dayOfWeekRepository = new GenericRepository<DayOfWeek>();
+            this.lessonTimeRepository = new GenericRepository<LessonTime>();
             this.userRepository = new GenericRepository<User>();
             this.subjectRepository = new GenericRepository<Subject>();
             this.pupilRepository = new GenericRepository<Pupil>();
@@ -50,6 +59,7 @@ namespace WPFScholifyApp
             this.classRepository = new GenericRepository<Class>();
             this.userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>());
             this.adminService = new AdminService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>());
+            this.scheduleService = new ScheduleService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Schedule>(), new GenericRepository<Subject>());
             this.InitializeComponent();
         }
 
@@ -177,6 +187,7 @@ namespace WPFScholifyApp
         {
             this.DeleteFromAdminPanels();
             this.ShowAllTeachers();
+            // this.adminService = new AdminService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>());
             var subjects = this.adminService.GetAllSubjectsForTeacher(teacherId);
             foreach (var p in subjects)
             {
@@ -269,7 +280,7 @@ namespace WPFScholifyApp
         private void AddSubjectToTeacher(object sender, RoutedEventArgs e)
         {
             var subjectButton = (Button)sender;
-            var createPanel = new CreateSubject(this.teacherRepository, this.subjectRepository, this.userRepository, this);
+            var createPanel = new CreateSubject(this.teacherRepository, this.subjectRepository, this.userRepository, this, this.classRepository);
             createPanel.TeacherId = this.selectedTeacherId;
             createPanel.Show();
             this.RightPanel.UpdateLayout();
@@ -303,6 +314,78 @@ namespace WPFScholifyApp
 
         private void ScheduleButton_Click(object sender, RoutedEventArgs e)
         {
+            this.selectedSubjectId = 0;
+            ShowAllSubjects();
+        }
+
+        public void ShowAllSubjects()
+        {
+            this.DeleteFromAdminPanels();
+
+            var subjects = this.subjectRepository.GetAllq()
+                .Include(x => x.Class);
+
+            foreach (var s in subjects)
+            {
+                var button = new Button { Content = $"{s.SubjectName} {s.Class!.ClassName}", Height = 60, Width = 500, FontSize = 30, Tag = s.Id };
+                button.Click += new RoutedEventHandler(this.SpecificSubjectButton_Click);
+                this.LeftPanel.Children.Add(button);
+            }
+
+            this.UpdateAdminPanels();
+        }
+
+        public void SpecificSubjectButton_Click(object sender, RoutedEventArgs e)
+        {
+            var subjectButton = (Button)sender;
+            this.selectedSubjectId = (int)subjectButton.Tag;
+            ShowAllSchedulesForSubject(this.selectedSubjectId);
+        }
+
+        public void ShowAllSchedulesForSubject(int subjectId)
+        {
+            DeleteFromAdminPanels();
+            ShowAllSubjects();
+            var schedules = this.scheduleService.GetAllSchedulesForSubjectId(subjectId);
+            foreach (var schedule in schedules)
+            {
+                var button = new Button { Content = $"{schedule.Subject!.SubjectName} {schedule.Class!.ClassName} {schedule.DayOfWeek!.Date.ToString("d")} {schedule.LessonTime!.StartTime.ToString("HH:mm")} - {schedule.LessonTime!.EndTime.ToString("HH:mm")}", Height = 60, Width = 700, FontSize = 30 };
+                var deleteButton = new Button { Content = "Видалити", Height = 60, Width = 700, FontSize = 3, Tag = schedule.Id };
+                deleteButton.Click += new RoutedEventHandler(this.DeleteSchedule);
+                this.RightPanel.Children.Add(button);
+                this.RightPanel.Children.Add(deleteButton);
+            }
+
+            var createButton = new Button { Content = "Додати предмет в розклад", Height = 60, Width = 700, FontSize = 30, Tag = subjectId };
+            createButton.Click += new RoutedEventHandler(this.AddSchedule);
+            this.RightAction.Children.Add(createButton);
+            UpdateAdminPanels();
+        }
+
+        public void DeleteSchedule(object sender, RoutedEventArgs e)
+        {
+            var deleteButton = (Button)sender;
+            this.DeleteFromAdminPanels();
+            this.scheduleRepository.Delete((int)deleteButton.Tag);
+            this.scheduleRepository.Save();
+            this.ShowAllSubjects();
+            this.ShowAllSchedulesForSubject(this.selectedSubjectId);
+            this.UpdateAdminPanels();
+        }
+
+        private void AddSchedule(object sender, RoutedEventArgs e)
+        {
+            var createButton = (Button)sender;
+            var createWindow = new CreateSchedule(
+                this.subjectRepository.GetAllq().Include(x => x.Class).FirstOrDefault(x => x.Id == this.selectedSubjectId)!.Class!, 
+                this.subjectRepository.GetAllq().Include(x => x.Class).FirstOrDefault(x => x.Id == this.selectedSubjectId)!,
+                this.scheduleRepository, 
+                this.dayOfWeekRepository, 
+                this.lessonTimeRepository,
+                this.teacherRepository,
+                this);
+
+            createWindow.Show();
         }
 
         private void ChatButton_Click(object sender, RoutedEventArgs e)

@@ -22,6 +22,30 @@
             </StackPanel >
             <StackPanel x:Name="InfoPanel" VerticalAlignment="Center" HorizontalAlignment="Left" Background="White" Height="1023" Margin="486,0,0,0" Width="1372" RenderTransformOrigin="0.503,0.796">
             </StackPanel>
+            <StackPanel x:Name="Schedule" Orientation="Vertical"  Height="1023" Margin="486,0,0,0" Width="1372" RenderTransformOrigin="0.503,0.796"  Background="White" Visibility="Hidden">
+                <Label VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="30">Розклад</Label>
+                <StackPanel Orientation="Horizontal" Height="900">
+                    <StackPanel x:Name="Monday" Width="250" Background="AliceBlue" Margin="15,20,0,10">
+                    </StackPanel>
+
+                    <StackPanel x:Name="Tuesday" Width="250" Background="AliceBlue" Margin="15,20,0,10">
+                    </StackPanel>
+
+                    <StackPanel x:Name="Wednesday"  Width="250" Background="AliceBlue" Margin="15,20,0,10">
+                    </StackPanel>
+
+                    <StackPanel x:Name="Thursday" Width="250" Background="AliceBlue" Margin="15,20,0,10">
+                    </StackPanel>
+
+                    <StackPanel x:Name="Friday" Width="250" Background="AliceBlue" Margin="15,20,0,10">
+                    </StackPanel>
+
+                </StackPanel>
+                <StackPanel Height="58" Width="1370" HorizontalAlignment="Right">
+                    <Button x:Name="previousWeek" FontSize="30" Width="427" HorizontalAlignment="Left" Tag="-7" Click="ChangeDate" >Попередній тиждень</Button>
+                    <Button x:Name="nextWeek" FontSize="30" Width="427" Content="Наступний тиждень" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-45,0,0" Tag="7" Click="ChangeDate" />
+                </StackPanel>
+            </StackPanel>
             <Button Content="Вихід" FontSize="30" Click="ExitButton_Click" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="141,0,0,37" Foreground="DarkBlue" Background="White" Width="193" Height="55"/>
         </Grid>
     </Viewbox>

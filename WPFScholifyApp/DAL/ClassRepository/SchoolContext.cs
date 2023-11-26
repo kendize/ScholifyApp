@@ -8,9 +8,11 @@ namespace WPFScholifyApp.DAL.ClassRepository
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Design;
     using WPFScholifyApp.DAL.DBClasses;
+    using WPFScholifyApp.Enums;
 
     public class SchoolContext : DbContext
     {
+        private readonly Times times = new Times();
         public SchoolContext(DbContextOptions<SchoolContext> options)
             : base(options)
         {
@@ -54,13 +56,7 @@ namespace WPFScholifyApp.DAL.ClassRepository
         {
             modelBuilder.Entity<Teacher>()
     .HasIndex(x => x.UserId)
-    .HasDatabaseName("IX_Teachers_UserId"); // Provide the name of the index to remove
-
-            var indexForRemoval = modelBuilder.Entity<Teacher>().Metadata.FindIndex("IX_Teachers_UserId");
-            if (indexForRemoval != null)
-            {
-                modelBuilder.Entity<Teacher>().Metadata.RemoveIndex(indexForRemoval);
-            }
+    .IsUnique(false);
 
             // Додаємо тестові дані при створені бази даних
             modelBuilder.Entity<User>().HasData(
@@ -84,20 +80,29 @@ namespace WPFScholifyApp.DAL.ClassRepository
             modelBuilder.Entity<Class>().HasData(
                 new Class { Id = 1, ClassName = "Class A" });
 
-            modelBuilder.Entity<Schedule>().HasData(
-                new Schedule { Id = 1, TeacherId = 1, ClassId = 1 });
 
             modelBuilder.Entity<DayBook>().HasData(
                 new DayBook { Id = 1, Grade = 10, Attendance = "Present", Date = DateTime.UtcNow, ClassId = 1, TeacherId = 1 });
 
             modelBuilder.Entity<Subject>().HasData(
-                new Subject { Id = 1, SubjectName = "Math" });
+                new Subject { Id = 1, SubjectName = "Math", ClassId = 1 });
 
             modelBuilder.Entity<DBClasses.DayOfWeek>().HasData(
-                new DBClasses.DayOfWeek { Id = 1, Day = "Monday" });
+                new DBClasses.DayOfWeek { Id = 1, Day = "27.11.2023", Date = new DateTime(2023, 11, 27).ToUniversalTime() });
 
             modelBuilder.Entity<LessonTime>().HasData(
-                new LessonTime { Id = 1, Start = "9:00 AM", End = "10:00 AM" });
+                new LessonTime { Id = 1, Start = Times.t8_30.ToString("HH:mm"), End = Times.t9_15.ToString("HH:mm"), StartTime = Times.t8_30, EndTime = Times.t9_15 },
+                new LessonTime { Id = 2, Start = Times.t9_30.ToString("HH:mm"), End = Times.t10_15.ToString("HH:mm"), StartTime = Times.t9_30, EndTime = Times.t10_15 },
+                new LessonTime { Id = 3, Start = Times.t10_30.ToString("HH:mm"), End = Times.t11_15.ToString("HH:mm"), StartTime = Times.t10_30, EndTime = Times.t11_15 },
+                new LessonTime { Id = 4, Start = Times.t11_35.ToString("HH:mm"), End = Times.t12_20.ToString("HH:mm"), StartTime = Times.t11_35, EndTime = Times.t12_20 },
+                new LessonTime { Id = 5, Start = Times.t12_40.ToString("HH:mm"), End = Times.t13_25.ToString("HH:mm"), StartTime = Times.t12_40, EndTime = Times.t13_25 },
+                new LessonTime { Id = 6, Start = Times.t13_35.ToString("HH:mm"), End = Times.t14_20.ToString("HH:mm"), StartTime = Times.t13_35, EndTime = Times.t14_20 },
+                new LessonTime { Id = 7, Start = Times.t14_35.ToString("HH:mm"), End = Times.t15_20.ToString("HH:mm"), StartTime = Times.t14_35, EndTime = Times.t15_20 },
+                new LessonTime { Id = 8, Start = Times.t15_30.ToString("HH:mm"), End = Times.t16_15.ToString("HH:mm"), StartTime = Times.t15_30, EndTime = Times.t16_15 });
+
+            modelBuilder.Entity<Schedule>().HasData(
+                new Schedule { Id = 1, TeacherId = 1, ClassId = 1, LessonTimeId = 1, DayOfWeekId = 1, SubjectId = 1 });
+
         }
     }
 

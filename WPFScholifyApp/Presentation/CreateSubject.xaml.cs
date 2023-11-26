@@ -6,6 +6,7 @@ namespace WPFScholifyApp.Presentation
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
@@ -28,16 +29,27 @@ namespace WPFScholifyApp.Presentation
     {
         private IGenericRepository<Teacher> teacherRepository;
         private IGenericRepository<Subject> subjectRepository;
+        private IGenericRepository<Class> classRepository;
         private AdminWindow adminWindow;
 
         public int TeacherId { get; set; }
+        public ObservableCollection<ComboBoxItem> cbItems { get; set; }
 
-        public CreateSubject(IGenericRepository<Teacher> teacherRepos, IGenericRepository<Subject> subjectRepos, IGenericRepository<User> userRepository, AdminWindow adminWindow)
+        public CreateSubject(IGenericRepository<Teacher> teacherRepos, IGenericRepository<Subject> subjectRepos, IGenericRepository<User> userRepository,  AdminWindow adminWindow, IGenericRepository<Class> classRepository)
         {
             this.teacherRepository = teacherRepos;
             this.subjectRepository = subjectRepos;
             this.adminWindow = adminWindow;
+            this.classRepository = classRepository;
             this.InitializeComponent();
+            cbItems = new ObservableCollection<ComboBoxItem>();
+            var classes = this.classRepository.GetAll();
+            foreach ( var c in classes )
+            {
+                cbItems.Add(new ComboBoxItem { Content = c.ClassName, Tag = c.Id });
+            }
+            this.cbItems = cbItems;
+            this.ClassComboBox.ItemsSource = cbItems;
         }
 
         private void SaveSubject(object sender, RoutedEventArgs e)
@@ -54,7 +66,8 @@ namespace WPFScholifyApp.Presentation
             {
                 Id = this.subjectRepository.GetAll().Select(x => x.Id).Max() + 1,
                 SubjectName = subjectName,
-            };
+                ClassId = (int)((ComboBoxItem)this.ClassComboBox.SelectedItem).Tag
+        };
 
             this.subjectRepository.Insert(subject);
             this.subjectRepository.Save();

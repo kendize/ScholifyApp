@@ -79,6 +79,19 @@
             InitializeComponent
             </summary>
         </member>
+        <member name="T:WPFScholifyApp.Presentation.CreateSchedule">
+            <summary>
+            Interaction logic for CreateSchedule.xaml
+            </summary>
+            <summary>
+            CreateSchedule
+            </summary>
+        </member>
+        <member name="M:WPFScholifyApp.Presentation.CreateSchedule.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
         <member name="T:WPFScholifyApp.Presentation.CreateSubject">
             <summary>
             Interaction logic for CreateSubject.xaml.

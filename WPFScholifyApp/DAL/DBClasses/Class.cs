@@ -5,12 +5,16 @@
 namespace WPFScholifyApp.DAL.DBClasses
 {
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.ComponentModel.DataAnnotations;
 
     public class Class
     {
         public int Id { get; set; }
 
         public string? ClassName { get; set; }
+        
+        public virtual ICollection<Subject>? Subjects { get; set; }
 
         public virtual ICollection<Advertisement>? Advertisements { get; set; }
 

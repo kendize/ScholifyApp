@@ -9,6 +9,9 @@
     <Compile Update="Presentation\CreateClass.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Presentation\CreateSchedule.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Presentation\CreateSubject.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -27,6 +30,9 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="Presentation\CreateClass.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Presentation\CreateSchedule.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Presentation\CreateSubject.xaml">
