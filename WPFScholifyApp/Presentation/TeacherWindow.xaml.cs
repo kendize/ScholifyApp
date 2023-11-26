@@ -30,18 +30,23 @@ namespace WPFScholifyApp
     public partial class TeacherWindow : Window
     {
         private AdminService adminService;
+        private ParentsService parentsService;
         private TeacherService teacherService;
         private GenericRepository<DayOfWeek> dayOfWeekRepository;
         private GenericRepository<Teacher> teacherRepository;
         private AdvertisementService advertisementService;
+        private GenericRepository<Parents> parentsRepository;
         public int selectedClassId;
+        private int selectedPupilsId;
         private User CurrentUser;
         public List<DateTime> Days { get; set; }
 
-        public TeacherWindow(User currentUser, GenericRepository<DayOfWeek> dayOfWeekRepository, GenericRepository<Teacher> teacherRepository)
+        public TeacherWindow(User currentUser, GenericRepository<DayOfWeek> dayOfWeekRepository, GenericRepository<Teacher> teacherRepository, GenericRepository<Parents> parentsRepository)
         {
             this.dayOfWeekRepository = dayOfWeekRepository;
             this.teacherRepository = teacherRepository;
+            this.parentsRepository = parentsRepository;
+            this.parentsService = new ParentsService(new GenericRepository<User>(), new GenericRepository<Pupil>(), new GenericRepository<Parents>());
             this.InitializeComponent();
             CultureInfo culture = new CultureInfo("uk-UA"); // Adjust culture as needed
 
@@ -92,9 +97,92 @@ namespace WPFScholifyApp
             this.RightPanel.Visibility = Visibility.Visible;
             this.RightAction.Visibility = Visibility.Visible;
             this.DeleteFromTeacherPanel();
-            ShowAllClassesParents(); 
+            this.ShowAllPuplis();
 
         }
+
+        public void ShowAllPuplis()
+        {
+            this.adminService = new AdminService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Advertisement>());
+            var puplis = this.adminService.GetAllPupils();
+
+            foreach (var p in puplis.OrderByDescending(x => x.LastName))
+            {
+                var teacherPanel = new StackPanel { Orientation = Orientation.Horizontal };
+                var button = new Button { Content = $"{p!.LastName} {p!.FirstName}", Height = 60, Width = 300, FontSize = 30, Tag = p.Id };
+                button.Click += new RoutedEventHandler(this.SpecificClassButton_ClickPupils);
+                LeftPanel.Children.Add(button);
+            }
+            this.UpdateTeacherPanel();
+
+        }
+        public void SpecificClassButton_ClickPupils(object sender, RoutedEventArgs e)
+        {
+            var parentsButton = (Button)sender;
+            this.ShowParentsForPupilId((int)parentsButton.Tag);
+        }
+
+        public void ShowParentsForPupilId(int pupilId)
+        {
+            this.DeleteFromTeacherPanel();
+            this.ShowAllPuplis();
+            this.selectedPupilsId = pupilId;
+            this.parentsService = new ParentsService(new GenericRepository<User>(), new GenericRepository<Pupil>(), new GenericRepository<Parents>());
+
+            var parents = this.parentsService.GetParentsForPupilId(pupilId);
+            foreach (var f in parents)
+            {
+                var teacherPanel = new StackPanel { Orientation = Orientation.Horizontal };
+
+                var button = new Button { Content = $" {f!.User!.LastName} {f!.User!.FirstName}", Height = 60, Width = 800, FontSize = 30, Tag = f.Id };
+               button.Click += new RoutedEventHandler(this.LookParents);
+                RightPanel.Children.Add(button);
+                this.LeftPanel.Children.Add(teacherPanel);
+            }
+
+            this.UpdateTeacherPanel();
+        }
+        private void LookParents(object sender, RoutedEventArgs e)
+        {
+            this.Schedule.Visibility = Visibility.Hidden;
+            this.SetSidePanelsVisible();
+
+            this.DeleteFromTeacherPanel();
+
+            var createButton = (Button)sender;
+            var parentsId = (int)createButton.Tag;
+            this.RightPanel.Children.Clear();
+            this.RightAction.Children.Clear();
+
+
+            ParentsService parentsService = new ParentsService(new GenericRepository<User>(), new GenericRepository<Pupil>(),new GenericRepository<Parents>() );
+            var parents = this.adminService.GetAllParents().FirstOrDefault(x => x.Id == (int)createButton.Tag);
+            if (parents != null)
+            {
+                TextBlock titleLabel = new TextBlock
+                {
+                    Text = "Приватна інформація",
+                    FontSize = 50,
+                    Foreground = new SolidColorBrush(Colors.DarkBlue),
+                    FontWeight = FontWeights.Bold,
+                    Margin = new Thickness(100, 30, 0, 20),
+                };
+                this.RightPanel.Children.Add(titleLabel);
+                TextBlock parentsInfo = new TextBlock
+                {
+
+                    Text = $"Ім'я:\t{parents.FirstName}\nПрізвище:\t {parents.LastName}\nПо батькові:\t{parents.MiddleName}\nСтать:\t{parents.Gender}" +
+                        $"\nДата народження: {parents.Birthday:dd.MM.yyyy}\nАдреса:{parents.Address}\nТелефон:\t{parents.PhoneNumber}",
+                    FontSize = 40,
+                    Foreground = new SolidColorBrush(Colors.DarkBlue),
+                    Margin = new Thickness(100, 70, 0, 40),
+                };
+                this.RightPanel.Children.Add(parentsInfo);
+            }
+            
+            this.UpdateTeacherPanel();
+            this.ShowAllPuplis();
+         }
 
         public void ShowAllClassesParents()
         {
@@ -226,7 +314,7 @@ namespace WPFScholifyApp
                     Text = $"Тема:\t {advertisement.Name}\n\n Вміст:\t {advertisement.Description}",
                     FontSize = 40,
                     Foreground = new SolidColorBrush(Colors.DarkBlue),
-                    Margin = new Thickness(180, 90, 0, 10),
+                    Margin = new Thickness(100, 90, 0, 20),
                 };
                 this.RightPanel.Children.Add(advertisementInfo);
             }
@@ -249,7 +337,7 @@ namespace WPFScholifyApp
                     Text = $"Тема:\t {advertisement.Name}\n\n Вміст:\t {advertisement.Description}",
                     FontSize = 40,
                     Foreground = new SolidColorBrush(Colors.DarkBlue),
-                    Margin = new Thickness(180, 90, 0, 10),
+                    Margin = new Thickness(100, 90, 0, 20),
                 };
                 this.RightPanel.Children.Add(advertisementInfo);
             }
@@ -288,7 +376,7 @@ namespace WPFScholifyApp
                 FontSize = 50,
                 Foreground = new SolidColorBrush(Colors.DarkBlue),
                 FontWeight = FontWeights.Bold,
-                Margin = new Thickness(180, 30, 0, 10),
+                Margin = new Thickness(100, 30, 0, 20),
             };
             this.RightPanel.Children.Add(titleLabel);
 
@@ -301,11 +389,11 @@ namespace WPFScholifyApp
             {
                 TextBlock studentInfo = new TextBlock
                 {
-                    Text = $"Ім'я:\t\t {teacher.FirstName}\n\nПрізвище:\t {teacher.LastName}\n\nПо батькові:\t {teacher.MiddleName}\n\nСтать:\t\t {teacher.Gender}" +
-                        $"\n\nДата народження: {teacher.Birthday:dd.MM.yyyy}\n\nАдреса:\t\t {teacher.Address}\n\nТелефон:\t {teacher.PhoneNumber}",
+                    Text = $"Ім'я:\t{teacher.FirstName}\nПрізвище:\t {teacher.LastName}\nПо батькові:\t {teacher.MiddleName}\nСтать:\t {teacher.Gender}" +
+                        $"\nДата народження: {teacher.Birthday:dd.MM.yyyy}\nАдреса:\t {teacher.Address}\nТелефон:\t {teacher.PhoneNumber}",
                     FontSize = 40,
                     Foreground = new SolidColorBrush(Colors.DarkBlue),
-                    Margin = new Thickness(180, 90, 0, 10),
+                    Margin = new Thickness(100, 90, 0, 20),
                 };
                 this.RightPanel.Children.Add(studentInfo);
             }

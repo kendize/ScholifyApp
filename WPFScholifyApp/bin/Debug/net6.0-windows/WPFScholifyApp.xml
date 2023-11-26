@@ -170,6 +170,19 @@
             InitializeComponent
             </summary>
         </member>
+        <member name="T:WPFScholifyApp.Presentation.LookParents">
+            <summary>
+            Interaction logic for LookParents.xaml
+            </summary>
+            <summary>
+            LookParents
+            </summary>
+        </member>
+        <member name="M:WPFScholifyApp.Presentation.LookParents.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
         <member name="T:WPFScholifyApp.Presentation.LookTeacher">
             <summary>
             Interaction logic for LookTeacher.xaml.

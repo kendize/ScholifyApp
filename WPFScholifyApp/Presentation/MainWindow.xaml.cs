@@ -48,7 +48,7 @@ namespace WPFScholifyApp
                     }
                     else if (authenticatedUser.Role == "вчитель")
                     {
-                        TeacherWindow teacherWindow = new TeacherWindow(authenticatedUser, new GenericRepository<DayOfWeek>(), new GenericRepository<Teacher>());
+                        TeacherWindow teacherWindow = new TeacherWindow(authenticatedUser, new GenericRepository<DayOfWeek>(), new GenericRepository<Teacher>(), new GenericRepository<Parents>());
                         teacherWindow.FirstNameTextBlock.Text = userService.Authenticate(email, password).FirstName;
                         teacherWindow.LastNameTextBlock.Text = userService.Authenticate(email, password).LastName;
                         teacherWindow.Show();

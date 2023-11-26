@@ -261,3 +261,5 @@ E:\Zoriana\Outsource\WPFScholifyApp\obj\Debug\net6.0-windows\WPFScholifyApp.genr
 E:\Zoriana\Outsource\WPFScholifyApp\obj\Debug\net6.0-windows\ref\WPFScholifyApp.dll
 E:\Zoriana\Outsource\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\CreateParents.g.cs
 E:\Zoriana\Outsource\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\CreateParents.baml
+E:\Zoriana\Outsource\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\LookParents.g.cs
+E:\Zoriana\Outsource\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\LookParents.baml

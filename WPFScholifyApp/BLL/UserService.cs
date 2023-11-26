@@ -86,5 +86,11 @@ namespace WPFScholifyApp.BLL
             this.userRepository.Delete(userId);
             this.userRepository.Save();
         }
+
+        //public void DeletePerents((int userId)
+        //{
+        //    this.userRepository.Delete(userId);
+        //    this.userRepository.Save();
+        //}
     }
 }

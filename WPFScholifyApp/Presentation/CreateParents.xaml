@@ -35,13 +35,6 @@
             <Label Width="92" Content="PhoneNumber"/>
             <TextBox x:Name="PhoneNumber" Width="385"/>
             <Label/>
-            <ComboBox x:Name="RoleComboBox" Width="150" Foreground="DarkBlue" Background="White" RenderTransformOrigin="0.513,0.619">
-                <ComboBoxItem Content="вчитель"/>
-                <ComboBoxItem Content="учень"/>
-                <ComboBoxItem Content="батьки"/>
-                <ComboBoxItem Content="адмін"/>
-            </ComboBox>
-            <Label/>
             <Button Click="SaveParents" Content="Додати" Height="19" Width="389"/>
             <Label/>
             <Button Click="Cancel" Content="Відмінити" Height="25" Width="385"/>
