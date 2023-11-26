@@ -8,6 +8,10 @@ namespace WPFScholifyApp
     using System.Windows;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
+    using WPFScholifyApp.BLL;
+    using WPFScholifyApp.DAL.ClassRepository;
+    using WPFScholifyApp.DAL.DBClasses;
+    using DayOfWeek = DAL.DBClasses.DayOfWeek;
 
     /// <summary>
     /// Interaction logic for App.xaml.

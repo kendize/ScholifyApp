@@ -10,6 +10,7 @@ namespace WPFScholifyApp
     using WPFScholifyApp.BLL;
     using WPFScholifyApp.DAL.ClassRepository;
     using WPFScholifyApp.DAL.DBClasses;
+    using DayOfWeek = DAL.DBClasses.DayOfWeek;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml.
@@ -25,53 +26,45 @@ namespace WPFScholifyApp
         {
             string email = this.EmailTextBox.Text;
             string password = this.PasswordBox.Password;
-            var role = ((ComboBoxItem)this.RoleComboBox.SelectedItem).Content;
-            if (role != null)
-            {
-                string selectedRole = role.ToString() !;
                 UserService userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>());
-                User authenticatedUser = userService.Authenticate(email, password, selectedRole);
+                User authenticatedUser = userService.Authenticate(email, password);
                 User authenticatedEmail = userService.AuthenticateEmail(email);
                 User authenticatedPassword = userService.AuthenticatePassword(password);
 
                 if (authenticatedUser != null)
                 {
-                    if (selectedRole == "учень")
+                    if (authenticatedUser.Role == "учень")
                     {
-                        PupilWindow pupilWindow = new PupilWindow(authenticatedUser, new PupilService(
-                            new GenericRepository<User>(), 
-                            new GenericRepository<Class>(), 
-                            new GenericRepository<Teacher>(), 
+                        PupilWindow pupilWindow = new PupilWindow(
+                            authenticatedUser, 
+                            new PupilService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Schedule>()), 
+                            new GenericRepository<DayOfWeek>(), 
                             new GenericRepository<Pupil>(), 
-                            new GenericRepository<Admin>(),
-                            new GenericRepository<Parents>(), 
-                            new GenericRepository<Subject>(),
-                            new GenericRepository<Schedule>()),
-                            new GenericRepository<DAL.DBClasses.DayOfWeek>());
-
-                        pupilWindow.FirstNameTextBlock.Text = userService.Authenticate(email, password, selectedRole).FirstName;
-                        pupilWindow.LastNameTextBlock.Text = userService.Authenticate(email, password, selectedRole).LastName;
+                            new AdminService(
+                                new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>() , new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Advertisement>()));
+                        pupilWindow.FirstNameTextBlock.Text = userService.Authenticate(email, password).FirstName;
+                        pupilWindow.LastNameTextBlock.Text = userService.Authenticate(email, password).LastName;
                         pupilWindow.Show();
                     }
-                    else if (selectedRole == "вчитель")
+                    else if (authenticatedUser.Role == "вчитель")
                     {
-                        TeacherWindow teacherWindow = new TeacherWindow(authenticatedUser, new GenericRepository<DAL.DBClasses.DayOfWeek>(), new GenericRepository<Teacher>());
-                        teacherWindow.FirstNameTextBlock.Text = userService.Authenticate(email, password, selectedRole).FirstName;
-                        teacherWindow.LastNameTextBlock.Text = userService.Authenticate(email, password, selectedRole).LastName;
+                        TeacherWindow teacherWindow = new TeacherWindow(authenticatedUser, new GenericRepository<DayOfWeek>(), new GenericRepository<Teacher>());
+                        teacherWindow.FirstNameTextBlock.Text = userService.Authenticate(email, password).FirstName;
+                        teacherWindow.LastNameTextBlock.Text = userService.Authenticate(email, password).LastName;
                         teacherWindow.Show();
                     }
-                    else if (selectedRole == "батьки")
+                    else if (authenticatedUser.Role == "батьки")
                     {
                         ParentsWindow parentsWindow = new ParentsWindow();
-                        parentsWindow.FirstNameTextBlock.Text = userService.Authenticate(email, password, selectedRole).FirstName;
-                        parentsWindow.LastNameTextBlock.Text = userService.Authenticate(email, password, selectedRole).LastName;
+                        parentsWindow.FirstNameTextBlock.Text = userService.Authenticate(email, password).FirstName;
+                        parentsWindow.LastNameTextBlock.Text = userService.Authenticate(email, password).LastName;
                         parentsWindow.Show();
                     }
                     else
                     {
-                        AdminWindow adminWindow = new AdminWindow();
-                        adminWindow.FirstNameTextBlock.Text = userService.Authenticate(email, password, selectedRole).FirstName;
-                        adminWindow.LastNameTextBlock.Text = userService.Authenticate(email, password, selectedRole).LastName;
+                        AdminWindow adminWindow = new AdminWindow(authenticatedUser);
+                        adminWindow.FirstNameTextBlock.Text = userService.Authenticate(email, password).FirstName;
+                        adminWindow.LastNameTextBlock.Text = userService.Authenticate(email, password).LastName;
                         adminWindow.Show();
                     }
 
@@ -96,11 +89,6 @@ namespace WPFScholifyApp
 
                     MessageBox.Show(errorMessage, "Authentication Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-            }
-            else
-            {
-                throw new InvalidOperationException("Role is null");
-            }
         }
     }
 }

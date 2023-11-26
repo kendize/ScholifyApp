@@ -4,6 +4,7 @@
 
 namespace WPFScholifyApp
 {
+    using Microsoft.EntityFrameworkCore;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -24,12 +25,29 @@ namespace WPFScholifyApp
     /// </summary>
     public partial class PupilWindow : Window
     {
-        private PupilService pupilService;
-        private IGenericRepository<DayOfWeek> dayOfWeekRepository;
-        private User CurrentUser;
         public List<DateTime> Days { get; set; }
-        public PupilWindow(User currentUser, PupilService pupilService, IGenericRepository<DayOfWeek> dayOfWeekRepository)
+
+
+        private IGenericRepository<Pupil> pupilRepository;
+        private IGenericRepository<DayOfWeek> dayOfWeekRepository;
+
+        private PupilService pupilService;
+        private User CurrentUser;
+        private AdminService adminService;
+        private UserService userService;
+        private AdvertisementService advertisementService;
+
+        public PupilWindow(User currentUser, PupilService pupilService, GenericRepository<DayOfWeek> dayOfWeekRepository, GenericRepository<Pupil> pupilRepository, AdminService adminService)
+
         {
+            this.CurrentUser = currentUser;
+            this.pupilService = new PupilService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Schedule>());
+            this.adminService = adminService;
+            this.userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>());
+            this.dayOfWeekRepository = dayOfWeekRepository;
+            this.advertisementService = new AdvertisementService(new GenericRepository<Advertisement>(), new GenericRepository<Class>(), new GenericRepository<Pupil>());
+            this.pupilRepository = pupilRepository;
+
             this.InitializeComponent();
             CultureInfo culture = new CultureInfo("uk-UA"); // Adjust culture as needed
 
@@ -59,6 +77,8 @@ namespace WPFScholifyApp
             this.pupilService = pupilService;
             this.CurrentUser = currentUser;
             this.dayOfWeekRepository = dayOfWeekRepository;
+            this.CurrentUser = currentUser;
+            this.pupilRepository = pupilRepository;
         }
 
         private void ExitButton_Click(object sender, RoutedEventArgs e)
@@ -72,8 +92,9 @@ namespace WPFScholifyApp
         private void PrivateInfoButton_Click(object sender, RoutedEventArgs e)
         {
             this.Schedule.Visibility = Visibility.Hidden;
-            this.InfoPanel.Visibility = Visibility.Visible;
-            this.InfoPanel.Children.Clear();
+            this.Panel.Visibility = Visibility.Visible;
+            this.Panel.Children.Clear();
+            DeleteFromPupilsPanel();
 
             TextBlock titleLabel = new TextBlock
             {
@@ -81,9 +102,9 @@ namespace WPFScholifyApp
                 FontSize = 50,
                 Foreground = new SolidColorBrush(Colors.DarkBlue),
                 FontWeight = FontWeights.Bold,
-                Margin = new Thickness(410, 30, 0, 10),
+                Margin = new Thickness(180, 30, 0, 10),
             };
-            this.InfoPanel.Children.Add(titleLabel);
+            this.Panel.Children.Add(titleLabel);
 
             UserService userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>());
             string name = this.FirstNameTextBlock.Text;
@@ -98,25 +119,28 @@ namespace WPFScholifyApp
                     $"\n\nДата народження: {pupil.Birthday:dd.MM.yyyy}\n\nАдреса:\t\t {pupil.Address}\n\nТелефон:\t {pupil.PhoneNumber}",
                     FontSize = 40,
                     Foreground = new SolidColorBrush(Colors.DarkBlue),
-                    Margin = new Thickness(430, 90, 0, 10),
+                    Margin = new Thickness(180, 90, 0, 10),
                 };
-                this.InfoPanel.Children.Add(studentInfo);
+                this.Panel.Children.Add(studentInfo);
             }
         }
 
         private void JournalButton_Click(object sender, RoutedEventArgs e)
         {
             this.Schedule.Visibility = Visibility.Hidden;
-            this.InfoPanel.Visibility = Visibility.Visible;
+            this.Panel.Visibility = Visibility.Visible;
 
+            DeleteFromPupilsPanel();
+            this.UpdateDays();
         }
 
         private void ScheduleButton_Click(object sender, RoutedEventArgs e)
         {
             this.Schedule.Visibility = Visibility.Visible;
-            this.InfoPanel.Visibility = Visibility.Hidden;
+            this.Panel.Visibility = Visibility.Hidden;
             this.ShowAllWeek();
 
+            //DeleteFromPupilsPanel();
         }
 
         public void ShowAllWeek()
@@ -246,7 +270,37 @@ namespace WPFScholifyApp
         private void AnnouncementsButton_Click(object sender, RoutedEventArgs e)
         {
             this.Schedule.Visibility = Visibility.Hidden;
-            this.InfoPanel.Visibility = Visibility.Visible;
+            this.Panel.Visibility = Visibility.Visible;
+            DeleteFromPupilsPanel();
+            var classId = this.pupilRepository.GetAllq().Include(x => x.Class).FirstOrDefault(x => x.Id == CurrentUser.Id)!.ClassId;
+            AdvertisementService advertisementService = new AdvertisementService(new GenericRepository<Advertisement>(), new GenericRepository<Class>(), new GenericRepository<Pupil>());
+            var advertisements = this.advertisementService.GetAdvertisementsForClassId(classId);
+            foreach (var advertisement in advertisements)
+            {
+                if (advertisement != null)
+                {
+                    string advertisementText = $"Тема:\t {advertisement.Name}\n\n Вміст:\t {advertisement.Description}";
+                    List<string> lines = new List<string>();
+                    int charactersPerLine = 110;
+                    for (int i = 0; i < advertisementText.Length; i += charactersPerLine)
+                    {
+                        int length = Math.Min(charactersPerLine, advertisementText.Length - i);
+                        lines.Add(advertisementText.Substring(i, length));
+                    }
+
+                    string wrappedText = string.Join(Environment.NewLine, lines);
+                    TextBlock advertisementInfo = new TextBlock
+                    {
+                        Text = wrappedText,
+                        FontSize = 30,
+                        Foreground = new SolidColorBrush(Colors.DarkBlue),
+                        Margin = new Thickness(90, 80, 0, 5),
+                    };
+                    this.Panel.Children.Add(advertisementInfo);
+                }
+            }
+
+            UpdatePupilsPanel();
         }
 
         public void ChangeDate(object sender, RoutedEventArgs e)
@@ -297,6 +351,19 @@ namespace WPFScholifyApp
             this.Wednesday.UpdateLayout();
             this.Thursday.UpdateLayout();
             this.Friday.UpdateLayout();
+           
+
+        }
+
+        public void DeleteFromPupilsPanel()
+        {
+            this.Panel.Children.Clear();
+        }
+
+        public void UpdatePupilsPanel()
+        {
+            this.Panel.UpdateLayout();
         }
     }
 }
+

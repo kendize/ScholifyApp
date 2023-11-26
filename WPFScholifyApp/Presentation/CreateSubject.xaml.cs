@@ -83,5 +83,10 @@ namespace WPFScholifyApp.Presentation
         {
             this.Close();
         }
+
+        private void Save(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

@@ -22,6 +22,7 @@ namespace WPFScholifyApp
     using WPFScholifyApp.DAL.ClassRepository;
     using WPFScholifyApp.DAL.DBClasses;
     using DayOfWeek = DAL.DBClasses.DayOfWeek;
+    using WPFScholifyApp.Presentation;
 
     /// <summary>
     /// Interaction logic for TeacherWindow.xaml.
@@ -30,14 +31,14 @@ namespace WPFScholifyApp
     {
         private AdminService adminService;
         private TeacherService teacherService;
-        private IGenericRepository<DayOfWeek> dayOfWeekRepository;
-        private IGenericRepository<Teacher> teacherRepository;
-
+        private GenericRepository<DayOfWeek> dayOfWeekRepository;
+        private GenericRepository<Teacher> teacherRepository;
+        private AdvertisementService advertisementService;
         public int selectedClassId;
         private User CurrentUser;
         public List<DateTime> Days { get; set; }
 
-        public TeacherWindow(User currentUser, IGenericRepository<DayOfWeek> dayOfWeekRepository, IGenericRepository<Teacher> teacherRepository)
+        public TeacherWindow(User currentUser, GenericRepository<DayOfWeek> dayOfWeekRepository, GenericRepository<Teacher> teacherRepository)
         {
             this.dayOfWeekRepository = dayOfWeekRepository;
             this.teacherRepository = teacherRepository;
@@ -68,28 +69,63 @@ namespace WPFScholifyApp
             }
             this.Days = daysOfWeek;
             this.CurrentUser = currentUser;
-            this.adminService = new AdminService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>());
+            this.adminService = new AdminService(
+                new GenericRepository<User>(), 
+                new GenericRepository<Class>(), 
+                new GenericRepository<Teacher>(), 
+                new GenericRepository<Pupil>(), 
+                new GenericRepository<Admin>(), 
+                new GenericRepository<Parents>(), 
+                new GenericRepository<Subject>(), 
+                new GenericRepository<Advertisement>());
+
             this.teacherService = new TeacherService( new GenericRepository<Advertisement>(), new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Schedule>());
+            this.adminService = new AdminService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Advertisement>());
+            this.advertisementService = new AdvertisementService(new GenericRepository<Advertisement>(), new GenericRepository<Class>(), new GenericRepository<Pupil>());
             this.InitializeComponent();
         }
 
         private void ParentsButton_Click(object sender, RoutedEventArgs e)
         {
             this.Schedule.Visibility = Visibility.Hidden;
-            this.InfoPanel.Visibility = Visibility.Visible;
+            this.LeftPanel.Visibility = Visibility.Visible;
+            this.RightPanel.Visibility = Visibility.Visible;
+            this.RightAction.Visibility = Visibility.Visible;
+            this.DeleteFromTeacherPanel();
+            ShowAllClassesParents(); 
+
+        }
+
+        public void ShowAllClassesParents()
+        {
+            this.DeleteFromTeacherPanel();
+            this.RightAction.Children.Clear();
+
+            var classes = this.adminService.GetAllClasses();
+
+            foreach (var c in classes)
+            {
+                var button = new Button { Content = c.ClassName, Height = 60, Width = 350, FontSize = 30, Tag = c.Id };
+                button.Click += new RoutedEventHandler(this.SpecificClassButton_Click1);
+                this.LeftPanel.Children.Add(button);
+            }
+            this.UpdateTeacherPanel();
+
         }
 
         public void ScheduleButton_Click(object sender, RoutedEventArgs e)
         {
             this.Schedule.Visibility = Visibility.Visible;
-            this.InfoPanel.Visibility = Visibility.Hidden;
+            this.SetSidePanelsHidden();
             ShowAllWeek();
+            this.DeleteFromTeacherPanel();
         }
 
         public void AnnouncementsButton_Click(object sender, RoutedEventArgs e)
         {
             this.Schedule.Visibility = Visibility.Hidden;
-            this.InfoPanel.Visibility = Visibility.Visible;
+            this.SetSidePanelsVisible();
+            this.DeleteFromTeacherPanel();
             ShowAllClasses();
         }
 
@@ -102,45 +138,149 @@ namespace WPFScholifyApp
             // Додамо кнопки з учнями
             this.ShowAllAdvertisementsForClassId(this.selectedClassId);
         }
+        public void ShowAllPupilsForClassId(int classId)
+        {
+            this.DeleteFromTeacherPanel();
+            //this.ShowAllClasses();
+            ShowAllClassesParents();
 
+            this.selectedClassId = classId;
+            var pupils = this.adminService.GetAllPupilsForClass(classId);
+
+            foreach (var p in pupils)
+            {
+                var pupilButton = new Button { Content = $"{p!.FirstName} {p!.LastName}", Height = 60, Width = 300, FontSize = 30, Tag = p.Id };
+                pupilButton.Click += new RoutedEventHandler(this.LookPupils);
+                this.RightPanel.Children.Add(pupilButton);
+            }
+            this.UpdateTeacherPanel();
+        }
+
+        public void SpecificClassButton_Click1(object sender, RoutedEventArgs e)
+        {
+            // Знайдемо ClassId з Tag кнопки, на яку ми натискали
+            var classButton = (Button)sender;
+            this.selectedClassId = (int)classButton.Tag;
+            // Додамо кнопки з учнями
+            this.ShowAllPupilsForClassId(this.selectedClassId);
+        }
         public void ShowAllClasses()
         {
             this.Schedule.Visibility = Visibility.Hidden;
-            this.InfoPanel.Visibility = Visibility.Visible;
+            this.SetSidePanelsVisible();
+
             this.DeleteFromTeacherPanel();
+            this.RightAction.Children.Clear();
 
             var classes = this.adminService.GetAllClasses();
 
             foreach (var c in classes)
             {
-                var button = new Button { Content = c.ClassName, Height = 60, Width = 300, FontSize = 30, Tag = c.Id };
+                var button = new Button { Content = c.ClassName, Height = 60, Width = 350, FontSize = 30, Tag = c.Id };
                 button.Click += new RoutedEventHandler(this.SpecificClassButton_Click);
-                this.InfoPanel.Children.Add(button);
+                this.LeftPanel.Children.Add(button);
             }
 
             this.UpdateTeacherPanel();
+            
         }
 
+        // виводить інфу по оголошеннях
         public void ShowAllAdvertisementsForClassId(int Id)
         {
             this.DeleteFromTeacherPanel();
-
+            this.ShowAllClasses();
             var advertisements = this.teacherService.GetAllAdvertisementsForClassId(Id);
 
             foreach (var ad in advertisements)
             {
-                var textbox = new TextBox { Text = ad.Description, FontSize = 30 };
-                this.InfoPanel.Children.Add(textbox);
-            }
-            this.UpdateTeacherPanel();
+                var lookButton = new Button { Content = $"Переглянути Оголошення '{ad!.Name}'", Height = 80, Width = 700, FontSize = 30, Tag = ad.Id };
+                lookButton.Click += new RoutedEventHandler(this.LookAvertisement);
+                this.RightPanel.Children.Add(lookButton);
+                var deleteButton = new Button { Content = $" Видалити Оголошення '{ad!.Name}'", Height = 80, Width = 700, FontSize = 30, Tag = ad.Id };
+                deleteButton.Click += new RoutedEventHandler(this.DeleteAdvertisements); this.LeftPanel.UpdateLayout(); ;
+                this.RightPanel.Children.Add(deleteButton);
+                this.LeftPanel.UpdateLayout();
 
+            }
+
+            // Після виведення всіх учнів для обраного класу додамо кнопку "Додати Оголошення"
+            var createButton = new Button { Content = "Додати Оголошення", Height = 80, Width = 700, FontSize = 30, Tag = Id };
+            createButton.Click += new RoutedEventHandler(this.AddAdvertisements);
+            this.RightAction.Children.Add(createButton);
+            this.UpdateTeacherPanel();
+        }
+        private void LookAvertisement(object sender, RoutedEventArgs e)
+        {
+            var createButton = (Button)sender;
+            this.RightPanel.Children.Clear();
+            this.RightAction.Children.Clear();
+
+            AdvertisementService advertisementService = new AdvertisementService(new GenericRepository<Advertisement>(), new GenericRepository<Class>(), new GenericRepository<Pupil>());
+            var advertisement = this.advertisementService.GetAllAdvertisementsForClassId(this.selectedClassId).FirstOrDefault(x => x.Id == (int)createButton.Tag);
+            if (advertisement != null)
+            {
+                TextBlock advertisementInfo = new TextBlock
+                {
+
+                    Text = $"Тема:\t {advertisement.Name}\n\n Вміст:\t {advertisement.Description}",
+                    FontSize = 40,
+                    Foreground = new SolidColorBrush(Colors.DarkBlue),
+                    Margin = new Thickness(180, 90, 0, 10),
+                };
+                this.RightPanel.Children.Add(advertisementInfo);
+            }
+
+            this.UpdateTeacherPanel();
+        }
+        private void LookPupils(object sender, RoutedEventArgs e)
+        {
+            var createButton = (Button)sender;
+            this.RightPanel.Children.Clear();
+            this.RightAction.Children.Clear();
+
+            AdvertisementService advertisementService = new AdvertisementService(new GenericRepository<Advertisement>(), new GenericRepository<Class>(), new GenericRepository<Pupil>());
+            var advertisement = this.advertisementService.GetAllAdvertisementsForClassId(this.selectedClassId).FirstOrDefault(x => x.Id == (int)createButton.Tag);
+            if (advertisement != null)
+            {
+                TextBlock advertisementInfo = new TextBlock
+                {
+
+                    Text = $"Тема:\t {advertisement.Name}\n\n Вміст:\t {advertisement.Description}",
+                    FontSize = 40,
+                    Foreground = new SolidColorBrush(Colors.DarkBlue),
+                    Margin = new Thickness(180, 90, 0, 10),
+                };
+                this.RightPanel.Children.Add(advertisementInfo);
+            }
+
+            this.UpdateTeacherPanel();
         }
 
+        private void DeleteAdvertisements(object sender, RoutedEventArgs e)
+        {
+            DeleteFromTeacherPanel();
+            ShowAllClasses();
+            var deleteButton = (Button)sender;
+            this.advertisementService.DeletedAvertisementl((int)deleteButton.Tag);
+            ShowAllAdvertisementsForClassId(selectedClassId);
+            UpdateTeacherPanel();
+        }
+
+        private void AddAdvertisements(object sender, RoutedEventArgs e)
+        {
+            var createButton = (Button)sender;
+            var createPanel = new CreateAdvertisements(new GenericRepository<Teacher>(), new GenericRepository<Advertisement>(), new GenericRepository<User>(), this, new GenericRepository<Class>(), new GenericRepository<Pupil>());
+            createPanel.ClassId = this.selectedClassId;
+            createPanel.Show();
+        }
         private void PrivateInfoButton_Click(object sender, RoutedEventArgs e)
         {
             this.Schedule.Visibility = Visibility.Hidden;
-            this.InfoPanel.Visibility = Visibility.Visible;
+            this.SetSidePanelsVisible();
+
             this.DeleteFromTeacherPanel();
+            DeleteFromTeacherPanel();
 
             TextBlock titleLabel = new TextBlock
             {
@@ -148,9 +288,9 @@ namespace WPFScholifyApp
                 FontSize = 50,
                 Foreground = new SolidColorBrush(Colors.DarkBlue),
                 FontWeight = FontWeights.Bold,
-                Margin = new Thickness(410, 30, 0, 10),
+                Margin = new Thickness(180, 30, 0, 10),
             };
-            this.InfoPanel.Children.Add(titleLabel);
+            this.RightPanel.Children.Add(titleLabel);
 
             UserService userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>());
             string name = this.FirstNameTextBlock.Text;
@@ -162,12 +302,12 @@ namespace WPFScholifyApp
                 TextBlock studentInfo = new TextBlock
                 {
                     Text = $"Ім'я:\t\t {teacher.FirstName}\n\nПрізвище:\t {teacher.LastName}\n\nПо батькові:\t {teacher.MiddleName}\n\nСтать:\t\t {teacher.Gender}" +
-                    $"\n\nДата народження: {teacher.Birthday:dd.MM.yyyy}\n\nАдреса:\t\t {teacher.Address}\n\nТелефон:\t {teacher.PhoneNumber}",
+                        $"\n\nДата народження: {teacher.Birthday:dd.MM.yyyy}\n\nАдреса:\t\t {teacher.Address}\n\nТелефон:\t {teacher.PhoneNumber}",
                     FontSize = 40,
                     Foreground = new SolidColorBrush(Colors.DarkBlue),
-                    Margin = new Thickness(430, 90, 0, 10),
+                    Margin = new Thickness(180, 90, 0, 10),
                 };
-                this.InfoPanel.Children.Add(studentInfo);
+                this.RightPanel.Children.Add(studentInfo);
             }
 
             this.UpdateTeacherPanel();
@@ -180,7 +320,8 @@ namespace WPFScholifyApp
         private void ExitButton_Click(object sender, RoutedEventArgs e)
         {
             this.Schedule.Visibility = Visibility.Hidden;
-            this.InfoPanel.Visibility = Visibility.Visible;
+            this.SetSidePanelsVisible();
+
             MainWindow mainWindow = new MainWindow();
             mainWindow.Show();
 
@@ -190,7 +331,8 @@ namespace WPFScholifyApp
         private void ClassJournalButton_Click(object sender, RoutedEventArgs e)
         {
             this.Schedule.Visibility = Visibility.Hidden;
-            this.InfoPanel.Visibility = Visibility.Visible;
+            this.SetSidePanelsVisible();
+
         }
 
         public void ShowAllWeek()
@@ -356,12 +498,30 @@ namespace WPFScholifyApp
 
         public void DeleteFromTeacherPanel()
         {
-            this.InfoPanel.Children.Clear();
+            this.RightPanel.Children.Clear();
+            this.LeftPanel.Children.Clear();
+            this.RightAction.Children.Clear();
         }
 
         public void UpdateTeacherPanel()
         {
-            this.InfoPanel.UpdateLayout();
+            this.RightPanel.UpdateLayout();
+            this.LeftPanel.UpdateLayout();
+            this.RightAction.UpdateLayout();
+        }
+
+        public void SetSidePanelsVisible()
+        {
+            this.RightPanel.Visibility = Visibility.Visible;
+            this.LeftPanel.Visibility = Visibility.Visible;
+            this.RightAction.Visibility = Visibility.Visible;
+        }
+
+        public void SetSidePanelsHidden()
+        {
+            this.RightPanel.Visibility = Visibility.Hidden;
+            this.LeftPanel.Visibility = Visibility.Hidden;
+            this.RightAction.Visibility = Visibility.Hidden;
         }
 
         public void ClearDays()

@@ -13,14 +13,7 @@
             <TextBox x:Name="EmailTextBox" Width="200" Margin="0,5,0,5"/>
             <Label Content="Пароль" Foreground="White" Width="56"/>
             <PasswordBox x:Name="PasswordBox" Width="200" Margin="0,5,0,5"/>
-            <Label Content="Роль" Foreground="White" Width="42"/>
-            <ComboBox x:Name="RoleComboBox" Width="150" Foreground="DarkBlue" Background="White" RenderTransformOrigin="0.513,0.619">
-                <ComboBoxItem Content="вчитель"/>
-                <ComboBoxItem Content="учень"/>
-                <ComboBoxItem Content="батьки"/>
-                <ComboBoxItem Content="адмін"/>
-            </ComboBox>
-            <Button Content="Вхід" Background="White" Click="RegisterButton_Click" Width="84" Height="29" Margin="310,10,0,0"/>
+            <Button Content="Вхід" Background="White" Click="RegisterButton_Click" Width="84" Height="29"/>
         </StackPanel>
     </Grid>
 </Window>

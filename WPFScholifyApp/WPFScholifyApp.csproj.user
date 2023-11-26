@@ -6,6 +6,9 @@
     <NoWarn>$(NoWarn),1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Update="Presentation\CreateAdvertisements.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Presentation\CreateClass.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -21,6 +24,9 @@
     <Compile Update="Presentation\CreateUser.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Presentation\LookClass.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Presentation\LookTeacher.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -29,6 +35,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Update="Presentation\CreateAdvertisements.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Presentation\CreateClass.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -42,6 +51,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Presentation\CreateUser.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Presentation\LookClass.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Presentation\LookTeacher.xaml">

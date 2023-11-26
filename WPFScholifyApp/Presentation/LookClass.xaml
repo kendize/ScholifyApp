@@ -1,0 +1,15 @@
+﻿<Window x:Class="WPFScholifyApp.Presentation.LookClass"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPFScholifyApp.Presentation"
+        mc:Ignorable="d"
+        Title="LookClass" Height="450" Width="800">
+    <Grid>
+        <Label Content="Назва Предмету" Margin="343,177,343,0"/>
+        <TextBox x:Name="ClassName" Width="385" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Button Click="SaveClass" Content="Зберегти" Height="32" Width="385" Margin="206,252,209,150"/>
+        <Button Click="Cancel" Content="Відмінити" Height="33" Width="388" Margin="206,301,206,100"/>
+    </Grid>
+</Window>

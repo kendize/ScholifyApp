@@ -20,9 +20,9 @@ namespace WPFScholifyApp.BLL
             this.userRepository = userRepos;
         }
 
-        public User Authenticate(string email, string password, string role)
+        public User Authenticate(string email, string password)
         {
-            var user = this.userRepository.GetAll().FirstOrDefault(u => u.Email == email && u.Password == password && u.Role == role);
+            var user = this.userRepository.GetAll().FirstOrDefault(u => u.Email == email && u.Password == password);
             if (user != null)
             {
                 return user;

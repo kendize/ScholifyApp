@@ -60,11 +60,12 @@ namespace WPFScholifyApp.DAL.ClassRepository
 
             // Додаємо тестові дані при створені бази даних
             modelBuilder.Entity<User>().HasData(
-                new User { Id = 1, Email = "1", Password = "1", FirstName = "AdminName", LastName = "AdminLastname", Role = "адмін" },
-                new User { Id = 2, Email = "user1@example.com", Password = "1", FirstName = "Марія", LastName = "Галушко", MiddleName = "Вікторівна", Role = "вчитель" },
-                new User { Id = 3, Email = "user2@example.com", Password = "1", FirstName = "Ігор", LastName = "Гнатюк", MiddleName = "Іванович", Role = "вчитель" },
-                new User { Id = 4, Email = "user3@example.com", Password = "1", FirstName = "Олег", LastName = "Винник", MiddleName = "Павлович", Role = "вчитель" });
-
+                new User { Id = 1, Email = "1", Password = "1", FirstName = "Адміністратор",LastName = "Платформи",     MiddleName = "",                Birthday = new DateTime(2023, 11, 25).ToUniversalTime(), Role = "адмін",    Address = "м.Житомир,вул Перемоги, 1" },
+                new User { Id = 2, Email = "2", Password = "2", FirstName = "Марія",        LastName = "Галушко",       MiddleName = "Вікторівна",      Birthday = new DateTime(2023, 11, 25).ToUniversalTime(), Role = "вчитель" , Address = "м.Житомир,вул Перемоги, 2" },
+                new User { Id = 3, Email = "3", Password = "3", FirstName = "Ігор",         LastName = "Гнатюк",        MiddleName = "Іванович",        Birthday = new DateTime(2023, 11, 25).ToUniversalTime(), Role = "вчитель",  Address = "м.Житомир,вул Перемоги, 3" },
+                new User { Id = 4, Email = "4", Password = "4", FirstName = "Олег",         LastName = "Винник",        MiddleName = "Павлович",        Birthday = new DateTime(2023, 11, 25).ToUniversalTime(), Role = "вчитель",  Address = "м.Житомир,вул Перемоги, 4" },
+                new User { Id = 5, Email = "5", Password = "5", FirstName = "Михайло",      LastName = "Іващенко",      MiddleName = "Святославович",   Birthday = new DateTime(2023, 11, 25).ToUniversalTime(), Gender = "чоловік",Address = "м.Житомир,вул Перемоги, 5", PhoneNumber = "0685495126", Role = "учень" },
+                new User { Id = 6, Email = "6", Password = "6", FirstName = "Світлана",     LastName = "Романюк",       MiddleName = "Василівна",       Birthday = new DateTime(2023, 11, 25).ToUniversalTime(), Gender = "жінка",  Address = "м.Харків вул.Миру,8", PhoneNumber ="0635472856", Role = "батьки"});
             modelBuilder.Entity<Admin>().HasData(
                 new Admin { Id = 1 });
 
@@ -72,20 +73,20 @@ namespace WPFScholifyApp.DAL.ClassRepository
                 new Teacher { Id = 1, UserId = 2, SubjectId = 1 });
 
             modelBuilder.Entity<Pupil>().HasData(
-                new Pupil { Id = 1, ClassId = 1 });
+                new Pupil { Id = 5, ClassId = 1 });
 
             modelBuilder.Entity<Parents>().HasData(
-                new Parents { Id = 1 });
+                new Parents { Id = 6 });
 
             modelBuilder.Entity<Class>().HasData(
-                new Class { Id = 1, ClassName = "Class A" });
+                new Class { Id = 1, ClassName = "11-А" });
 
 
             modelBuilder.Entity<DayBook>().HasData(
                 new DayBook { Id = 1, Grade = 10, Attendance = "Present", Date = DateTime.UtcNow, ClassId = 1, TeacherId = 1 });
 
             modelBuilder.Entity<Subject>().HasData(
-                new Subject { Id = 1, SubjectName = "Math", ClassId = 1 });
+                new Subject { Id = 1, SubjectName = "Математика", ClassId = 1 });
 
             modelBuilder.Entity<DBClasses.DayOfWeek>().HasData(
                 new DBClasses.DayOfWeek { Id = 1, Day = "27.11.2023", Date = new DateTime(2023, 11, 27).ToUniversalTime() });

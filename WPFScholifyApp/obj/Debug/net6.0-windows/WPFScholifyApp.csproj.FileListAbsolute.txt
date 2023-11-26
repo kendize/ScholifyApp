@@ -249,3 +249,9 @@ D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\WPFScholifyApp.genru
 D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\ref\WPFScholifyApp.dll
 D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\CreateSchedule.g.cs
 D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\CreateSchedule.baml
+E:\Zoriana\Outsource\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\CreateAdvertisements.g.cs
+E:\Zoriana\Outsource\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\CreateAdvertisements.baml
+D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\CreateAdvertisements.g.cs
+D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\CreateAdvertisements.baml
+D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\LookClass.g.cs
+D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\LookClass.baml
