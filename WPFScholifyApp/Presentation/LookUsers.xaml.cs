@@ -29,17 +29,43 @@ namespace WPFScholifyApp.Presentation
         private IGenericRepository<User> userRepository;
         private IGenericRepository<Pupil> pupilRepository;
         private UserService userService;
+        public AdminWindow AdminWindow { get; set; }
+        public User? currentUser { get; set; }
+        public int currentClassId { get; set; }
 
-        public LookUsers(IGenericRepository<User> userRepos, IGenericRepository<Pupil> pupilRepos)
+        public LookUsers(IGenericRepository<User> userRepos, IGenericRepository<Pupil> pupilRepos, AdminWindow adminWindow)
         {
             this.pupilRepository = pupilRepos;
             this.userRepository = userRepos;
-            this.userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>());
+            this.userService = new UserService(userRepos, pupilRepos);
             this.InitializeComponent();
+            AdminWindow = adminWindow;
         }
 
         private void SaveUser(object sender, RoutedEventArgs e)
         {
+            var user = new User
+            {
+                Id = currentUser!.Id,
+                Email = this.Email.Text,
+                Password = this.Password.Text,
+                FirstName = this.FirstName.Text,
+                LastName = this.LastName.Text,
+                MiddleName = this.MiddleName.Text,
+                Gender = this.Gender.Text,
+                Birthday = this.Birthday.SelectedDate!.Value.ToUniversalTime(),
+                Address = this.Adress.Text,
+                PhoneNumber = this.PhoneNumber.Text,
+                Role = "учень"
+            };
+
+
+            this.userRepository.Update(user);
+            this.userRepository.Save();
+
+            this.AdminWindow.DeleteFromAdminPanels();
+            this.AdminWindow.ShowAllTeachers();
+
             this.Close();
         }
 

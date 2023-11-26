@@ -59,7 +59,7 @@ namespace WPFScholifyApp
                     }
                     else
                     {
-                        AdminWindow adminWindow = new AdminWindow();
+                        AdminWindow adminWindow = new AdminWindow(authenticatedUser);
                         adminWindow.FirstNameTextBlock.Text = userService.Authenticate(email, password, selectedRole).FirstName;
                         adminWindow.LastNameTextBlock.Text = userService.Authenticate(email, password, selectedRole).LastName;
                         adminWindow.Show();

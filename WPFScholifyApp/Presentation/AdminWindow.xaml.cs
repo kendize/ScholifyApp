@@ -38,12 +38,13 @@ namespace WPFScholifyApp
         private IGenericRepository<Advertisement> advertisementsRepository;
         private int selectedClassId;
         private int selectedTeacherId;
-
+        private User? CurrentUser { get; set; }
         // private int selectedPupilId;
         // private int selectedSubjectId;
         // private int selectedParentId;
-        public AdminWindow()
+        public AdminWindow(User CurrentUser)
         {
+            this.CurrentUser = CurrentUser;
             this.userRepository = new GenericRepository<User>();
             this.subjectRepository = new GenericRepository<Subject>();
             this.pupilRepository = new GenericRepository<Pupil>();
@@ -111,19 +112,22 @@ namespace WPFScholifyApp
 
             foreach (var p in pupils)
             {
-                var pupilButton = new Button { Content = $"{p!.FirstName} {p!.LastName}", Height = 60, Width = 300, FontSize = 30, Tag = p.Id };
+                var pupilButton = new Button { Content = $"{p!.FirstName} {p!.LastName}", Height = 60, Width = 700, FontSize = 30, Tag = p.Id };
                 pupilButton.Click += new RoutedEventHandler(this.LookUsers);
-                var deleteButton = new Button { Content = $"Delete {p!.FirstName} {p!.LastName}", Height = 60, Width = 300, FontSize = 30, Tag = p.Id };
+                var deleteButton = new Button { Content = $"Delete {p!.FirstName} {p!.LastName}", Height = 60, Width = 700, FontSize = 30, Tag = p.Id };
                 deleteButton.Click += new RoutedEventHandler(this.DeletePupil);
                 this.RightPanel.Children.Add(pupilButton);
                 this.RightPanel.Children.Add(deleteButton);
             }
 
             // Після виведення всіх учнів для обраного класу додамо кнопку "Додати Учня"
-            var createButton = new Button { Content = "Додати Учня", Height = 60, Width = 300, FontSize = 30, Tag = classId };
+            var createButton = new Button { Content = "Додати Учня", Height = 60, Width = 700, FontSize = 30, Tag = classId };
             createButton.Click += new RoutedEventHandler(this.AddPupil);
             this.RightAction.Children.Add(createButton);
             this.UpdateAdminPanels();
+            this.userRepository = new GenericRepository<User>(); // Re-initialize the repository
+            this.pupilRepository = new GenericRepository<Pupil>();
+            this.adminService = new AdminService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Advertisement>());
         }
 
         // Метод який викликається при натисканні кнопки "Додати Учня"
@@ -146,7 +150,7 @@ namespace WPFScholifyApp
         public void ShowAllTeachers()
         {
             this.DeleteFromAdminPanels();
-
+            this.adminService = new AdminService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Advertisement>());
             var teacher = this.adminService.GetAllTeacher();
             foreach (var t in teacher)
             {
@@ -190,7 +194,7 @@ namespace WPFScholifyApp
                 this.RightPanel.Children.Add(deleteButton);
             }
 
-            var createButton = new Button { Content = "Додати предмет викладачу", Height = 60, Width = 300, FontSize = 30, Tag = teacherId };
+            var createButton = new Button { Content = "Додати предмет викладачу", Height = 60, Width = 700, FontSize = 30, Tag = teacherId };
             createButton.Click += new RoutedEventHandler(this.AddSubjectToTeacher);
 
             this.RightAction.Children.Add(createButton);
@@ -213,7 +217,10 @@ namespace WPFScholifyApp
         private void LookTeacher(object sender, RoutedEventArgs e)
         {
             var createButton = (Button)sender;
-            var createPanel = new LookTeacher(this.userRepository);
+            var createPanel = new LookTeacher(new GenericRepository<User>(), new GenericRepository<Teacher>(), this);
+            createPanel.currentClassId = this.selectedClassId;
+
+            createPanel.currentUser = this.adminService.GetAllTeacher().FirstOrDefault(x => x.Id == (int)createButton.Tag);
             var teacher = this.adminService.GetAllTeacher().FirstOrDefault(x => x.Id == (int)createButton.Tag);
             createPanel.Email.Text = teacher!.Email?.ToString();
             createPanel.Password.Text = teacher!.Password?.ToString();
@@ -233,9 +240,10 @@ namespace WPFScholifyApp
         {
             var createButton = (Button)sender;
 
-            var createPanel = new LookUsers(this.userRepository, this.pupilRepository);
-
+            var createPanel = new LookUsers(new GenericRepository<User>(), new GenericRepository<Pupil>(), this);
+            createPanel.currentClassId = this.selectedClassId;
             var pupils = this.adminService.GetAllPupils().FirstOrDefault(x => x.Id == (int)createButton.Tag);
+            createPanel.currentUser = pupils;
             createPanel.Email.Text = pupils!.Email!.ToString();
             createPanel.Password.Text = pupils!.Password!.ToString();
             createPanel.FirstName.Text = pupils!.FirstName!.ToString();
@@ -301,11 +309,59 @@ namespace WPFScholifyApp
 
         private void ParentsButton_Click(object sender, RoutedEventArgs e)
         {
+            DeleteFromAdminPanels();
+            this.selectedClassId = 0;
+            this.ShowAllClassesForParents();
         }
 
-        private void ScheduleButton_Click(object sender, RoutedEventArgs e)
+        public void ShowAllClassesForParents()
         {
+            this.DeleteFromAdminPanels();
+
+            var classes = this.adminService.GetAllClasses();
+
+            foreach (var c in classes)
+            {
+                var button = new Button { Content = c.ClassName, Height = 60, Width = 300, FontSize = 30, Tag = c.Id };
+                button.Click += new RoutedEventHandler(this.SpecificPupilsButton_Click);
+                this.LeftPanel.Children.Add(button);
+            }
+            this.UpdateAdminPanels();
         }
+        public void SpecificPupilsButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.DeleteFromAdminPanels();
+            ShowAllClassesForParents();
+            // Знайдемо ClassId з Tag кнопки, на яку ми натискали
+            var classButton = (Button)sender;
+            this.selectedClassId = (int)classButton.Tag;
+
+            // Додамо кнопки з учнями
+            this.ShowAllPupilsForParents(this.selectedClassId);
+        }
+        public void ShowAllPupilsForParents(int classId)
+        {
+            this.DeleteFromAdminPanels();
+            ShowAllClassesForParents();
+            this.selectedClassId = classId;
+            var pupils = this.adminService.GetAllPupilsForClass(classId);
+
+            //foreach (var p in pupils)
+            //{
+            //    var pupilButton = new Button { Content = $"{p!.FirstName} {p!.LastName}", Height = 60, Width = 300, FontSize = 30, Tag = p.Id };
+            //    pupilButton.Click += new RoutedEventHandler(this.LookUsers);
+            //    this.RightPanel.Children.Add(pupilButton);
+            //}
+
+            // Після виведення всіх учнів для обраного класу додамо кнопку "Додати Учня"
+            //var createButton = new Button { Content = "Додати Учня", Height = 60, Width = 300, FontSize = 30, Tag = classId };
+            //createButton.Click += new RoutedEventHandler(this.AddPupil);
+            //this.RightAction.Children.Add(createButton);
+            this.UpdateAdminPanels();
+        }
+        private void ScheduleButton_Click(object sender, RoutedEventArgs e)
+         {
+         }
 
         private void ChatButton_Click(object sender, RoutedEventArgs e)
         {
