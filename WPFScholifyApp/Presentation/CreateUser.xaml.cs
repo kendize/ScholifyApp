@@ -77,6 +77,7 @@ namespace WPFScholifyApp.Presentation
             {
                 Id = this.userRepository.GetAll().Select(x => x.Id).Max() + 1,
                 ClassId = this.ClassId,
+                UserId = user.Id
             };
 
             this.userService.AddUser(user, pupil);

@@ -31,6 +31,7 @@ namespace WPFScholifyApp
     public partial class AdminWindow : Window
     {
         private AdminService adminService;
+        private ParentsService parentsService;
         private UserService userService;
         private ScheduleService scheduleService;
         private IGenericRepository<User> userRepository;
@@ -41,9 +42,11 @@ namespace WPFScholifyApp
         private IGenericRepository<Schedule> scheduleRepository;
         private IGenericRepository<DayOfWeek> dayOfWeekRepository;
         private IGenericRepository<LessonTime> lessonTimeRepository;
+        private IGenericRepository<Parents> parentsRepository;
         private int selectedClassId;
         private int selectedTeacherId;
         private int selectedSubjectId;
+        private int selectedPupilsId;
 
         private IGenericRepository<Advertisement> advertisementsRepository;
         private User? CurrentUser { get; set; }
@@ -55,6 +58,7 @@ namespace WPFScholifyApp
             this.dayOfWeekRepository = new GenericRepository<DayOfWeek>();
             this.lessonTimeRepository = new GenericRepository<LessonTime>();
             this.CurrentUser = CurrentUser;
+            this.parentsRepository = new GenericRepository<Parents>();
             this.userRepository = new GenericRepository<User>();
             this.subjectRepository = new GenericRepository<Subject>();
             this.pupilRepository = new GenericRepository<Pupil>();
@@ -62,6 +66,7 @@ namespace WPFScholifyApp
             this.classRepository = new GenericRepository<Class>();
             this.advertisementsRepository = new GenericRepository<Advertisement>();
             this.userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>());
+            this.parentsService = new ParentsService(new GenericRepository<User>(), new GenericRepository<Pupil>(), new GenericRepository<Parents>());
             this.scheduleService = new ScheduleService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Schedule>(), new GenericRepository<Subject>());
             this.adminService = new AdminService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Advertisement>());
             this.InitializeComponent();
@@ -84,22 +89,70 @@ namespace WPFScholifyApp
         // Метод який викликається при натисканні кнопки "Батьки" на панелі Адміністратора
         private void ParentsButton_Click(object sender, RoutedEventArgs e)
         {
-            DeleteFromAdminPanels();
-            this.selectedClassId = 0;
-            this.ShowAllClassesForParents();
-            UpdateAdminPanels();
+            this.ShowAllPuplis();
         }
 
+        public void ShowAllPuplis()
+        {
+            this.selectedPupilsId = 0;
+            this.DeleteFromAdminPanels();
+            var puplis = this.adminService.GetAllPupils();
+
+            foreach (var p in puplis.OrderByDescending(x => x.LastName))
+            {
+                var teacherPanel = new StackPanel { Orientation = Orientation.Horizontal };
+                var button = new Button { Content = $"{p!.LastName} {p!.FirstName}", Height = 60, Width = 290, FontSize = 30, Tag = p.Id };
+                button.Click += new RoutedEventHandler(this.SpecificClassButton_ClickPupils);
+                LeftPanel.Children.Add(button);
+            }
+            this.UpdateAdminPanels();
+        }
+         public void SpecificClassButton_ClickPupils(object sender, RoutedEventArgs e)
+        {
+            this.DeleteFromAdminPanels();
+            var parentsButton = (Button)sender;
+            this.ShowAllPuplis();
+            this.selectedPupilsId = (int)parentsButton.Tag;
+
+            var parents = this.parentsService.GetParentsForPupilId((int)parentsButton.Tag);
+            foreach (var f in parents)
+            {
+                var teacherPanel = new StackPanel { Orientation = Orientation.Horizontal };
+
+                var button = new Button { Content = $" {f!.User!.LastName} {f!.User!.FirstName}", Height = 60, Width = 500, FontSize = 30, Tag = f.Id };
+                button.Click += new RoutedEventHandler(this.SpecificTeacherButton_Click);
+                RightPanel.Children.Add(button);
+
+                //var lookButton = new Button { Content = "U", Height = 60, Width = 30, FontSize = 30, Tag = t.Id, Margin = new Thickness(10, 0, 0, 0) };
+                //lookButton.Click += new RoutedEventHandler(this.LookTeacher);
+                //teacherPanel.Children.Add(lookButton);
+
+                //var deleteButton = new Button { Content = $"X", Height = 60, Width = 30, FontSize = 30, Tag = t.Id, Margin = new Thickness(10, 0, 0, 0) };
+                //deleteButton.Click += new RoutedEventHandler(this.DeleteTeacher);
+                //teacherPanel.Children.Add(deleteButton);
+
+                this.LeftPanel.Children.Add(teacherPanel);
+            }
+
+            var createButton = new Button { Content = "Додати Батьків", Height = 60, Width = 300, FontSize = 30, };
+            createButton.Click += new RoutedEventHandler(this.AddParents);
+            this.RightAction.Children.Add(createButton);
+
+            this.UpdateAdminPanels();
+        }
+
+        private void AddParents(object sender, RoutedEventArgs e)
+        {
+            var createButton = (Button)sender;
+            var createPanel = new CreateParents(this.userRepository, this.parentsRepository, this.pupilRepository, this, new GenericRepository<ParentsPupil>());
+            createPanel.PupilsId = this.selectedPupilsId;
+            createPanel.Show();
+        }
         // Метод який викликається при натисканні кнопки "Розклад" на панелі Адміністратора
         private void ScheduleButton_Click(object sender, RoutedEventArgs e)
         {
             ShowAllSubjects();
         }
-
-
-
-        //----
-
 
         // Метод для виведення списку кнопок з усіма класами для предметів
         public void ShowAllClasses()
@@ -175,33 +228,22 @@ namespace WPFScholifyApp
         }
 
         // Метод для виведення списку кнопок з усіма класами для батьків
-        public void ShowAllClassesForParents()
-        {
-            this.selectedSubjectId = 0;
-            this.DeleteFromAdminPanels();
+        //public void ShowAllClassesForParents()
+        //{
+        //    this.selectedSubjectId = 0;
+        //    this.DeleteFromAdminPanels();
 
-            var classes = this.adminService.GetAllClasses();
+        //    var classes = this.adminService.GetAllClasses();
 
-            foreach (var c in classes)
-            {
-                var button = new Button { Content = c.ClassName, Height = 60, Width = 300, FontSize = 30, Tag = c.Id };
-                button.Click += new RoutedEventHandler(this.SpecificParentClassButton_Click);
-                this.LeftPanel.Children.Add(button);
-            }
+        //    foreach (var c in classes)
+        //    {
+        //        var button = new Button { Content = c.ClassName, Height = 60, Width = 300, FontSize = 30, Tag = c.Id };
+        //        button.Click += new RoutedEventHandler(this.SpecificParentClassButton_Click);
+        //        this.LeftPanel.Children.Add(button);
+        //    }
 
-            var createButton = new Button
-            {
-                Content = "Створити Клас",
-                VerticalAlignment = VerticalAlignment.Bottom,
-                Height = 60,
-                Width = 300,
-                FontSize = 30,
-            };
-            createButton.Click += new RoutedEventHandler(this.AddClass);
-            this.LeftAction.Children.Add(createButton);
-
-            this.UpdateAdminPanels();
-        }
+        //    this.UpdateAdminPanels();
+        //}
 
         // Метод для виведення списку кнопок з усіма Предметами
         public void ShowAllSubjects()
@@ -245,13 +287,13 @@ namespace WPFScholifyApp
         }
 
         // Метод який викликається при натисканні кнопки обраного класу серед списку класів на панелі Адміністратора (Перегляд Батьків)
-        public void SpecificParentClassButton_Click(Object sender, RoutedEventArgs e)
-        {
-            var classButton = (Button)sender;
-            this.selectedClassId = (int)classButton.Tag;
+        //public void SpecificParentClassButton_Click(Object sender, RoutedEventArgs e)
+        //{
+        //    var classButton = (Button)sender;
+        //    this.selectedClassId = (int)classButton.Tag;
 
-            this.ShowAllParentsForClassId(this.selectedClassId);
-        }
+        //    this.ShowAllParentsForClassId(this.selectedClassId);
+        //}
 
         // Метод який викликається при натисканні кнопки обраного предмету серед списку предметів на панелі Адміністратора
         public void SpecificSubjectButton_Click(object sender, RoutedEventArgs e)
@@ -292,6 +334,7 @@ namespace WPFScholifyApp
             this.adminService = new AdminService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Advertisement>());
         }
 
+      
         // Метод для виведення списку кнопок з усіма предметами для обраного викладача
         public void ShowAllSubjectsForTeacher(int teacherId)
         {
@@ -338,13 +381,6 @@ namespace WPFScholifyApp
             UpdateAdminPanels();
         }
 
-        public void ShowAllParentsForClassId(int classId)
-        {
-
-        }
-
-
-        //----
 
 
         // Метод який викликається при натисканні кнопки "Додати Клас"
@@ -501,23 +537,17 @@ namespace WPFScholifyApp
             this.LeftPanel.UpdateLayout(); // воно не робе
         }
 
-       
-
         
-        
-
-        
-        
-        public void SpecificPupilsButton_Click(object sender, RoutedEventArgs e)
-        {
-            //TODO
-            this.DeleteFromAdminPanels();
-            ShowAllClassesForParents();
-            // Знайдемо ClassId з Tag кнопки, на яку ми натискали
-            var classButton = (Button)sender;
-            this.selectedClassId = (int)classButton.Tag;
-            // Додамо кнопки з учнями
-        }
+        //public void SpecificPupilsButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    //TODO
+        //    this.DeleteFromAdminPanels();
+        //    ShowAllClassesForParents();
+        //    // Знайдемо ClassId з Tag кнопки, на яку ми натискали
+        //    var classButton = (Button)sender;
+        //    this.selectedClassId = (int)classButton.Tag;
+        //    // Додамо кнопки з учнями
+        //}
 
         private void ExitButton_Click(object sender, RoutedEventArgs e)
         {

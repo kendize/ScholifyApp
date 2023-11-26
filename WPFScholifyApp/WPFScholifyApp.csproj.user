@@ -12,6 +12,9 @@
     <Compile Update="Presentation\CreateClass.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Presentation\CreateParents.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Presentation\CreateSchedule.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -39,6 +42,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Presentation\CreateClass.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Presentation\CreateParents.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Presentation\CreateSchedule.xaml">
