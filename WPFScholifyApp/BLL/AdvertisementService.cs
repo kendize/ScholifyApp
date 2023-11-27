@@ -56,7 +56,7 @@ namespace WPFScholifyApp.BLL
         {
             return  this.advertisementRepository.GetAllq()
             .Include(x => x.Class!)
-            .Where(x => x.Class!.Id != classId)
+            .Where(x => x.Class!.Id == classId)
             .ToList();
         }
         public void DeletedAvertisementl(int userId)

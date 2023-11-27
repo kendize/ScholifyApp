@@ -64,7 +64,7 @@ namespace WPFScholifyApp.Presentation
 
             var subject = new Subject
             {
-                Id = this.subjectRepository.GetAll().Select(x => x.Id).Max() + 1,
+                Id = (this.subjectRepository.GetAll().OrderByDescending(x => x.Id).FirstOrDefault()?.Id ?? 0) + 1,
                 SubjectName = subjectName,
                 ClassId = (int)((ComboBoxItem)this.ClassComboBox.SelectedItem).Tag
         };

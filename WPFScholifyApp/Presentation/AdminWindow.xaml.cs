@@ -7,6 +7,7 @@ namespace WPFScholifyApp
     using Microsoft.EntityFrameworkCore;
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
@@ -30,6 +31,7 @@ namespace WPFScholifyApp
     /// </summary>
     public partial class AdminWindow : Window
     {
+        private PupilService pupilService;
         private AdminService adminService;
         private ParentsService parentsService;
         private UserService userService;
@@ -43,6 +45,8 @@ namespace WPFScholifyApp
         private GenericRepository<DayOfWeek> dayOfWeekRepository;
         private GenericRepository<LessonTime> lessonTimeRepository;
         private GenericRepository<Parents> parentsRepository;
+        private TeacherService teacherService;
+        private AdvertisementService advertisementService;
         private int selectedClassId;
         private int selectedTeacherId;
         private int selectedSubjectId;
@@ -50,10 +54,14 @@ namespace WPFScholifyApp
 
         private IGenericRepository<Advertisement> advertisementsRepository;
         private User? CurrentUser { get; set; }
+        public List<DateTime> Days { get; set; }
+
         // private int selectedPupilId;
         // private int selectedParentId;
         public AdminWindow(User CurrentUser)
         {
+
+            this.pupilService = new PupilService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Schedule>());
             this.scheduleRepository = new GenericRepository<Schedule>();
             this.dayOfWeekRepository = new GenericRepository<DayOfWeek>();
             this.lessonTimeRepository = new GenericRepository<LessonTime>();
@@ -70,11 +78,51 @@ namespace WPFScholifyApp
             this.scheduleService = new ScheduleService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Schedule>(), new GenericRepository<Subject>());
             this.adminService = new AdminService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Advertisement>());
             this.InitializeComponent();
+            this.teacherService = new TeacherService(new GenericRepository<Advertisement>(), new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Schedule>());
+            CultureInfo culture = new CultureInfo("uk-UA"); // Adjust culture as needed
+
+            // Get the current date
+            DateTime currentDate = DateTime.Now;
+
+            // Calculate the start date of the current week (Monday)
+            DateTimeFormatInfo dfi = culture.DateTimeFormat;
+            System.DayOfWeek firstDayOfWeek = dfi.FirstDayOfWeek;
+            int daysToSubtract = (int)currentDate.DayOfWeek - (int)firstDayOfWeek;
+            if (daysToSubtract < 0)
+            {
+                daysToSubtract += 7;
+            }
+
+            DateTime startDate = currentDate.AddDays(-daysToSubtract);
+
+            // Create a list to store the days of the week
+            List<DateTime> daysOfWeek = new List<DateTime>();
+
+            // Add each day of the week to the list
+            for (int i = 0; i < 7; i++)
+            {
+                daysOfWeek.Add(startDate.AddDays(i));
+            }
+            this.Days = daysOfWeek;
+            this.CurrentUser = CurrentUser;
+            this.adminService = new AdminService(
+                new GenericRepository<User>(),
+                new GenericRepository<Class>(),
+                new GenericRepository<Teacher>(),
+                new GenericRepository<Pupil>(),
+                new GenericRepository<Admin>(),
+                new GenericRepository<Parents>(),
+                new GenericRepository<Subject>(),
+                new GenericRepository<Advertisement>());
+
+            this.advertisementService = new AdvertisementService(new GenericRepository<Advertisement>(), new GenericRepository<Class>(), new GenericRepository<Pupil>());
         }
 
         // Метод який викликається при натисканні кнопки "Класи" на панелі Адміністратора
         public void ClassButton_Click(object sender, RoutedEventArgs e)
         {
+            this.Schedule.Visibility = Visibility.Hidden;
+            this.SetSidePanelsVisible();
             this.selectedClassId = 0;
             this.ShowAllClasses();
         }
@@ -82,6 +130,8 @@ namespace WPFScholifyApp
         // Метод який викликається при натисканні кнопки "Вчителі" на панелі Адміністратора
         public void TeachersButton_Click(object sender, RoutedEventArgs e)
         {
+            this.Schedule.Visibility = Visibility.Hidden;
+            this.SetSidePanelsVisible();
             this.selectedTeacherId = 0;
             this.ShowAllTeachers();
         }
@@ -89,8 +139,182 @@ namespace WPFScholifyApp
         // Метод який викликається при натисканні кнопки "Батьки" на панелі Адміністратора
         private void ParentsButton_Click(object sender, RoutedEventArgs e)
         {
+            this.Schedule.Visibility = Visibility.Hidden;
+            this.SetSidePanelsVisible();
             this.ShowAllPuplis();
         }
+
+        // Метод який викликається при натисканні кнопки "Розклад" на панелі Адміністратора
+        private void ScheduleButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Schedule.Visibility = Visibility.Hidden;
+            this.SetSidePanelsVisible();
+            
+            ShowAllClasses(true);
+        }
+
+
+
+
+        // ----------------------------------------------------------------------------------
+        // Розклад
+        public void ChangeDate(object sender, RoutedEventArgs e)
+        {
+            var changeDateButton = (Button)sender;
+            int daysToAdd = int.Parse((string)changeDateButton.Tag);
+            CultureInfo culture = new CultureInfo("uk-UA"); // Adjust culture as needed
+
+            // Get the current date
+            DateTime currentDate = this.Days[0];
+
+            // Calculate the start date of the current week (Monday)
+            DateTimeFormatInfo dfi = culture.DateTimeFormat;
+            System.DayOfWeek firstDayOfWeek = dfi.FirstDayOfWeek;
+            int daysToSubtract = (int)currentDate.DayOfWeek - (int)firstDayOfWeek;
+            if (daysToSubtract < 0)
+            {
+                daysToSubtract += 7;
+            }
+
+            DateTime startDate = currentDate.AddDays(-daysToSubtract + daysToAdd);
+
+            // Create a list to store the days of the week
+            List<DateTime> daysOfWeek = new List<DateTime>();
+
+            // Add each day of the week to the list
+            for (int i = 0; i < 7; i++)
+            {
+                daysOfWeek.Add(startDate.AddDays(i));
+            }
+            this.Days = daysOfWeek;
+
+            this.ShowAllWeek(this.selectedClassId);
+        }
+
+        public void ShowAllWeek(int classId)
+        {
+            ClearDays();
+            var result = new List<Schedule>();
+            var dayOfWeeks = this.dayOfWeekRepository.GetAll();
+            for (int i = 0; i <= 6; i++)
+            {
+
+                var dayOfWeek = dayOfWeeks.FirstOrDefault(x => x.Date.AddDays(1).Date.Equals(this.Days[i].Date));
+                var dayOfWeekId = dayOfWeek != null ? dayOfWeek!.Id : 0;
+                var schedulesForDay = this.pupilService.GetAllSchedules(classId, dayOfWeekId).ToList();
+                result.AddRange(schedulesForDay);
+
+                if (i == 0)
+                {
+                    Label label1 = new Label();
+                    var date = this.Days[i].Date.Date.ToString("d");
+
+
+                    label1.Content = $"Понеділок {date}";
+                    label1.FontSize = 24;
+                    label1.HorizontalAlignment = HorizontalAlignment.Center;
+                    this.Monday.Children.Add(label1);
+                    foreach (var schedule in schedulesForDay.OrderBy(x => x.LessonTime!.StartTime))
+                    {
+                        Label label2 = new Label();
+                        label2.Content = $"{schedule.LessonTime!.Start} {schedule.Subject!.SubjectName}";
+                        label2.FontSize = 24;
+                        this.Monday.Children.Add(label2);
+                        this.Monday.UpdateLayout();
+
+                    }
+                }
+                if (i == 1)
+                {
+                    Label label1 = new Label();
+                    var date = this.Days[i].Date.Date.ToString("d");
+
+
+                    label1.Content = $"Вівторок {date}";
+                    label1.FontSize = 24;
+                    label1.HorizontalAlignment = HorizontalAlignment.Center;
+                    this.Tuesday.Children.Add(label1);
+                    foreach (var schedule in schedulesForDay.OrderBy(x => x.LessonTime!.StartTime))
+
+                    {
+                        Label label2 = new Label();
+                        label2.Content = $"{schedule.LessonTime!.Start} {schedule.Subject!.SubjectName}";
+                        label2.FontSize = 24;
+                        this.Tuesday.Children.Add(label2);
+                        this.Tuesday.UpdateLayout();
+                    }
+                }
+                if (i == 2)
+                {
+                    Label label1 = new Label();
+                    var date = this.Days[i].Date.Date.ToString("d");
+
+
+
+                    label1.Content = $"Середа {date}";
+                    label1.FontSize = 24;
+                    label1.HorizontalAlignment = HorizontalAlignment.Center;
+                    this.Wednesday.Children.Add(label1);
+                    foreach (var schedule in schedulesForDay.OrderBy(x => x.LessonTime!.StartTime))
+
+                    {
+                        Label label2 = new Label();
+                        label2.Content = $"{schedule.LessonTime!.Start} {schedule.Subject!.SubjectName}";
+                        label2.FontSize = 24;
+                        this.Wednesday.Children.Add(label2);
+                        this.Wednesday.UpdateLayout();
+                    }
+                }
+                if (i == 3)
+                {
+                    Label label1 = new Label();
+                    var date = this.Days[i].Date.Date.ToString("d");
+
+
+
+                    label1.Content = $"Четвер {date}";
+                    label1.FontSize = 24;
+                    label1.HorizontalAlignment = HorizontalAlignment.Center;
+                    this.Thursday.Children.Add(label1);
+                    foreach (var schedule in schedulesForDay.OrderBy(x => x.LessonTime!.StartTime))
+
+                    {
+                        Label label2 = new Label();
+                        label2.Content = $"{schedule.LessonTime!.Start} {schedule.Subject!.SubjectName}";
+                        label2.FontSize = 24;
+                        this.Thursday.Children.Add(label2);
+                        this.Thursday.UpdateLayout();
+                    }
+                }
+                if (i == 4)
+                {
+                    Label label1 = new Label();
+                    var date = this.Days[i].Date.Date.ToString("d");
+
+
+                    label1.Content = $"П'ятниця {date}";
+                    label1.FontSize = 24;
+                    label1.HorizontalAlignment = HorizontalAlignment.Center;
+                    this.Friday.Children.Add(label1);
+                    foreach (var schedule in schedulesForDay.OrderBy(x => x.LessonTime!.StartTime))
+
+                    {
+                        Label label2 = new Label();
+                        label2.Content = $"{schedule.LessonTime!.Start} {schedule.Subject!.SubjectName}";
+                        label2.FontSize = 24;
+                        this.Friday.Children.Add(label2);
+                        this.Friday.UpdateLayout();
+                    }
+                }
+
+            }
+            UpdateDays();
+            return;
+
+        }
+
+
+        //
 
         public void ShowAllPuplis()
         {
@@ -107,7 +331,112 @@ namespace WPFScholifyApp
             }
             this.UpdateAdminPanels();
         }
-         public void SpecificClassButton_ClickPupils(object sender, RoutedEventArgs e)
+
+        // Метод для виведення списку кнопок з усіма класами для предметів
+        public void ShowAllClasses(bool isSchedule = false)
+        {
+            this.selectedSubjectId = 0;
+            this.DeleteFromAdminPanels();
+
+            var classes = this.adminService.GetAllClasses();
+
+            foreach (var c in classes)
+            {
+                var teacherPanel = new StackPanel { Orientation = Orientation.Horizontal };
+
+                var button = new Button { Content = $"{c!.ClassName}", Height = 60, Width = 290, FontSize = 30, Tag = c.Id };
+                if (isSchedule)
+                {
+                    button.Click += new RoutedEventHandler(this.SpecificClassButton_Schedule_Click);
+                }
+                else
+                {
+                    button.Click += new RoutedEventHandler(this.SpecificClassButton_Click);
+                }
+
+                teacherPanel.Children.Add(button);
+
+                if (!isSchedule)
+                {
+                    var deleteButton = new Button { Content = $"Del", Height = 60, Width = 70, FontSize = 30, Tag = c.Id, Margin = new Thickness(10, 0, 0, 0) };
+                    deleteButton.Click += new RoutedEventHandler(DeleteClass);
+                    teacherPanel.Children.Add(deleteButton);
+                }
+
+
+                this.LeftPanel.Children.Add(teacherPanel);
+            }
+
+            if (!isSchedule)
+            {
+                var createButton = new Button
+                {
+                    Content = "Створити Клас",
+                    VerticalAlignment = VerticalAlignment.Bottom,
+                    Height = 60,
+                    Width = 300,
+                    FontSize = 30,
+                };
+                createButton.Click += new RoutedEventHandler(this.AddClass);
+                this.LeftAction.Children.Add(createButton);
+            }
+
+
+            this.UpdateAdminPanels();
+        }
+        // Метод для виведення списку кнопок з усіма вчителями
+        public void ShowAllTeachers()
+        {
+            this.DeleteFromAdminPanels();
+            this.adminService = new AdminService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Advertisement>());
+            var teacher = this.adminService.GetAllTeacher();
+            foreach (var t in teacher)
+            {
+                var teacherPanel = new StackPanel { Orientation = Orientation.Horizontal };
+
+                var button = new Button { Content = $"{t!.FirstName} {t!.LastName}", Height = 60, Width = 290, FontSize = 30, Tag = t.Id };
+                button.Click += new RoutedEventHandler(this.SpecificTeacherButton_Click);
+                teacherPanel.Children.Add(button);
+
+                var lookButton = new Button { Content = "U", Height = 60, Width = 30, FontSize = 30, Tag = t.Id, Margin = new Thickness(10, 0, 0, 0) };
+                lookButton.Click += new RoutedEventHandler(this.LookTeacher);
+                teacherPanel.Children.Add(lookButton);
+
+                var deleteButton = new Button { Content = $"Del", Height = 60, Width = 60, FontSize = 30, Tag = t.Id, Margin = new Thickness(2, 0, 0, 0) };
+                deleteButton.Click += new RoutedEventHandler(this.DeleteTeacher);
+                teacherPanel.Children.Add(deleteButton);
+
+                this.LeftPanel.Children.Add(teacherPanel);
+            }
+
+            var createButton = new Button { Content = "Додати Вчителя", Height = 60, Width = 300, FontSize = 30, };
+            createButton.Click += new RoutedEventHandler(this.AddTeacher);
+            this.LeftAction.Children.Add(createButton);
+
+            this.UpdateAdminPanels();
+        }
+        // Метод для виведення списку кнопок з усіма Предметами
+        public void ShowAllSubjects(int classId)
+        {
+
+            this.DeleteFromAdminPanels();
+
+            var subjects = this.subjectRepository.GetAllq()
+                .Include(x => x.Class).Where(x => x.ClassId == classId).ToList();
+
+            foreach (var s in subjects)
+            {
+                var button = new Button { Content = $"{s.SubjectName} {s.Class!.ClassName}", Height = 60, Width = 400, FontSize = 30, Tag = s.Id };
+                button.Click += new RoutedEventHandler(this.SpecificSubjectButton_Click);
+                this.LeftPanel.Children.Add(button);
+            }
+
+            this.UpdateAdminPanels();
+        }
+
+        //----------------------------
+
+        public void SpecificClassButton_ClickPupils(object sender, RoutedEventArgs e)
         {
             var parentsButton = (Button)sender;
             this.ShowParentsForPupilId((int)parentsButton.Tag);
@@ -184,49 +513,8 @@ namespace WPFScholifyApp
             createPanel.PupilsId = this.selectedPupilsId;
             createPanel.Show();
         }
-        // Метод який викликається при натисканні кнопки "Розклад" на панелі Адміністратора
-
-        private void ScheduleButton_Click(object sender, RoutedEventArgs e)
-        {
-            ShowAllSubjects();
-        }
-
-        // Метод для виведення списку кнопок з усіма класами для предметів
-        public void ShowAllClasses()
-        {
-            this.selectedSubjectId = 0;
-            this.DeleteFromAdminPanels();
-
-            var classes = this.adminService.GetAllClasses();
-
-            foreach (var c in classes)
-            {
-                var teacherPanel = new StackPanel { Orientation = Orientation.Horizontal };
-
-                var button = new Button { Content = $"{c!.ClassName}", Height = 60, Width = 290, FontSize = 30, Tag = c.Id };
-                button.Click += new RoutedEventHandler(this.SpecificClassButton_Click);
-                teacherPanel.Children.Add(button);
-
-                var deleteButton = new Button { Content = $"Del", Height = 60, Width = 70, FontSize = 30, Tag = c.Id, Margin = new Thickness(10, 0, 0, 0) };
-                deleteButton.Click += new RoutedEventHandler(DeleteClass);
-                teacherPanel.Children.Add(deleteButton);
-
-                this.LeftPanel.Children.Add(teacherPanel);
-            }
-
-            var createButton = new Button
-            {
-                Content = "Створити Клас",
-                VerticalAlignment = VerticalAlignment.Bottom,
-                Height = 60,
-                Width = 300,
-                FontSize = 30,
-            };
-            createButton.Click += new RoutedEventHandler(this.AddClass);
-            this.LeftAction.Children.Add(createButton);
-
-            this.UpdateAdminPanels();
-        }
+        
+        
         public void DeleteClass(object sender, RoutedEventArgs e)
         {
             var deleteButton = (Button)sender;
@@ -238,55 +526,19 @@ namespace WPFScholifyApp
             this.ShowAllClasses();
 
         }
-        // Метод для виведення списку кнопок з усіма вчителями
-        public void ShowAllTeachers()
+        
+        public void SpecificClassButton_Schedule_Click(object sender, RoutedEventArgs e)
         {
-            this.DeleteFromAdminPanels();
-            this.adminService = new AdminService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Advertisement>());
-            var teacher = this.adminService.GetAllTeacher();
-            foreach (var t in teacher)
-            {
-                var teacherPanel = new StackPanel { Orientation = Orientation.Horizontal };
-
-                var button = new Button { Content = $"{t!.FirstName} {t!.LastName}", Height = 60, Width = 290, FontSize = 30, Tag = t.Id };
-                button.Click += new RoutedEventHandler(this.SpecificTeacherButton_Click);
-                teacherPanel.Children.Add(button);
-
-                var lookButton = new Button { Content = "U", Height = 60, Width = 30, FontSize = 30, Tag = t.Id, Margin = new Thickness(10, 0, 0, 0) };
-                lookButton.Click += new RoutedEventHandler(this.LookTeacher);
-                teacherPanel.Children.Add(lookButton);
-
-                var deleteButton = new Button { Content = $"Del", Height = 60, Width = 60, FontSize = 30, Tag = t.Id, Margin = new Thickness(2, 0, 0, 0) };
-                deleteButton.Click += new RoutedEventHandler(this.DeleteTeacher);
-                teacherPanel.Children.Add(deleteButton);
-
-                this.LeftPanel.Children.Add(teacherPanel);
-            }
-
-            var createButton = new Button { Content = "Додати Вчителя", Height = 60, Width = 300, FontSize = 30, };
-            createButton.Click += new RoutedEventHandler(this.AddTeacher);
-            this.LeftAction.Children.Add(createButton);
-
-            this.UpdateAdminPanels();
-        }
-        // Метод для виведення списку кнопок з усіма Предметами
-        public void ShowAllSubjects()
-        {
-            this.DeleteFromAdminPanels();
-
-            var subjects = this.subjectRepository.GetAllq()
-                .Include(x => x.Class);
-
-            foreach (var s in subjects)
-            {
-                var button = new Button { Content = $"{s.SubjectName} {s.Class!.ClassName}", Height = 60, Width = 400, FontSize = 30, Tag = s.Id };
-                button.Click += new RoutedEventHandler(this.SpecificSubjectButton_Click);
-                this.LeftPanel.Children.Add(button);
-            }
-
-            this.UpdateAdminPanels();
+            this.Schedule.Visibility = Visibility.Visible;
+            this.SetSidePanelsHidden();
+            var button =(Button)sender;
+            var tag = (int)button.Tag;
+            this.selectedClassId = tag;
+            this.ShowAllWeek(this.selectedClassId);
+            //this.ShowAllSubjects(tag);
         }
 
+        
 
         //----
 
@@ -353,6 +605,8 @@ namespace WPFScholifyApp
         {
             this.DeleteFromAdminPanels();
             this.ShowAllTeachers();
+
+            this.selectedTeacherId = teacherId;
             // this.adminService = new AdminService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>());
             var subjects = this.adminService.GetAllSubjectsForTeacher(teacherId);
             foreach (var p in subjects)
@@ -377,7 +631,8 @@ namespace WPFScholifyApp
         public void ShowAllSchedulesForSubject(int subjectId)
         {
             DeleteFromAdminPanels();
-            ShowAllSubjects();
+            var classId = this.subjectRepository.GetAll().FirstOrDefault(x => x.Id == subjectId).ClassId;
+            ShowAllSubjects(classId);
             var schedules = this.scheduleService.GetAllSchedulesForSubjectId(subjectId);
             foreach (var schedule in schedules)
             {
@@ -388,8 +643,8 @@ namespace WPFScholifyApp
                 this.RightPanel.Children.Add(deleteButton);
             }
 
-            var createButton = new Button { Content = "Додати предмет в розклад", Height = 60, Width = 700, FontSize = 30, Tag = subjectId };
-            createButton.Click += new RoutedEventHandler(this.AddSchedule);
+            var createButton = new Button { Content = "Додати предмет в розклад", Height = 60, Width = 700, FontSize = 30, Tag = classId };
+            createButton.Click += new RoutedEventHandler(this.СreateSchedule);
             this.RightAction.Children.Add(createButton);
             UpdateAdminPanels();
         }
@@ -434,12 +689,12 @@ namespace WPFScholifyApp
         }
 
         // Метод який викликається при натисканні кнопки "Додати Розклад"
-        private void AddSchedule(object sender, RoutedEventArgs e)
+        private void СreateSchedule(object sender, RoutedEventArgs e)
         {
-            var createButton = (Button)sender;
+            //var createButton = (Button)sender;
             var createWindow = new CreateSchedule(
-                this.subjectRepository.GetAllq().Include(x => x.Class).FirstOrDefault(x => x.Id == this.selectedSubjectId)!.Class!,
-                this.subjectRepository.GetAllq().Include(x => x.Class).FirstOrDefault(x => x.Id == this.selectedSubjectId)!,
+                this.subjectRepository.GetAllq().Include(x => x.Class).FirstOrDefault(x => x.ClassId == this.selectedClassId)!.Class!,
+                new GenericRepository<Subject>(),
                 this.scheduleRepository,
                 this.dayOfWeekRepository,
                 this.lessonTimeRepository,
@@ -493,7 +748,11 @@ namespace WPFScholifyApp
             this.scheduleRepository.Delete((int)deleteButton.Tag);
             this.scheduleRepository.Save();
             this.DeleteFromAdminPanels();
-            this.ShowAllSubjects();
+
+            var subjectId = this.subjectRepository.GetAll().FirstOrDefault(x => x.Id == (int)deleteButton.Tag).Id;
+
+            var classId = this.subjectRepository.GetAll().FirstOrDefault(x => x.Id == subjectId).ClassId;
+            ShowAllSubjects(classId);
             this.ShowAllSchedulesForSubject(this.selectedSubjectId);
             this.UpdateAdminPanels();
         }
@@ -553,6 +812,7 @@ namespace WPFScholifyApp
         }
 
 
+        // Методи для оновлення вмісту вікна
         public void DeleteFromAdminPanels()
         {
             this.RightPanel.Children.Clear();
@@ -567,6 +827,37 @@ namespace WPFScholifyApp
             this.LeftPanel.UpdateLayout();
             this.RightAction.UpdateLayout();
             this.LeftAction.UpdateLayout();
+        }
+
+        public void SetSidePanelsVisible()
+        {
+            this.RightPanel.Visibility = Visibility.Visible;
+            this.LeftPanel.Visibility = Visibility.Visible;
+            this.RightAction.Visibility = Visibility.Visible;
+        }
+
+        public void SetSidePanelsHidden()
+        {
+            this.RightPanel.Visibility = Visibility.Hidden;
+            this.LeftPanel.Visibility = Visibility.Hidden;
+            this.RightAction.Visibility = Visibility.Hidden;
+        }
+
+        public void ClearDays()
+        {
+            this.Monday.Children.Clear();
+            this.Tuesday.Children.Clear();
+            this.Wednesday.Children.Clear();
+            this.Thursday.Children.Clear();
+            this.Friday.Children.Clear();
+        }
+        public void UpdateDays()
+        {
+            this.Monday.UpdateLayout();
+            this.Tuesday.UpdateLayout();
+            this.Wednesday.UpdateLayout();
+            this.Thursday.UpdateLayout();
+            this.Friday.UpdateLayout();
         }
     }
 }

@@ -279,7 +279,7 @@ namespace WPFScholifyApp
             // Додамо кнопки з учнями
             this.ShowAllPupilsForClassId(this.selectedClassId);
         }
-        public void ShowAllClasses(bool IsAdvertisement = false, bool IsJournal = false)
+        public void ShowAllClasses(bool IsAdvertisement = true, bool IsJournal = false)
         {
             this.Schedule.Visibility = Visibility.Hidden;
             this.SetSidePanelsVisible();
@@ -317,7 +317,7 @@ namespace WPFScholifyApp
             var subjects = this.subjectRepository.GetAllq()
                 .Include(x => x.Teachers)
                 .Include(x => x.Class)
-                .Where(x => x.Teachers!.Select(y => y.Id).Contains(this.CurrentUser.Id));
+                .Where(x => x.Teachers!.Select(y => y.UserId).Contains(this.CurrentUser.Id)).ToList();
 
             foreach (var s in subjects)
             {

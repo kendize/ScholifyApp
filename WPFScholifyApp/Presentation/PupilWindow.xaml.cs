@@ -391,7 +391,7 @@ namespace WPFScholifyApp
             this.Schedule.Visibility = Visibility.Hidden;
             this.Panel.Visibility = Visibility.Visible;
             DeleteFromPupilsPanel();
-            var classId = this.pupilRepository.GetAllq().Include(x => x.Class).FirstOrDefault(x => x.Id == CurrentUser.Id)!.ClassId;
+            var classId = this.pupilRepository.GetAllq().Include(x => x.Class).FirstOrDefault(x => x.UserId == CurrentUser.Id)!.ClassId;
             AdvertisementService advertisementService = new AdvertisementService(new GenericRepository<Advertisement>(), new GenericRepository<Class>(), new GenericRepository<Pupil>());
             var advertisements = this.advertisementService.GetAdvertisementsForClassId(classId);
             foreach (var advertisement in advertisements)

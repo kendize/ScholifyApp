@@ -28,13 +28,14 @@ namespace WPFScholifyApp.Presentation
         private IGenericRepository<DayOfWeek> dayOfWeekRepository;
         private IGenericRepository<LessonTime> lessonTimeRepository;
         private IGenericRepository<Teacher> teacherRepository;
+        private IGenericRepository<Subject> subjectRepository;
         private AdminWindow adminWindow;
         public Class? Class;
-        public Subject? Subject;
 
         public ObservableCollection<ComboBoxItem> cbItems { get; set; }
+        public ObservableCollection<ComboBoxItem> cbItems2 { get; set; }
 
-        public CreateSchedule(Class clas, Subject subject, IGenericRepository<Schedule> scheduleRepository, IGenericRepository<DayOfWeek> dayOfWeekRepository, IGenericRepository<LessonTime> lessonTimeRepository, IGenericRepository<Teacher> teacherRepository, AdminWindow adminWindow)
+        public CreateSchedule(Class clas, IGenericRepository<Subject> subjectRepository, IGenericRepository<Schedule> scheduleRepository, IGenericRepository<DayOfWeek> dayOfWeekRepository, IGenericRepository<LessonTime> lessonTimeRepository, IGenericRepository<Teacher> teacherRepository, AdminWindow adminWindow)
         {
             this.adminWindow = adminWindow;
             InitializeComponent();
@@ -42,11 +43,11 @@ namespace WPFScholifyApp.Presentation
             this.dayOfWeekRepository = dayOfWeekRepository;
             this.lessonTimeRepository = lessonTimeRepository;
             this.teacherRepository = teacherRepository;
+            this.subjectRepository = subjectRepository;
             cbItems = new ObservableCollection<ComboBoxItem>();
+
             this.ClassLabel.Content = clas.ClassName;
-            this.SubjectLabel.Content = subject.SubjectName;
             this.Class = clas;
-            this.Subject = subject;
             cbItems.Add(new ComboBoxItem { Content = $"{Times.t8_30.ToString("HH:mm")} - {Times.t9_15.ToString("HH:mm")}", Tag = 1 });
             cbItems.Add(new ComboBoxItem { Content = $"{Times.t9_30.ToString("HH:mm")} - {Times.t10_15.ToString("HH:mm")}", Tag = 2 });
             cbItems.Add(new ComboBoxItem { Content = $"{Times.t10_30.ToString("HH:mm")} - {Times.t11_15.ToString("HH:mm")}", Tag = 3 });
@@ -58,6 +59,15 @@ namespace WPFScholifyApp.Presentation
             this.cbItems = cbItems;
             this.TimeComboBox.ItemsSource = cbItems;
             this.adminWindow = adminWindow;
+
+            var subjects = this.subjectRepository.GetAll().Where(x => x.ClassId == clas.Id);
+            cbItems2 = new ObservableCollection<ComboBoxItem>();
+            foreach ( var subject in subjects)
+            {
+                cbItems2.Add(new ComboBoxItem { Content = subject.SubjectName, Tag = subject.Id });
+            }
+            this.cbItems2 = cbItems2;
+            this.SubjectComboBox.ItemsSource = cbItems2;
         }
 
         private void ClassComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -69,7 +79,7 @@ namespace WPFScholifyApp.Presentation
         {
             var timeId = ((ComboBoxItem)this.TimeComboBox.SelectedItem).Tag != null ? (int)((ComboBoxItem)this.TimeComboBox.SelectedItem).Tag : 0;
             var lessonTime = this.lessonTimeRepository.GetAll().FirstOrDefault(x => x.Id == timeId);
-
+            var subjectId =  ((ComboBoxItem)this.SubjectComboBox.SelectedItem).Tag != null ? (int)((ComboBoxItem)this.SubjectComboBox.SelectedItem).Tag : 0;
             var dayOfWeek = this.dayOfWeekRepository.GetAll().FirstOrDefault(x => x.Date.AddDays(1).Date.Equals(this.Date.SelectedDate!.Value.Date));
 
             if (dayOfWeek == null) {
@@ -85,7 +95,7 @@ namespace WPFScholifyApp.Presentation
                 dayOfWeek = new DayOfWeek { Id = newDayOfWeek.Id };
             }
 
-            var teacher = this.teacherRepository.GetAll().FirstOrDefault(x => x.SubjectId == this.Subject!.Id);
+            var teacher = this.teacherRepository.GetAll().FirstOrDefault(x => x.SubjectId == subjectId);
 
             var newSchedule = new Schedule()
             {
@@ -93,7 +103,7 @@ namespace WPFScholifyApp.Presentation
                 ClassId = this.Class!.Id,
                 DayOfWeekId = dayOfWeek!.Id,
                 LessonTimeId = lessonTime!.Id,
-                SubjectId = this.Subject!.Id
+                SubjectId = subjectId
             };
 
             this.scheduleRepository.Insert(newSchedule);
@@ -101,10 +111,7 @@ namespace WPFScholifyApp.Presentation
 
             this.Close();
 
-            this.adminWindow.DeleteFromAdminPanels();
-            this.adminWindow.ShowAllSubjects();
-            this.adminWindow.ShowAllSchedulesForSubject(this.Subject!.Id);
-            this.adminWindow.UpdateAdminPanels();
+            this.adminWindow.ShowAllWeek(this.Class!.Id);
         }
     }
 }

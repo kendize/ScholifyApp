@@ -73,8 +73,14 @@ namespace WPFScholifyApp
                     }
                     else if (authenticatedUser.Role == "батьки")
                     {
-                        ParentsWindow parentsWindow = new ParentsWindow();
-                        parentsWindow.FirstNameTextBlock.Text = userService.Authenticate(email, password).FirstName;
+                        ParentsWindow parentsWindow = new ParentsWindow(authenticatedUser,
+                            new PupilService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Schedule>()),
+                            new GenericRepository<DayOfWeek>(),
+                            new GenericRepository<Pupil>(),
+                            new AdminService(
+                                new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Advertisement>()),
+                            new GenericRepository<Class>(), new JournalService(new GenericRepository<DayBook>(), new GenericRepository<Subject>(), new GenericRepository<Class>(), new GenericRepository<DayOfWeek>(), new ScheduleService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Schedule>(), new GenericRepository<Subject>())), new GenericRepository<DayBook>(), new GenericRepository<Schedule>(), new GenericRepository<Subject>());
+                    parentsWindow.FirstNameTextBlock.Text = userService.Authenticate(email, password).FirstName;
                         parentsWindow.LastNameTextBlock.Text = userService.Authenticate(email, password).LastName;
                         parentsWindow.Show();
                     }
