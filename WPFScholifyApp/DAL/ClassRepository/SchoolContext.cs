@@ -55,8 +55,8 @@ namespace WPFScholifyApp.DAL.ClassRepository
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Teacher>()
-    .HasIndex(x => x.UserId)
-    .IsUnique(false);
+            .HasIndex(x => x.UserId)
+            .IsUnique(false);
 
             // Додаємо тестові дані при створені бази даних
             modelBuilder.Entity<User>().HasData(

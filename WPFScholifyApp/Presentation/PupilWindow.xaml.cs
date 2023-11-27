@@ -14,6 +14,7 @@ namespace WPFScholifyApp
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Data;
+    using System.Windows.Input;
     using System.Windows.Media;
     using WPFScholifyApp.BLL;
     using WPFScholifyApp.DAL.ClassRepository;
@@ -27,19 +28,26 @@ namespace WPFScholifyApp
     {
         public List<DateTime> Days { get; set; }
 
-
         private IGenericRepository<Pupil> pupilRepository;
         private IGenericRepository<DayOfWeek> dayOfWeekRepository;
-
+        private IGenericRepository<Class> classRepository;
+        private IGenericRepository<DayBook> dayBookRepository;
+        private IGenericRepository<Schedule> scheduleRepository;
+        private IGenericRepository<Subject> subjectRepository;
         private PupilService pupilService;
         private User CurrentUser;
         private AdminService adminService;
         private UserService userService;
         private AdvertisementService advertisementService;
+        private JournalService journalService;
 
-        public PupilWindow(User currentUser, PupilService pupilService, GenericRepository<DayOfWeek> dayOfWeekRepository, GenericRepository<Pupil> pupilRepository, AdminService adminService)
+        public PupilWindow(User currentUser, PupilService pupilService, GenericRepository<DayOfWeek> dayOfWeekRepository, GenericRepository<Pupil> pupilRepository, AdminService adminService, GenericRepository<Class> classRepository, JournalService journalService, GenericRepository<DayBook> dayBookRepository, GenericRepository<Schedule> scheduleRepository, GenericRepository<Subject> subjectRepository)
 
         {
+            this.subjectRepository = subjectRepository;
+            this.scheduleRepository = scheduleRepository;
+            this.journalService = journalService;
+            this.dayBookRepository = dayBookRepository;
             this.CurrentUser = currentUser;
             this.pupilService = new PupilService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Schedule>());
             this.adminService = adminService;
@@ -47,6 +55,7 @@ namespace WPFScholifyApp
             this.dayOfWeekRepository = dayOfWeekRepository;
             this.advertisementService = new AdvertisementService(new GenericRepository<Advertisement>(), new GenericRepository<Class>(), new GenericRepository<Pupil>());
             this.pupilRepository = pupilRepository;
+            this.classRepository = classRepository;
 
             this.InitializeComponent();
             CultureInfo culture = new CultureInfo("uk-UA"); // Adjust culture as needed
@@ -129,9 +138,119 @@ namespace WPFScholifyApp
         {
             this.Schedule.Visibility = Visibility.Hidden;
             this.Panel.Visibility = Visibility.Visible;
-
-            DeleteFromPupilsPanel();
+            this.ShowJournalForUserId(CurrentUser.Id);
             this.UpdateDays();
+        }
+        public void ShowJournalForUserId(int id)
+        {
+            this.DeleteFromPupilsPanel();
+            //this.ShowAllSubjectsForTeacher();
+            var group2 = this.classRepository.GetAllq().Include(x => x.Pupils).Where(x => x.Pupils!.Select(y => y.Id).Contains(id)).ToList(); //   .Select(x => x.Pupils).ToList();
+            var classId = this.classRepository.GetAllq().Include(x => x.Pupils).Where(x => x.Pupils!.Select(y => y.Id).Contains(id)).FirstOrDefault().Id;
+            var group = this.subjectRepository.GetAll().Where(x => x.ClassId == classId).ToList();
+
+
+            var grades = this.journalService.GetDayBooksForUserId(id);
+            var dates = this.scheduleRepository.GetAllq().AsNoTracking().Include(x => x.Class).Where(x => x.ClassId == classId).Select(x => x.DayOfWeek).Distinct().ToList();
+
+
+            dates = dates.OrderBy(x => x.Date).ToList();
+            // Create Grid for table
+            var grid = new Grid();
+
+            // Define the rows in the grid
+            for (int i = 0; i <= group.Count; i++)
+            {
+                grid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
+            }
+
+            // Create columns for user names and dates
+            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto }); // User column
+
+            foreach (var date in dates)
+            {
+                grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto }); // Date columns
+            }
+
+            // Add headers
+            for (int i = 0; i <= dates.Count; i++)
+            {
+                var label = new Label();
+                label.FontSize = 20;
+                label.HorizontalAlignment = HorizontalAlignment.Center;
+
+                if (i == 0)
+                {
+                    label.Content = "Предмет";
+                }
+                else
+                {
+                    label.Content = dates[i - 1].Date.ToString("d");
+                }
+
+                Grid.SetColumn(label, i);
+                Grid.SetRow(label, 0);
+                grid.Children.Add(label);
+            }
+
+            // Populate data
+            for (int i = 0; i < group.Count; i++)
+            {
+                var subject = group[i];
+
+                var subjectLabel = new Label();
+                subjectLabel.FontSize = 25;
+                subjectLabel.Content = $"{subject.SubjectName}";
+                Grid.SetColumn(subjectLabel, 0);
+                Grid.SetRow(subjectLabel, i + 1);
+                grid.Children.Add(subjectLabel);
+
+                for (int j = 0; j < dates.Count; j++)
+                {
+                    var date = dates[j];
+                    var dayBook = grades.FirstOrDefault(x => x.Schedule.SubjectId == subject.Id && x.Schedule.DayOfWeek.Day.Equals(date.Day));
+
+                    if (dayBook != null)
+                    {
+                        var gradeButton = new Button();
+                        gradeButton.FontSize = 25;
+                        gradeButton.Width = 110;
+                        gradeButton.Height = 45;
+                        gradeButton.Content = dayBook.Grade.ToString();
+                        gradeButton.Tag = dayBook.Id;
+
+                        Grid.SetColumn(gradeButton, j + 1);
+                        Grid.SetRow(gradeButton, i + 1);
+                        grid.Children.Add(gradeButton);
+                    }
+
+                    else
+                    {
+                        var gradeInput = new Button();
+                        gradeInput.FontSize = 25;
+                        gradeInput.Width = 110;
+                        gradeInput.Height = 45;
+
+                        gradeInput.HorizontalAlignment = HorizontalAlignment.Center;
+                        gradeInput.VerticalAlignment = VerticalAlignment.Center;
+                        gradeInput.VerticalAlignment = VerticalAlignment.Center;
+                        gradeInput.HorizontalAlignment = HorizontalAlignment.Center;
+                        gradeInput.Content = "-";
+
+                        Grid.SetColumn(gradeInput, j + 1);
+                        Grid.SetRow(gradeInput, i + 1);
+                        grid.Children.Add(gradeInput);
+                    }
+
+
+                }
+            }
+            grid.Margin = new Thickness(80, 80, 50, 50);
+            // Add the Grid to your UI
+            Panel.Children.Add(grid);
+
+            // After displaying all students for the selected class, add the "Add Announcement" button
+            this.UpdatePupilsPanel();
         }
 
         private void ScheduleButton_Click(object sender, RoutedEventArgs e)
@@ -302,6 +421,7 @@ namespace WPFScholifyApp
 
             UpdatePupilsPanel();
         }
+
 
         public void ChangeDate(object sender, RoutedEventArgs e)
         {

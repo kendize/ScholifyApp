@@ -22,7 +22,7 @@ namespace WPFScholifyApp.DAL.DBClasses
 
         public string? Attendance { get; set; }
 
-        [Required]
+        //[Required]
         public int ScheduleId { get; set; }
 
         [ForeignKey("ScheduleId")]

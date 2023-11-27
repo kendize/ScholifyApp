@@ -41,14 +41,31 @@ namespace WPFScholifyApp
                             new GenericRepository<DayOfWeek>(), 
                             new GenericRepository<Pupil>(), 
                             new AdminService(
-                                new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>() , new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Advertisement>()));
+                                new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>() , new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Advertisement>()),
+                            new GenericRepository<Class>(), new JournalService(new GenericRepository<DayBook>(), new GenericRepository<Subject>(), new GenericRepository<Class>(), new GenericRepository<DayOfWeek>(), new ScheduleService(new GenericRepository<User> (), new GenericRepository<Class>(), new GenericRepository<Schedule>(), new GenericRepository<Subject>())), new GenericRepository<DayBook>(), new GenericRepository<Schedule>(), new GenericRepository<Subject>());
                         pupilWindow.FirstNameTextBlock.Text = userService.Authenticate(email, password).FirstName;
                         pupilWindow.LastNameTextBlock.Text = userService.Authenticate(email, password).LastName;
                         pupilWindow.Show();
                     }
                     else if (authenticatedUser.Role == "вчитель")
                     {
-                        TeacherWindow teacherWindow = new TeacherWindow(authenticatedUser, new GenericRepository<DayOfWeek>(), new GenericRepository<Teacher>(), new JournalService(new GenericRepository <DayBook> (),new  GenericRepository < Subject > (), new GenericRepository < Class > ()), new GenericRepository<DayBook>(), new GenericRepository<Class>(), new GenericRepository<User>(), new GenericRepository<DayBook>(), new GenericRepository<Subject>());
+                        TeacherWindow teacherWindow = new TeacherWindow(authenticatedUser, 
+                            new GenericRepository<DayOfWeek>(), 
+                            new GenericRepository<Teacher>(), 
+                            new JournalService(
+                                new GenericRepository <DayBook> (),
+                                new  GenericRepository < Subject > (), 
+                                new GenericRepository < Class > (), 
+                                new GenericRepository<DayOfWeek>(), 
+                                new ScheduleService(
+                                    new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Schedule>(),  new GenericRepository<Subject>())), 
+                            new GenericRepository<DayBook>(),
+                                new GenericRepository<Class>(),
+                                new GenericRepository<User>(),
+                                new GenericRepository<DayBook>(),
+                                new GenericRepository<Subject>(),
+                                new GenericRepository<Schedule>());
+
                         teacherWindow.FirstNameTextBlock.Text = userService.Authenticate(email, password).FirstName;
                         teacherWindow.LastNameTextBlock.Text = userService.Authenticate(email, password).LastName;
                         teacherWindow.Show();

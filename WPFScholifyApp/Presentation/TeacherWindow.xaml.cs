@@ -41,11 +41,13 @@ namespace WPFScholifyApp
         private GenericRepository<User> userRepository;
         private GenericRepository<DayBook> dayBookRepository;
         private GenericRepository<Subject> subjectRepository;
+        private GenericRepository<Schedule> scheduleRepository;
         public int selectedClassId;
+        public int selectedSubjectId;
         private User CurrentUser;
         public List<DateTime> Days { get; set; }
 
-        public TeacherWindow(User currentUser, GenericRepository<DayOfWeek> dayOfWeekRepository, GenericRepository<Teacher> teacherRepository, JournalService journalService, GenericRepository<DayBook> journalRepository, GenericRepository<Class> classRepository, GenericRepository<User> userRepository, GenericRepository<DayBook> dayBookRepository, GenericRepository<Subject> subjectRepository)
+        public TeacherWindow(User currentUser, GenericRepository<DayOfWeek> dayOfWeekRepository, GenericRepository<Teacher> teacherRepository, JournalService journalService, GenericRepository<DayBook> journalRepository, GenericRepository<Class> classRepository, GenericRepository<User> userRepository, GenericRepository<DayBook> dayBookRepository, GenericRepository<Subject> subjectRepository, GenericRepository<Schedule> scheduleRepository)
         {
             this.dayBookRepository = dayBookRepository;
             this.journalService = journalService;
@@ -55,6 +57,7 @@ namespace WPFScholifyApp
             this.classRepository = classRepository;
             this.userRepository = userRepository;
             this.subjectRepository = subjectRepository;
+            this.scheduleRepository = scheduleRepository;
             this.InitializeComponent();
             CultureInfo culture = new CultureInfo("uk-UA"); // Adjust culture as needed
 
@@ -155,10 +158,10 @@ namespace WPFScholifyApp
         public void SpecificClassButton_Journal_Click(object sender, RoutedEventArgs e)
         {
             var classButton = (Button)sender;
-            this.selectedClassId = (int)classButton.Tag;
+            this.selectedSubjectId = (int)classButton.Tag;
 
             // Додамо кнопки з учнями
-            this.ShowJournalForClassId(this.selectedClassId);
+            this.ShowJournalForSubjectId(this.selectedSubjectId);
         }
 
         public void ShowAllPupilsForClassId(int classId)
@@ -263,19 +266,27 @@ namespace WPFScholifyApp
             this.UpdateTeacherPanel();
         }
 
-        public void ShowJournalForClassId(int id)
+        public void ShowJournalForSubjectId(int id)
         {
             this.DeleteFromTeacherPanel();
             this.ShowAllSubjectsForTeacher();
+            var a = this.userRepository.GetAllq()
+                .Include(x => x.Pupil)
+                .ThenInclude(x => x.Class);
 
             var group = this.userRepository.GetAllq()
                 .Include(x => x.Pupil)
                 .ThenInclude(x => x.Class)
-                .Where(x => x.Pupil.Class.Id == id).ToList();
+                .ThenInclude(x => x.Subjects)
+                .Where(x => x.Pupil.Class.Subjects!.Select(y => y.Id).Contains(id)).ToList();
+            var classId = this.classRepository.GetAllq().Include(x => x.Subjects).Where(x => x.Subjects!.Select(y => y.Id).Contains(id)).FirstOrDefault().Id;
 
-            var columns = this.journalService.GetDayBooks(id);
-            var dates = columns.Select(x => x.Schedule.DayOfWeek).Distinct().ToList();
 
+            var grades = this.journalService.GetDayBooks(classId);
+            var dates = this.scheduleRepository.GetAllq().AsNoTracking().Include(x => x.DayOfWeek).Where(x => x.SubjectId == id).Select(x => x.DayOfWeek).Distinct().ToList();
+
+
+            dates = dates.OrderBy(x => x.Date).ToList();
             // Create Grid for table
             var grid = new Grid();
 
@@ -320,7 +331,7 @@ namespace WPFScholifyApp
                 var user = group[i];
 
                 var userLabel = new Label();
-                userLabel.FontSize = 20;
+                userLabel.FontSize = 25;
                 userLabel.Content = $"{user.LastName} {user.FirstName}";
                 Grid.SetColumn(userLabel, 0);
                 Grid.SetRow(userLabel, i + 1);
@@ -329,39 +340,55 @@ namespace WPFScholifyApp
                 for (int j = 0; j < dates.Count; j++)
                 {
                     var date = dates[j];
-                    var dayBook = columns.FirstOrDefault(x => x.Pupil.User.Id == user.Id && x.Schedule.DayOfWeek == date);
+                    var dayBook = grades.FirstOrDefault(x => x.Pupil.User.Id == user.Id && x.Schedule.DayOfWeek.Day.Equals(date.Day));
 
-                    var gradeButton = new Button();
-                    gradeButton.FontSize = 20;
                     if (dayBook != null)
                     {
+                        var gradeButton = new Button();
+                        gradeButton.FontSize = 25;
+                        gradeButton.Width = 110;
+                        gradeButton.Height = 45;
                         gradeButton.Content = dayBook.Grade.ToString();
-                        gradeButton.Tag = new {
-                            DayOfWeek = date, 
-                            DayBook = dayBook
-                        };
+                        gradeButton.Tag = dayBook.Id;
 
                         gradeButton.Click += new RoutedEventHandler(this.DeleteGrade);
+                        Grid.SetColumn(gradeButton, j + 1);
+                        Grid.SetRow(gradeButton, i + 1);
+                        grid.Children.Add(gradeButton);
                     }
 
                     else 
                     {
-                        gradeButton.Content = "-";
-                        gradeButton.Tag = new
+                        var gradeInput = new TextBox();
+                        gradeInput.FontSize = 25;
+                        gradeInput.Width = 110;
+                        gradeInput.Height = 45;
+
+                        gradeInput.VerticalAlignment = VerticalAlignment.Center;
+                        gradeInput.HorizontalAlignment = HorizontalAlignment.Center;
+                        gradeInput.Text = "";
+                        gradeInput.Tag = new
                         {
                             DayOfWeek = date,
-                            User = user
+                            DayBook = new DayBook
+                            {
+                                Id = (this.dayBookRepository.GetAll().OrderByDescending(x => x.Id).FirstOrDefault()?.Id ?? 0) + 1,
+                                PupilId = (this.adminService.GetAllPupils().FirstOrDefault(x => x.Id == user.Id)?.Id ?? 0),
+                                Grade = int.TryParse(gradeInput.Text, out int result)  == true  ? result : 0,
+                                Attendance = !int.TryParse(gradeInput.Text, out int result2) == true ? gradeInput.Text : string.Empty,
+                            }
                         };
 
-                        gradeButton.Click += new RoutedEventHandler(this.AddGrade);
+                        gradeInput.KeyDown += this.AddGrade;
+                        Grid.SetColumn(gradeInput, j + 1);
+                        Grid.SetRow(gradeInput, i + 1);
+                        grid.Children.Add(gradeInput);
                     }
 
-                    Grid.SetColumn(gradeButton, j + 1);
-                    Grid.SetRow(gradeButton, i + 1);
-                    grid.Children.Add(gradeButton);
+                    
                 }
             }
-
+            grid.Margin = new Thickness(20, 20, 50, 50);
             // Add the Grid to your UI
             RightPanel.Children.Add(grid);
 
@@ -369,13 +396,31 @@ namespace WPFScholifyApp
             this.UpdateTeacherPanel();
         }
 
-        public void AddGrade(object sender, RoutedEventArgs e)
+        public void AddGrade(object sender, KeyEventArgs e)
         {
+            if (e.Key == Key.Return)
+            {
+                var gradeInput = (TextBox)sender;
+                var tag = (dynamic)gradeInput.Tag;
+                var dayOfWeek = ((dynamic)gradeInput.Tag).DayOfWeek;
+                var dayBook = ((dynamic)gradeInput.Tag).DayBook;
+                dayBook.Grade = int.TryParse(gradeInput.Text, out int result) == true ? result : 0;
+                dayBook.Attendance = !int.TryParse(gradeInput.Text, out int result2) == true ? gradeInput.Text : string.Empty;
+                this.journalService.AddGrade(dayOfWeek, dayBook, this.selectedSubjectId);
+                this.DeleteFromTeacherPanel();
+                this.ShowJournalForSubjectId(this.selectedSubjectId);
+                this.UpdateTeacherPanel();
+            }
         }
 
         public void DeleteGrade(object sender, RoutedEventArgs e)
         {
-
+            var gradeInput = (Button)sender;
+            var dayBookId = (int)gradeInput.Tag;
+            this.journalService.DeleteGrade(dayBookId);
+            this.DeleteFromTeacherPanel();
+            this.ShowJournalForSubjectId(this.selectedSubjectId);
+            this.UpdateTeacherPanel();
         }
 
         private void LookAvertisement(object sender, RoutedEventArgs e)

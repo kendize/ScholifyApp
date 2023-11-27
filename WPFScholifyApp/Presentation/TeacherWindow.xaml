@@ -24,10 +24,10 @@
                 <StackPanel x:Name="LeftPanel" RenderTransformOrigin="0.297,0.786" Background="White" Width="420" Height="1012">
                 </StackPanel>
             </ScrollViewer>
-            <ScrollViewer Margin="934,0,0,60" Name="rightScroll" CanContentScroll="True" >
-                <StackPanel x:Name="RightPanel" Background="White" Height="1023" Width="924" RenderTransformOrigin="0.503,0.796"/>
+            <ScrollViewer Margin="934,0,0,60" Name="rightScroll" CanContentScroll="True" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
+                <StackPanel x:Name="RightPanel" Background="White" Height="1023" Width="924" RenderTransformOrigin="0.503,0.796" />
             </ScrollViewer>
-            <StackPanel Background="White" x:Name="RightAction" Margin="934,1023,0,-1">
+            <StackPanel Background="White" x:Name="RightAction" Margin="934,1062,0,-1">
             </StackPanel>
             <StackPanel x:Name="Schedule" Orientation="Vertical"  Height="1023" Margin="486,0,0,0" Width="1372" RenderTransformOrigin="0.503,0.796"  Background="White" Visibility="Hidden">
                 <Label VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="30">Розклад</Label>
