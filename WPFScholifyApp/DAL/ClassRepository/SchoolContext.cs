@@ -64,12 +64,14 @@ namespace WPFScholifyApp.DAL.ClassRepository
             modelBuilder.Entity<ParentsPupil>()
                 .HasOne(x => x.parent)
                 .WithMany(x => x.ParentsPupils)
-                .HasForeignKey(x => x.parentId);
+                .HasForeignKey(x => x.parentId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<ParentsPupil>()
                 .HasOne(x => x.pupil)
                 .WithMany(x => x.ParentsPupil)
-                .HasForeignKey(x => x.pupilId);
+                .HasForeignKey(x => x.pupilId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Додаємо тестові дані при створені бази даних
             modelBuilder.Entity<User>().HasData(

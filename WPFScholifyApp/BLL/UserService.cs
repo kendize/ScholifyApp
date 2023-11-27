@@ -4,6 +4,7 @@
 
 namespace WPFScholifyApp.BLL
 {
+    using Microsoft.EntityFrameworkCore;
     using System;
     using System.Linq;
     using WPFScholifyApp.DAL.ClassRepository;
@@ -13,11 +14,15 @@ namespace WPFScholifyApp.BLL
     {
         private IGenericRepository<User> userRepository;
         private IGenericRepository<Pupil> pupilRepository;
+        private IGenericRepository<Parents> parentRepository;
+        private IGenericRepository<ParentsPupil> parentsPupilRepository;
 
-        public UserService(IGenericRepository<User> userRepos, IGenericRepository<Pupil> pupilRepos)
+        public UserService(IGenericRepository<User> userRepos, IGenericRepository<Pupil> pupilRepos, IGenericRepository<Parents> parentRepository, IGenericRepository<ParentsPupil> parentsPupilRepository)
         {
             this.pupilRepository = pupilRepos;
             this.userRepository = userRepos;
+            this.parentRepository = parentRepository;
+            this.parentsPupilRepository = parentsPupilRepository;
         }
 
         public User Authenticate(string email, string password)
@@ -87,10 +92,15 @@ namespace WPFScholifyApp.BLL
             this.userRepository.Save();
         }
 
-        //public void DeletePerents((int userId)
-        //{
-        //    this.userRepository.Delete(userId);
-        //    this.userRepository.Save();
-        //}
+        public void DeleteParent(int parentId)
+        {
+            var parent = this.parentRepository.GetAllq().Include(x => x.ParentsPupils).FirstOrDefault(x => x.Id == parentId);
+
+            this.parentRepository.Delete(parentId);
+            this.parentRepository.Save();
+
+            this.userRepository.Delete(parent.UserId);
+            this.userRepository.Save();
+        }
     }
 }

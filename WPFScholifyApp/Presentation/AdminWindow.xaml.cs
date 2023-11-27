@@ -65,7 +65,7 @@ namespace WPFScholifyApp
             this.teacherRepository = new GenericRepository<Teacher>();
             this.classRepository = new GenericRepository<Class>();
             this.advertisementsRepository = new GenericRepository<Advertisement>();
-            this.userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>());
+            this.userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>(), new GenericRepository<Parents>(), new GenericRepository<ParentsPupil>());
             this.parentsService = new ParentsService(new GenericRepository<User>(), new GenericRepository<Pupil>(), new GenericRepository<Parents>());
             this.scheduleService = new ScheduleService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Schedule>(), new GenericRepository<Subject>());
             this.adminService = new AdminService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Advertisement>());
@@ -123,17 +123,17 @@ namespace WPFScholifyApp
             var parents = this.parentsService.GetParentsForPupilId(pupilId);
             foreach (var f in parents)
             {
-                var teacherPanel = new StackPanel { Orientation = Orientation.Horizontal };
+                //var teacherPanel = new StackPanel { Orientation = Orientation.Horizontal };
 
                 var button = new Button { Content = $" {f!.User!.LastName} {f!.User!.FirstName}", Height = 60, Width = 500, FontSize = 30, Tag = f.Id };
                 button.Click += new RoutedEventHandler(this.LookParents);
                 RightPanel.Children.Add(button);
 
-                //var deleteButton = new Button { Content = $"Видалити", Height = 60, Width = 30, FontSize = 30, Tag = f.Id, Margin = new Thickness(10, 0, 0, 0) };
-                //deleteButton.Click += new RoutedEventHandler(this.DeleteParents);
-                //RightPanel.Children.Add(deleteButton);
+                var deleteButton = new Button { Content = $"Видалити", Height = 60, Width = 500, FontSize = 30, Tag = f.Id, Margin = new Thickness(0, 0, 0, 0) };
+                deleteButton.Click += new RoutedEventHandler(this.DeleteParents);
+                RightPanel.Children.Add(deleteButton);
 
-                this.LeftPanel.Children.Add(teacherPanel);
+                //this.LeftPanel.Children.Add(teacherPanel);
             }
 
             var createButton = new Button { Content = "Додати Батьків", Height = 60, Width = 300, FontSize = 30, };
@@ -142,18 +142,17 @@ namespace WPFScholifyApp
 
             this.UpdateAdminPanels();
         }
-        //private void DeleteParents(object sender, RoutedEventArgs e)
-        //{
-        //    var deleteButton = (Button)sender;
-        //    this.userService.DeletePerents((int)deleteButton.Tag);
-        //    this.RightPanel.Children.Clear();
-        //    this.LeftPanel.Children.Clear();
-        //    this.ShowAllPuplis();
-        //    this.ShowParentsForPupilId(this.selectedPupilsId);
-        //    this.UpdateAdminPanels();
-        //    this.RightPanel.UpdateLayout();
-        //    this.LeftPanel.UpdateLayout();
-        //}
+
+        private void DeleteParents(object sender, RoutedEventArgs e)
+        {
+            var deleteButton = (Button)sender;
+            this.userService.DeleteParent((int)deleteButton.Tag);
+            this.DeleteFromAdminPanels();
+            this.ShowAllPuplis();
+            this.ShowParentsForPupilId(this.selectedPupilsId);
+            this.UpdateAdminPanels();
+        }
+
         private void LookParents(object sender, RoutedEventArgs e)
         {
             var createButton = (Button)sender;
@@ -526,7 +525,7 @@ namespace WPFScholifyApp
         {
             var createButton = (Button)sender;
 
-            var createPanel = new LookUsers(new GenericRepository<User>(), new GenericRepository<Pupil>(), this);
+            var createPanel = new LookUsers(new GenericRepository<User>(), new GenericRepository<Pupil>(), this, new GenericRepository<Parents>(), new GenericRepository<ParentsPupil>());
             createPanel.ShowAllClasses = true;
             createPanel.currentClassId = this.selectedClassId;
             var pupils = this.adminService.GetAllPupils().FirstOrDefault(x => x.Id == (int)createButton.Tag);

@@ -39,7 +39,7 @@ namespace WPFScholifyApp.Presentation
         {
             this.pupilRepository = pupilRepos;
             this.userRepository = userRepos;
-            this.userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>());
+            this.userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>(), new GenericRepository<Parents> (), new GenericRepository < ParentsPupil > ());
             this.InitializeComponent();
             this.Zoriana.Content = this.TestFirstName;
             this.adminWindow = adminWindow;

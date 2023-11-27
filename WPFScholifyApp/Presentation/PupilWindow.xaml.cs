@@ -51,7 +51,7 @@ namespace WPFScholifyApp
             this.CurrentUser = currentUser;
             this.pupilService = new PupilService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Schedule>());
             this.adminService = adminService;
-            this.userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>());
+            this.userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>(), new GenericRepository<Parents>(), new GenericRepository<ParentsPupil>());
             this.dayOfWeekRepository = dayOfWeekRepository;
             this.advertisementService = new AdvertisementService(new GenericRepository<Advertisement>(), new GenericRepository<Class>(), new GenericRepository<Pupil>());
             this.pupilRepository = pupilRepository;
@@ -115,7 +115,7 @@ namespace WPFScholifyApp
             };
             this.Panel.Children.Add(titleLabel);
 
-            UserService userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>());
+            UserService userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>(), new GenericRepository<Parents>(), new GenericRepository<ParentsPupil>());
             string name = this.FirstNameTextBlock.Text;
             string surname = this.LastNameTextBlock.Text;
             User pupil = userService.GetInfoByNameSurname(name, surname);

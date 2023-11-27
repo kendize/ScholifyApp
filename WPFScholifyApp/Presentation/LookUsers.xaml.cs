@@ -35,11 +35,11 @@ namespace WPFScholifyApp.Presentation
         public User? currentUser { get; set; }
         public int currentClassId { get; set; }
 
-        public LookUsers(IGenericRepository<User> userRepos, IGenericRepository<Pupil> pupilRepos, AdminWindow adminWindow)
+        public LookUsers(IGenericRepository<User> userRepos, IGenericRepository<Pupil> pupilRepos, AdminWindow adminWindow, IGenericRepository<Parents> parentsRepository, IGenericRepository<ParentsPupil> parentPupilRepository)
         {
             this.pupilRepository = pupilRepos;
             this.userRepository = userRepos;
-            this.userService = new UserService(userRepos, pupilRepos);
+            this.userService = new UserService(userRepos, pupilRepos, parentsRepository, parentPupilRepository);
             this.InitializeComponent();
             AdminWindow = adminWindow;
         }

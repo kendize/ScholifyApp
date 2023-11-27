@@ -99,7 +99,7 @@ namespace WPFScholifyApp.Presentation
             this.adminWindow.DeleteFromAdminPanels();
 
             this.adminWindow.ShowAllPuplis();
-            this.parentsService.GetParentsForPupilId(this.PupilsId);
+            this.adminWindow.ShowParentsForPupilId(this.PupilsId);
 
             this.adminWindow.UpdateAdminPanels();
         }

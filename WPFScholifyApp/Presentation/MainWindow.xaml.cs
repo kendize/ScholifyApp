@@ -26,7 +26,7 @@ namespace WPFScholifyApp
         {
             string email = this.EmailTextBox.Text;
             string password = this.PasswordBox.Password;
-                UserService userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>());
+                UserService userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>(), new GenericRepository<Parents>(), new GenericRepository<ParentsPupil>());
                 User authenticatedUser = userService.Authenticate(email, password);
                 User authenticatedEmail = userService.AuthenticateEmail(email);
                 User authenticatedPassword = userService.AuthenticatePassword(password);
