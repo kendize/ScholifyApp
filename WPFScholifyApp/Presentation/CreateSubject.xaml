@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFScholifyApp.Presentation"
         mc:Ignorable="d"
-        Title="CreateSubject" Height="191" Width="554">
-    <Grid>
-        <StackPanel>
+        Title="CreateSubject" Height="235" Width="554">
+    <Grid Margin="0,0,0,-16">
+        <StackPanel Margin="0,0,0,15">
             <Label Width="92" Content="Назва предмету"/>
             <TextBox x:Name="SubjectName" Width="385"/>
             <Label/>
@@ -15,7 +15,7 @@
             <Label Width="92" Content="Клас" HorizontalContentAlignment="Center">
             </Label>
             <ComboBox x:Name="ClassComboBox" Width="150" Foreground="DarkBlue" Background="White" RenderTransformOrigin="0.513,0.619" ItemsSource="{Binding cbItems}"/>
-
+            <Label/>
             <Button Click="SaveSubject" Content="Додати Новий Предмет" Height="36" Width="382"/>
             <Label Height="18" RenderTransformOrigin="0.5,0.5" Width="385">
                 <Label.RenderTransform>

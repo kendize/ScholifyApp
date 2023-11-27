@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFScholifyApp.Presentation"
         mc:Ignorable="d"
-        Title="CreateClass"  Height="450" Width="800">
-    <Grid>
-        <StackPanel>
+        Title="CreateClass"  Height="243" Width="397">
+    <Grid Margin="0,0,-307,-265">
+        <StackPanel Margin="0,0,305,249">
             <Label Width="92" Content="Назва Класу"/>
             <TextBox x:Name="ClassName" Width="385"/>
             <Label/>

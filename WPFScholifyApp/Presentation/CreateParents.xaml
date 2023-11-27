@@ -1,11 +1,11 @@
-﻿<Window x:Class="WPFScholifyApp.Presentation.CreateUser"
+﻿<Window x:Class="WPFScholifyApp.Presentation.CreateParents"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFScholifyApp.Presentation"
         mc:Ignorable="d"
-            Title="CreateUser" Height="535" Width="800">
+        Title="CreateParents" Height="535" Width="800">
     <Grid Height="760" VerticalAlignment="Top">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="6*"/>
@@ -35,11 +35,9 @@
             <Label Width="92" Content="PhoneNumber"/>
             <TextBox x:Name="PhoneNumber" Width="385"/>
             <Label/>
-            <Button Click="SaveUser" Content="Додати Нового користувача" Height="34" Width="388"/>
+            <Button Click="SaveParents" Content="Додати" Height="19" Width="389"/>
             <Label/>
             <Button Click="Cancel" Content="Відмінити" Height="25" Width="385"/>
-            <Label x:Name="Zoriana"></Label>
         </StackPanel>
-
     </Grid>
 </Window>

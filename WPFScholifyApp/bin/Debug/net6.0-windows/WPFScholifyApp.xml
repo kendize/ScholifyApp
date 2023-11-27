@@ -92,6 +92,19 @@
             InitializeComponent
             </summary>
         </member>
+        <member name="T:WPFScholifyApp.Presentation.CreateParents">
+            <summary>
+            Interaction logic for CreateParents.xaml
+            </summary>
+            <summary>
+            CreateParents
+            </summary>
+        </member>
+        <member name="M:WPFScholifyApp.Presentation.CreateParents.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
         <member name="T:WPFScholifyApp.Presentation.CreateSchedule">
             <summary>
             Interaction logic for CreateSchedule.xaml
@@ -153,6 +166,19 @@
             </summary>
         </member>
         <member name="M:WPFScholifyApp.Presentation.LookClass.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:WPFScholifyApp.Presentation.LookParents">
+            <summary>
+            Interaction logic for LookParents.xaml
+            </summary>
+            <summary>
+            LookParents
+            </summary>
+        </member>
+        <member name="M:WPFScholifyApp.Presentation.LookParents.InitializeComponent">
             <summary>
             InitializeComponent
             </summary>

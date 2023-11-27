@@ -41,6 +41,10 @@
         "net6.0-windows7.0": {
           "targetAlias": "net6.0-windows",
           "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[7.0.13, )"
+            },
             "Microsoft.EntityFrameworkCore.Analyzers": {
               "target": "Package",
               "version": "[7.0.13, )"

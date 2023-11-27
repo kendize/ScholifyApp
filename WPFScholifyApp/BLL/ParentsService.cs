@@ -1,23 +1,48 @@
-﻿// <copyright file="UserService.cs" company="PlaceholderCompany">
+﻿// <copyright file="ParentsService.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 
 namespace WPFScholifyApp.BLL
 {
+    using Microsoft.EntityFrameworkCore;
     using System;
+    using System.Collections.Generic;
     using System.Linq;
+    using System.Windows.Documents;
     using WPFScholifyApp.DAL.ClassRepository;
     using WPFScholifyApp.DAL.DBClasses;
 
-    public class UserService
+    public class ParentsService
     {
         private IGenericRepository<User> userRepository;
         private IGenericRepository<Pupil> pupilRepository;
+        private IGenericRepository<Parents> parentsRepository;
 
-        public UserService(IGenericRepository<User> userRepos, IGenericRepository<Pupil> pupilRepos)
+
+        public ParentsService(IGenericRepository<User> userRepos, IGenericRepository<Pupil> pupilRepos, IGenericRepository<Parents> parentsRepos)
         {
             this.pupilRepository = pupilRepos;
             this.userRepository = userRepos;
+            this.parentsRepository = parentsRepos;
+        }
+ 
+        public List<Parents> GetParentsForPupilId (int pupilId )
+        {
+#pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
+            var allParentsOfPupil = this.parentsRepository
+    .GetAllq()
+    .Where(x => x.ParentsPupils!.Any(y => y.pupilId == pupilId))
+    .Include(x => x.ParentsPupils)
+        .ThenInclude(pp => pp.pupil!)
+    .Include(x => x.User)
+    .ToList();
+#pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
+            return allParentsOfPupil;
+        }
+
+        public void AddParentToPupilId(Parents parents, int pupilId )
+        {
+
         }
 
         public User Authenticate(string email, string password)
@@ -86,11 +111,5 @@ namespace WPFScholifyApp.BLL
             this.userRepository.Delete(userId);
             this.userRepository.Save();
         }
-
-        //public void DeletePerents((int userId)
-        //{
-        //    this.userRepository.Delete(userId);
-        //    this.userRepository.Save();
-        //}
     }
 }

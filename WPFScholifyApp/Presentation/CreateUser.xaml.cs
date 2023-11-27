@@ -56,7 +56,6 @@ namespace WPFScholifyApp.Presentation
             DateTime birthday = this.Birthday.DisplayDate.ToUniversalTime();
             string adress = this.Adress.Text;
             string phoneNumber = this.PhoneNumber.Text;
-            var role = ((ComboBoxItem)this.RoleComboBox.SelectedItem).Content == null ? ((ComboBoxItem)this.RoleComboBox.SelectedItem).Content : "учень";
 
             var user = new User
             {
@@ -70,13 +69,14 @@ namespace WPFScholifyApp.Presentation
                 Birthday = birthday,
                 Address = adress,
                 PhoneNumber = phoneNumber,
-                Role = role.ToString(),
+                Role = "учень"
             };
 
             var pupil = new Pupil
             {
                 Id = this.userRepository.GetAll().Select(x => x.Id).Max() + 1,
                 ClassId = this.ClassId,
+                UserId = user.Id
             };
 
             this.userService.AddUser(user, pupil);

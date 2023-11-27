@@ -58,6 +58,19 @@ namespace WPFScholifyApp.DAL.ClassRepository
             .HasIndex(x => x.UserId)
             .IsUnique(false);
 
+            modelBuilder.Entity<ParentsPupil>()
+                .HasKey(pt => new {pt.pupilId, pt.parentId});
+
+            modelBuilder.Entity<ParentsPupil>()
+                .HasOne(x => x.parent)
+                .WithMany(x => x.ParentsPupils)
+                .HasForeignKey(x => x.parentId);
+
+            modelBuilder.Entity<ParentsPupil>()
+                .HasOne(x => x.pupil)
+                .WithMany(x => x.ParentsPupil)
+                .HasForeignKey(x => x.pupilId);
+
             // Додаємо тестові дані при створені бази даних
             modelBuilder.Entity<User>().HasData(
                 new User { Id = 1, Email = "1", Password = "1", FirstName = "Адміністратор",LastName = "Платформи",     MiddleName = "",                Birthday = new DateTime(2023, 11, 25).ToUniversalTime(), Role = "адмін",    Address = "м.Житомир,вул Перемоги, 1" },
@@ -73,10 +86,13 @@ namespace WPFScholifyApp.DAL.ClassRepository
                 new Teacher { Id = 1, UserId = 2, SubjectId = 1 });
 
             modelBuilder.Entity<Pupil>().HasData(
-                new Pupil { Id = 5, ClassId = 1 });
+                new Pupil { Id = 5, UserId = 5, ClassId = 1 });
 
             modelBuilder.Entity<Parents>().HasData(
-                new Parents { Id = 6 });
+                new Parents { Id = 6, UserId = 6 });
+
+            modelBuilder.Entity<ParentsPupil>().HasData(
+                new ParentsPupil { parentId = 6, pupilId = 5 });
 
             modelBuilder.Entity<Class>().HasData(
                 new Class { Id = 1, ClassName = "11-А" });

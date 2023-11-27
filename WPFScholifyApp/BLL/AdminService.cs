@@ -20,14 +20,13 @@ namespace WPFScholifyApp.BLL
         private IGenericRepository<Class> classRepository;
 
         private IGenericRepository<Teacher> teacherRepository;
+        private IGenericRepository<Parents> parentsRepository;
         private IGenericRepository<Pupil> pupilRepository;
         private IGenericRepository<Admin> adminRepository;
-        private IGenericRepository<Parents> parentsRepository;
         private IGenericRepository<Subject> subjectRepository;
         private IGenericRepository<Advertisement> advertisementsRepository;
 
-        public AdminService
-            (IGenericRepository<User> userRepos, IGenericRepository<Class> classRepository, IGenericRepository<Teacher> teacherRepository, IGenericRepository<Pupil> pupilRepository, IGenericRepository<Admin> adminRepository, IGenericRepository<Parents> parentsRepository, IGenericRepository<Subject> subjectRepository, IGenericRepository<Advertisement> advertisementsRepository)
+        public AdminService(IGenericRepository<User> userRepos, IGenericRepository<Class> classRepository, IGenericRepository<Teacher> teacherRepository, IGenericRepository<Pupil> pupilRepository, IGenericRepository<Admin> adminRepository, IGenericRepository<Parents> parentsRepository, IGenericRepository<Subject> subjectRepository, IGenericRepository<Advertisement> advertisementsRepository)
         {
             this.userRepository = userRepos;
             this.classRepository = classRepository;

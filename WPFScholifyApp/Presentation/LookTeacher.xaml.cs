@@ -30,7 +30,7 @@ namespace WPFScholifyApp.Presentation
         private IGenericRepository<Teacher> teacherRepository;
         private TeacherService teacherService;
         public AdminWindow AdminWindow { get; set; }
-        public User? currentUser { get; set; }
+        public User? currentParents { get; set; }
         public int currentClassId { get; set; }
         public LookTeacher(IGenericRepository<User> userRepos, IGenericRepository<Teacher> teacherRepos, AdminWindow adminWindow)
         {
@@ -45,7 +45,7 @@ namespace WPFScholifyApp.Presentation
         {
             var user = new User
             {
-                Id = currentUser!.Id,
+                Id = currentParents!.Id,
                 Email = this.Email.Text,
                 Password = this.Password.Text,
                 FirstName = this.FirstName.Text,

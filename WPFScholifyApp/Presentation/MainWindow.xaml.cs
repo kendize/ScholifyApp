@@ -64,7 +64,8 @@ namespace WPFScholifyApp
                                 new GenericRepository<User>(),
                                 new GenericRepository<DayBook>(),
                                 new GenericRepository<Subject>(),
-                                new GenericRepository<Schedule>());
+                                new GenericRepository<Schedule>(),
+                                new GenericRepository<Parents>());
 
                         teacherWindow.FirstNameTextBlock.Text = userService.Authenticate(email, password).FirstName;
                         teacherWindow.LastNameTextBlock.Text = userService.Authenticate(email, password).LastName;

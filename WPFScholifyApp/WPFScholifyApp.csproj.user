@@ -12,6 +12,9 @@
     <Compile Update="Presentation\CreateClass.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Presentation\CreateParents.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Presentation\CreateSchedule.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -25,6 +28,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Presentation\LookClass.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Presentation\LookParents.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Presentation\LookTeacher.xaml.cs">
@@ -41,6 +47,9 @@
     <Page Update="Presentation\CreateClass.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Presentation\CreateParents.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Presentation\CreateSchedule.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -54,6 +63,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Presentation\LookClass.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Presentation\LookParents.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Presentation\LookTeacher.xaml">
