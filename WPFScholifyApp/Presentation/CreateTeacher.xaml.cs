@@ -49,7 +49,7 @@ namespace WPFScholifyApp.Presentation
             DateTime birthday = this.Birthday.DisplayDate.ToUniversalTime();
             string adress = this.Adress.Text;
             string phoneNumber = this.PhoneNumber.Text;
-            var role = ((ComboBoxItem)this.RoleComboBox.SelectedItem).Content == null ? ((ComboBoxItem)this.RoleComboBox.SelectedItem).Content : "вчитель";
+
 
             var user = new User
             {
@@ -63,7 +63,7 @@ namespace WPFScholifyApp.Presentation
                 Birthday = birthday,
                 Address = adress,
                 PhoneNumber = phoneNumber,
-                Role = role.ToString(),
+                Role = "вчитель",
             };
 
             this.teacherService.AddTeacher(user);

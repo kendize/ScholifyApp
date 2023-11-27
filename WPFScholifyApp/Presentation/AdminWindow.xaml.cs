@@ -208,12 +208,8 @@ namespace WPFScholifyApp
                 button.Click += new RoutedEventHandler(this.SpecificClassButton_Click);
                 teacherPanel.Children.Add(button);
 
-                var lookButton = new Button { Content = "U", Height = 60, Width = 30, FontSize = 30, Tag = c.Id, Margin = new Thickness(10, 0, 0, 0) };
-                //lookButton.Click += new RoutedEventHandler(this.LookSubject);
-                teacherPanel.Children.Add(lookButton);
-
-                var deleteButton = new Button { Content = $"X", Height = 60, Width = 30, FontSize = 30, Tag = c.Id, Margin = new Thickness(10, 0, 0, 0) };
-                //deleteButton.Click += new RoutedEventHandler(this.DeleteClass);
+                var deleteButton = new Button { Content = $"Del", Height = 60, Width = 70, FontSize = 30, Tag = c.Id, Margin = new Thickness(10, 0, 0, 0) };
+                deleteButton.Click += new RoutedEventHandler(DeleteClass);
                 teacherPanel.Children.Add(deleteButton);
 
                 this.LeftPanel.Children.Add(teacherPanel);
@@ -232,7 +228,17 @@ namespace WPFScholifyApp
 
             this.UpdateAdminPanels();
         }
+        public void DeleteClass(object sender, RoutedEventArgs e)
+        {
+            var deleteButton = (Button)sender;
+            this.selectedClassId = (int)deleteButton.Tag;
+            this.classRepository.Delete((int)deleteButton.Tag);
+            this.classRepository.Save();
+            this.UpdateAdminPanels();
+            this.DeleteFromAdminPanels();
+            this.ShowAllClasses();
 
+        }
         // Метод для виведення списку кнопок з усіма вчителями
         public void ShowAllTeachers()
         {
@@ -251,7 +257,7 @@ namespace WPFScholifyApp
                 lookButton.Click += new RoutedEventHandler(this.LookTeacher);
                 teacherPanel.Children.Add(lookButton);
 
-                var deleteButton = new Button { Content = $"X", Height = 60, Width = 30, FontSize = 30, Tag = t.Id, Margin = new Thickness(10, 0, 0, 0) };
+                var deleteButton = new Button { Content = $"Del", Height = 60, Width = 60, FontSize = 30, Tag = t.Id, Margin = new Thickness(2, 0, 0, 0) };
                 deleteButton.Click += new RoutedEventHandler(this.DeleteTeacher);
                 teacherPanel.Children.Add(deleteButton);
 
@@ -274,7 +280,7 @@ namespace WPFScholifyApp
 
             foreach (var s in subjects)
             {
-                var button = new Button { Content = $"{s.SubjectName} {s.Class!.ClassName}", Height = 60, Width = 500, FontSize = 30, Tag = s.Id };
+                var button = new Button { Content = $"{s.SubjectName} {s.Class!.ClassName}", Height = 60, Width = 400, FontSize = 30, Tag = s.Id };
                 button.Click += new RoutedEventHandler(this.SpecificSubjectButton_Click);
                 this.LeftPanel.Children.Add(button);
             }
@@ -462,6 +468,8 @@ namespace WPFScholifyApp
         {
             var deleteButton = (Button)sender;
             this.userService.DeletePupil((int)deleteButton.Tag);
+            this.DeleteFromAdminPanels();
+            this.ShowAllTeachers();
         }
         
         // Метод який викликається при натисканні кнопки "Видалити Предмет"
@@ -485,6 +493,7 @@ namespace WPFScholifyApp
             this.DeleteFromAdminPanels();
             this.scheduleRepository.Delete((int)deleteButton.Tag);
             this.scheduleRepository.Save();
+            this.DeleteFromAdminPanels();
             this.ShowAllSubjects();
             this.ShowAllSchedulesForSubject(this.selectedSubjectId);
             this.UpdateAdminPanels();
