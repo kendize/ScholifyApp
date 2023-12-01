@@ -22,7 +22,6 @@ namespace WPFScholifyApp.Presentation
     /// </summary>
     public partial class LookParents : Window
     {
-        public int currentPupilId { get; set; }
 
         private IGenericRepository<User> userRepository;
         private IGenericRepository<Parents> parentsRepository;
@@ -32,6 +31,10 @@ namespace WPFScholifyApp.Presentation
         private AdminWindow adminWindow;
         public int ParentsId { get; set; }
         public User? currentParents { get; set; }
+        public int currentPupilId { get; set; }
+
+
+
         public LookParents(IGenericRepository<User> userRepos, IGenericRepository<Parents> parentsRepos, IGenericRepository<Pupil> pupilRepos, AdminWindow adminWindow, IGenericRepository<ParentsPupil> parentsPupilRepository)
         {
             this.parentsPupilRepository = parentsPupilRepository;

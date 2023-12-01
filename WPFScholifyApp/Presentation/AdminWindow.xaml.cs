@@ -454,7 +454,7 @@ namespace WPFScholifyApp
             {
                 //var teacherPanel = new StackPanel { Orientation = Orientation.Horizontal };
 
-                var button = new Button { Content = $" {f!.User!.LastName} {f!.User!.FirstName}", Height = 60, Width = 500, FontSize = 30, Tag = f.Id };
+                var button = new Button { Content = $" {f!.User!.LastName} {f!.User!.FirstName}", Height = 60, Width = 500, FontSize = 30, Tag = f.UserId };
                 button.Click += new RoutedEventHandler(this.LookParents);
                 RightPanel.Children.Add(button);
 
@@ -486,21 +486,23 @@ namespace WPFScholifyApp
         {
             var createButton = (Button)sender;
             var parentsId = (int)createButton.Tag;
-            var createPanel = new LookParents(new GenericRepository<User>(), new GenericRepository<Parents>(), new GenericRepository<Pupil>(), this, new GenericRepository<ParentsPupil>());
+            var createPanel = new LookUsers(new GenericRepository<User>(), new GenericRepository<Pupil>(), this, new GenericRepository<Parents>(), new GenericRepository<ParentsPupil>());
+
+            //var createPanel = new LookParents(new GenericRepository<User>(), new GenericRepository<Parents>(), new GenericRepository<Pupil>(), this, new GenericRepository<ParentsPupil>());
             //  createPanel.ShowAllClasses = true;
 
             createPanel.currentPupilId = this.selectedPupilsId;
-            var parents = this.adminService.GetAllParents().FirstOrDefault(x => x.Id == (int)createButton.Tag);
-            createPanel.currentParents = parents;
-            createPanel.Email.Text = parents!.Email!.ToString();
-            createPanel.Password.Text = parents!.Password!.ToString();
-            createPanel.FirstName.Text = parents!.FirstName!.ToString();
-            createPanel.LastName.Text = parents!.LastName!.ToString();
-            createPanel.MiddleName.Text = parents!.MiddleName!.ToString();
-            createPanel.Gender.Text = parents!.Gender!.ToString();
-            createPanel.Birthday.Text = parents!.Birthday!.ToString();
-            createPanel.Adress.Text = parents!.Address!.ToString();
-            createPanel.PhoneNumber.Text = parents!.PhoneNumber!.ToString();
+            var parent = this.adminService.GetAllParents().FirstOrDefault(x => x.Id == (int)createButton.Tag);
+            createPanel.currentUser = parent;
+            createPanel.Email.Text = parent!.Email!.ToString();
+            createPanel.Password.Text = parent!.Password!.ToString();
+            createPanel.FirstName.Text = parent!.FirstName!.ToString();
+            createPanel.LastName.Text = parent!.LastName!.ToString();
+            createPanel.MiddleName.Text = parent!.MiddleName!.ToString();
+            createPanel.Gender.Text = parent!.Gender!.ToString();
+            createPanel.Birthday.Text = parent!.Birthday!.ToString();
+            createPanel.Adress.Text = parent!.Address!.ToString();
+            createPanel.PhoneNumber.Text = parent!.PhoneNumber!.ToString();
 
             createPanel.Show();
             this.LeftPanel.UpdateLayout();
@@ -761,10 +763,12 @@ namespace WPFScholifyApp
         private void LookTeacher(object sender, RoutedEventArgs e)
         {
             var createButton = (Button)sender;
-            var createPanel = new LookTeacher(new GenericRepository<User>(), new GenericRepository<Teacher>(), this);
+            var createPanel = new LookUsers(new GenericRepository<User>(), new GenericRepository<Pupil>(), this, new GenericRepository<Parents>(), new GenericRepository<ParentsPupil>());
+
+            //var createPanel = new LookTeacher(new GenericRepository<User>(), new GenericRepository<Teacher>(), this);
             createPanel.currentClassId = this.selectedClassId;
 
-            createPanel.currentParents = this.adminService.GetAllTeacher().FirstOrDefault(x => x.Id == (int)createButton.Tag);
+            createPanel.currentUser = this.adminService.GetAllTeacher().FirstOrDefault(x => x.Id == (int)createButton.Tag);
             var teacher = this.adminService.GetAllTeacher().FirstOrDefault(x => x.Id == (int)createButton.Tag);
             createPanel.Email.Text = teacher!.Email?.ToString();
             createPanel.Password.Text = teacher!.Password?.ToString();

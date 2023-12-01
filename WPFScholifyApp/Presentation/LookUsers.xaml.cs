@@ -32,9 +32,14 @@ namespace WPFScholifyApp.Presentation
         private IGenericRepository<Pupil> pupilRepository;
         private UserService userService;
         public AdminWindow AdminWindow { get; set; }
+
         public User? currentUser { get; set; }
+
         public int currentClassId { get; set; }
 
+        public int currentPupilId { get; set; }
+
+        public int parentId { get; set; }
         public LookUsers(IGenericRepository<User> userRepos, IGenericRepository<Pupil> pupilRepos, AdminWindow adminWindow, IGenericRepository<Parents> parentsRepository, IGenericRepository<ParentsPupil> parentPupilRepository)
         {
             this.pupilRepository = pupilRepos;
@@ -58,26 +63,45 @@ namespace WPFScholifyApp.Presentation
                 Birthday = this.Birthday.SelectedDate!.Value.ToUniversalTime(),
                 Address = this.Adress.Text,
                 PhoneNumber = this.PhoneNumber.Text,
-                Role = "учень"
+                Role = currentUser.Role
             };
-
 
             this.userRepository.Update(user);
             this.userRepository.Save();
 
-            this.AdminWindow.DeleteFromAdminPanels();
-            if (this.ShowAllTeachers)
+            if (currentUser.Role == "учень")
             {
+
+                this.AdminWindow.DeleteFromAdminPanels();
+                if (this.ShowAllTeachers)
+                {
+                    this.AdminWindow.ShowAllTeachers();
+                }
+
+                if (this.ShowAllClasses)
+                {
+                    this.AdminWindow.ShowAllClasses();
+                    this.AdminWindow.ShowAllPupilsForClassId(this.currentClassId);
+                }
+
+                this.AdminWindow.UpdateAdminPanels();
+            }
+
+            if (currentUser.Role == "батьки")
+            {
+                this.AdminWindow.DeleteFromAdminPanels();
+                this.AdminWindow.ShowAllPuplis();
+                this.AdminWindow.ShowParentsForPupilId(this.currentPupilId);
+                this.AdminWindow.UpdateAdminPanels();
+            }   
+            
+            if (currentUser.Role == "вчитель")
+            {
+                this.AdminWindow.DeleteFromAdminPanels();
                 this.AdminWindow.ShowAllTeachers();
 
             }
 
-            if (this.ShowAllClasses)
-            {
-                this.AdminWindow.ShowAllClasses();
-                this.AdminWindow.ShowAllPupilsForClassId(this.currentClassId);
-            }
-            this.AdminWindow.UpdateAdminPanels();
             this.Close();
         }
 
