@@ -90,9 +90,10 @@ namespace WPFScholifyApp.Presentation
                 Role = "батьки"
             };
 
+            //this.userService.SaveUser(user);
+
             var pupil = this.pupilService.GetAllPupils().FirstOrDefault(x => x.UserId == PupilsId);
 
-            user = this.userService.GetUserById(user.Id);
 
             var parents = new Parents
             {
@@ -100,7 +101,7 @@ namespace WPFScholifyApp.Presentation
                 UserId = user!.Id
             };
 
-            this.userService.AddUser(user, parents);
+            this.userService.AddUser(user, parents, PupilsId);
 
             this.windowService.Show<AdminWindow>(window =>
             {
@@ -111,7 +112,17 @@ namespace WPFScholifyApp.Presentation
 
                 window.UpdateAdminPanels();
             });
-                this.Hide();
+            this.Email.Text = "";
+            this.Password.Text = "";
+            this.FirstName.Text = "";
+            this.MiddleName.Text = "";
+            this.LastName.Text = "";
+            this.Gender.Text = "";
+            this.Birthday.DisplayDate = DateTime.UtcNow;
+            this.Adress.Text = "";
+            this.PhoneNumber.Text = "";
+
+            this.Hide();
             
         }
 

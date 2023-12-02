@@ -49,7 +49,7 @@ namespace WPFScholifyApp
         public User? _authenticatedUser { get; set; }
         private readonly MainWindow _mainWindow;
         public List<DateTime> Days { get; set; }
-        public List<Pupil> pupils { get; set; }
+        public List<Pupil>? pupils { get; set; }
 
         public ParentsWindow(AdminService adminService,
                             AdvertisementService advertisementService,
@@ -109,7 +109,6 @@ namespace WPFScholifyApp
             this.Days = daysOfWeek;
             this.pupilService = pupilService;
 
-            this.pupils = this.pupilService.GetAllPupils();
 
             _mainWindow = mainWindow;
             this.Closing += new CancelEventHandler(this.Window_Closing!);
@@ -118,14 +117,13 @@ namespace WPFScholifyApp
 
         public void Window_Closing(object sender, CancelEventArgs e)
         {
-            this.Hide();
-            this.adminWindow.Show();
+            Application.Current.Shutdown();
         }
 
         private void JournalButton_Click(object sender, RoutedEventArgs e)
         {
             this.InfoPanel.Children.Clear();
-            var listOfUsers = this.pupils.Select(x => x.UserId).ToList();
+            var listOfUsers = this.pupilService.GetAllPupils().Where(x => x.ParentsPupil!.Select(x => x.parentId).Contains(_authenticatedUser.Id)).ToList().Select(x => x.UserId).ToList();
             foreach (var u in listOfUsers)
             {
                 this.ShowJournalForUserId(u);
@@ -179,6 +177,8 @@ namespace WPFScholifyApp
 
         public void ShowJournalForUserId(int id)
         {
+            var user = this.userService.GetUserById(id);
+            var userName  = $"{user?.LastName} {user?.FirstName} {user?.MiddleName}";
             //this.ShowAllSubjectsForTeacher();
             var classId = this.classService.GetClassByUserId(id).Id;
             var group = this.subjectService.GetSubjectsByClassId(classId);
@@ -214,7 +214,7 @@ namespace WPFScholifyApp
 
                 if (i == 0)
                 {
-                    label.Content = "Предмет";
+                    label.Content = userName;
                 }
                 else
                 {

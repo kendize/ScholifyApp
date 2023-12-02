@@ -24,6 +24,7 @@ namespace WPFScholifyApp
     using DayOfWeek = DAL.DBClasses.DayOfWeek;
     using WPFScholifyApp.Presentation;
     using Microsoft.EntityFrameworkCore;
+    using System.ComponentModel;
 
     /// <summary>
     /// Interaction logic for TeacherWindow.xaml.
@@ -114,7 +115,13 @@ namespace WPFScholifyApp
                 daysOfWeek.Add(startDate.AddDays(i));
             }
             this.Days = daysOfWeek;
+            this.Closing += new CancelEventHandler(this.Window_Closing!);
             this.InitializeComponent();
+        }
+
+        public void Window_Closing(object sender, CancelEventArgs e)
+        {
+            Application.Current.Shutdown();
         }
 
         private void ParentsButton_Click(object sender, RoutedEventArgs e)
@@ -572,9 +579,6 @@ namespace WPFScholifyApp
         private void AddAdvertisements(object sender, RoutedEventArgs e)
         {
             var createButton = (Button)sender;
-            var createPanel = this.createAdvertisements;
-            createPanel.ClassId = this.selectedClassId;
-            createPanel.Show();
             this.windowService.Show<CreateAdvertisements>(window =>
             {
                 window.InitializeComponent();

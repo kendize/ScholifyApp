@@ -26,7 +26,7 @@ namespace WPFScholifyApp.Presentation
     /// </summary>
     public partial class CreateSchedule : Window
     {
-        public Class? clas { get; set; }
+        
         private AdminService adminService;
         private AdvertisementService advertisementService;
         private ClassService classService;
@@ -42,8 +42,11 @@ namespace WPFScholifyApp.Presentation
         private WindowService windowService;
         private MainWindow mainWindow;
 
-        public ObservableCollection<ComboBoxItem> cbItems { get; set; }
-        public ObservableCollection<ComboBoxItem> cbItems2 { get; set; }
+        public Class? clas { get; set; }
+        public int selectedClassId { get; set; }
+
+        public ObservableCollection<ComboBoxItem>? cbItems { get; set; }
+        public ObservableCollection<ComboBoxItem>? cbItems2 { get; set; }
 
         public CreateSchedule(AdminService adminService,
                             AdvertisementService advertisementService,
@@ -78,8 +81,9 @@ namespace WPFScholifyApp.Presentation
             this.windowService = windowService;
             this.mainWindow = mainWindow;
             cbItems = new ObservableCollection<ComboBoxItem>();
+                this.clas = this.classService.GetAllClasses().FirstOrDefault(x => x.Id == this.selectedClassId)!;
 
-            this.ClassLabel.Content = clas != null ? clas!.ClassName : "";
+
             cbItems.Add(new ComboBoxItem { Content = $"{Times.t8_30.ToString("HH:mm")} - {Times.t9_15.ToString("HH:mm")}", Tag = 1 });
             cbItems.Add(new ComboBoxItem { Content = $"{Times.t9_30.ToString("HH:mm")} - {Times.t10_15.ToString("HH:mm")}", Tag = 2 });
             cbItems.Add(new ComboBoxItem { Content = $"{Times.t10_30.ToString("HH:mm")} - {Times.t11_15.ToString("HH:mm")}", Tag = 3 });
@@ -90,20 +94,42 @@ namespace WPFScholifyApp.Presentation
             cbItems.Add(new ComboBoxItem { Content = $"{Times.t15_30.ToString("HH:mm")} - {Times.t16_15.ToString("HH:mm")}", Tag = 8 });
             this.cbItems = cbItems;
             this.TimeComboBox.ItemsSource = cbItems;
-            if (clas == null)
-            {
-                // Assuming you have some default criteria for selecting a class from the repository
-                this.clas = this.classService.GetAllClasses().FirstOrDefault() ?? new Class();
-            }
+            
 
-            var subjects = this.subjectService.GetSubjectsByClassId(clas.Id);// this.subjectRepository.GetAll().Where(x => x.ClassId == clas.Id);
+            
+
+        }
+        public void SetClassId(int classId)
+        {
+            this.selectedClassId = classId;
+            this.clas = this.classService.GetAllClasses().FirstOrDefault(x => x.Id == this.selectedClassId)!;
+            this.ClassLabel.Content = clas != null ? clas!.ClassName : "";
+            var subjects = this.subjectService.GetSubjectsByClassId(this.selectedClassId);// this.subjectRepository.GetAll().Where(x => x.ClassId == clas.Id);
             cbItems2 = new ObservableCollection<ComboBoxItem>();
-            foreach ( var subject in subjects)
+            foreach (var subject in subjects)
             {
                 cbItems2.Add(new ComboBoxItem { Content = subject.SubjectName, Tag = subject.Id });
             }
             this.cbItems2 = cbItems2;
             this.SubjectComboBox.ItemsSource = cbItems2;
+
+            PopulateTimeComboBox();
+        }
+
+        private void PopulateTimeComboBox()
+        {
+            cbItems = new ObservableCollection<ComboBoxItem>();
+
+            cbItems.Add(new ComboBoxItem { Content = $"{Times.t8_30.ToString("HH:mm")} - {Times.t9_15.ToString("HH:mm")}", Tag = 1 });
+            cbItems.Add(new ComboBoxItem { Content = $"{Times.t9_30.ToString("HH:mm")} - {Times.t10_15.ToString("HH:mm")}", Tag = 2 });
+            cbItems.Add(new ComboBoxItem { Content = $"{Times.t10_30.ToString("HH:mm")} - {Times.t11_15.ToString("HH:mm")}", Tag = 3 });
+            cbItems.Add(new ComboBoxItem { Content = $"{Times.t11_35.ToString("HH:mm")} - {Times.t12_20.ToString("HH:mm")}", Tag = 4 });
+            cbItems.Add(new ComboBoxItem { Content = $"{Times.t12_40.ToString("HH:mm")} - {Times.t13_25.ToString("HH:mm")}", Tag = 5 });
+            cbItems.Add(new ComboBoxItem { Content = $"{Times.t13_35.ToString("HH:mm")} - {Times.t14_20.ToString("HH:mm")}", Tag = 6 });
+            cbItems.Add(new ComboBoxItem { Content = $"{Times.t14_35.ToString("HH:mm")} - {Times.t15_20.ToString("HH:mm")}", Tag = 7 });
+            cbItems.Add(new ComboBoxItem { Content = $"{Times.t15_30.ToString("HH:mm")} - {Times.t16_15.ToString("HH:mm")}", Tag = 8 });
+
+            this.TimeComboBox.ItemsSource = cbItems;
         }
 
         private void ClassComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -131,11 +157,11 @@ namespace WPFScholifyApp.Presentation
             }
 
             var teacher = this.teacherService.GetTeacherBySubjectId(subjectId); // this.teacherRepository.GetAll().FirstOrDefault(x => x.SubjectId == subjectId);
-
+            var classOfSubject = this.classService.GetClassBySubjectId(subjectId);
             var newSchedule = new Schedule()
             {
                 TeacherId = teacher!.Id,
-                ClassId = this.clas!.Id,
+                ClassId = classOfSubject.Id,
                 DayOfWeekId = dayOfWeek!.Id,
                 LessonTimeId = lessonTime!.Id,
                 SubjectId = subjectId
@@ -147,7 +173,7 @@ namespace WPFScholifyApp.Presentation
 
             this.windowService.Show<AdminWindow>(window =>
             {
-                window.ShowAllWeek(this.clas!.Id);
+                window.ShowAllWeek(classOfSubject.Id);
             } );
         }
     }

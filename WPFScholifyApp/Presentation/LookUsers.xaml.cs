@@ -61,7 +61,6 @@
 
                     if (ShowAllClasses)
                     {
-                        window.ShowAllClasses();
                         window.ShowAllPupilsForClassId(currentClassId);
                     }
                 }

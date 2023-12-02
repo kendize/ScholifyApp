@@ -118,6 +118,16 @@ namespace WPFScholifyApp.Presentation
 
                 window.UpdateAdminPanels();
             });
+
+            this.Email.Text = "";
+            this.Password.Text = "";
+            this.FirstName.Text = "";
+            this.MiddleName.Text = "";
+            this.LastName.Text = "";
+            this.Gender.Text = "";
+            this.Birthday.DisplayDate = DateTime.UtcNow;
+            this.Adress.Text = "";
+            this.PhoneNumber.Text = "";
         }
 
         private void Cancel(object sender, RoutedEventArgs e)

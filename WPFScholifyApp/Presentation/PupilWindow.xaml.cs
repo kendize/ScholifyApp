@@ -104,6 +104,13 @@ namespace WPFScholifyApp
             }
             this.Days = daysOfWeek;
             this.CurrentUser = _authenticatedUser!;
+            this.Closing += new CancelEventHandler(this.Window_Closing!);
+            this.InitializeComponent();
+        }
+
+        public void Window_Closing(object sender, CancelEventArgs e)
+        {
+            Application.Current.Shutdown();
         }
 
         private void ExitButton_Click(object sender, RoutedEventArgs e)
@@ -152,7 +159,7 @@ namespace WPFScholifyApp
         {
             this.Schedule.Visibility = Visibility.Hidden;
             this.Panel.Visibility = Visibility.Visible;
-            this.ShowJournalForUserId(CurrentUser.Id);
+            this.ShowJournalForUserId(_authenticatedUser.Id);
             this.UpdateDays();
         }
         public void ShowJournalForUserId(int id)
@@ -278,7 +285,7 @@ namespace WPFScholifyApp
         public void ShowAllWeek()
         {
             ClearDays();
-            var classId = this.pupilService.GetAllPupils().FirstOrDefault(x => x.Id == this.CurrentUser.Id)!.ClassId;
+            var classId = this.pupilService.GetAllPupils().FirstOrDefault(x => x.Id == this._authenticatedUser.Id)!.ClassId;
             var result = new List<Schedule>();
             var dayOfWeeks = this.dayOfWeekService.GetAll();
             for (int i = 0; i <= 6; i++)
@@ -404,7 +411,7 @@ namespace WPFScholifyApp
             this.Schedule.Visibility = Visibility.Hidden;
             this.Panel.Visibility = Visibility.Visible;
             DeleteFromPupilsPanel();
-            var classId = this.classService.GetClassByUserId(CurrentUser.Id).Id;
+            var classId = this.classService.GetClassByUserId(_authenticatedUser.Id).Id;
             var advertisements = this.advertisementService.GetAdvertisementsForClassId(classId);
             foreach (var advertisement in advertisements)
             {

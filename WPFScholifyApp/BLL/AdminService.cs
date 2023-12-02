@@ -55,42 +55,37 @@ namespace WPFScholifyApp.BLL
 
         public List<Class> GetAllClasses()
         {
-            var classes = this.classRepository.GetAll().ToList();
+            var classes = this.classRepository.GetAll().OrderBy(x => x.ClassName).ToList();
             return classes;
         }
 
         public List<User> GetAllAdmins()
         {
-            var admines = this.userRepository.GetAll().Where(x => x.Role == "адмін").ToList();
+            var admines = this.userRepository.GetAll().Where(x => x.Role == "адмін").OrderByDescending(x => x.LastName).ToList();
             return admines;
         }
 
         public List<User> GetAllPupils()
         {
-            var pupils = this.userRepository.GetAll().Where(x => x.Role == "учень").ToList();
+            var pupils = this.userRepository.GetAllq().Include(x => x.Pupil).Where(x => x.Role == "учень").OrderByDescending(x => x.LastName).ToList();
             return pupils;
         }
 
         public List<User> GetAllTeacher()
         {
-            var teacher = this.userRepository.GetAll().Where(x => x.Role == "вчитель").ToList();
+            var teacher = this.userRepository.GetAll().Where(x => x.Role == "вчитель").OrderByDescending(x => x.LastName).ToList();
             return teacher;
         }
 
         public List<User> GetAllParents()
         {
-            var parents = this.userRepository.GetAll().Where(x => x.Role == "батьки").ToList();
+            var parents = this.userRepository.GetAll().Where(x => x.Role == "батьки").OrderByDescending(x => x.LastName).ToList();
             return parents;
         }
 
-        public List<User?> GetAllPupilsForClass(int classId)
+        public List<User> GetAllPupilsForClass(int classId)
         {
-            var pupilsWithUsers = this.pupilRepository.GetAllq()
-            .Include(x => x.User!)
-            .Where(x => x.Class!.Id == classId && x.User != null)
-            .ToList();
-
-            var userPupils = pupilsWithUsers.Select(pupil => pupil.User).ToList();
+            var userPupils = GetAllPupils().Where(x => x.Pupil.ClassId == classId).OrderByDescending(x => x.LastName).ToList();
             return userPupils;
         }
 
@@ -98,7 +93,7 @@ namespace WPFScholifyApp.BLL
         {
             var subjectsWithTeachers = this.subjectRepository.GetAllq()
                 .Include(x => x.Teachers)
-                .Where(x => x.Teachers!.Select(y => y.UserId).Contains(teacherId)).ToList();
+                .Where(x => x.Teachers!.Select(y => y.UserId).Contains(teacherId)).OrderByDescending(x => x.SubjectName).ToList();
             return subjectsWithTeachers!;
         }
 
@@ -198,5 +193,10 @@ namespace WPFScholifyApp.BLL
         {
             return (this.advertisementsRepository.GetAll().OrderByDescending(x => x.Id).FirstOrDefault()?.Id ?? 0) + 1;
         }
+
+        //public int GetNewParentPupilId()
+        //{
+        //    return (this.parentsPupilRepository.GetAll().OrderByDescending(x => x.Id).FirstOrDefault()?.Id ?? 0) + 1;
+        //}
     }
 }

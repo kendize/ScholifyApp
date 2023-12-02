@@ -95,15 +95,15 @@ namespace WPFScholifyApp.BLL
             return user;
         }
 
-        public User AddUser(User user, Parents parents)
+        public User AddUser(User user, Parents parents, int pupilId)
         {
                 this.userRepository.Insert(user);
                 this.parentRepository.Insert(parents);
                 this.userRepository.Save();
-                this.pupilRepository.Save();
+                this.parentRepository.Save();
                 var ParentsPupil = new ParentsPupil
                 {
-                    pupilId = user!.Id,
+                    pupilId = pupilId,
                     parentId = parents.Id
                 };
 
@@ -120,13 +120,18 @@ namespace WPFScholifyApp.BLL
 
         public void DeleteParent(int parentId)
         {
-            var parent = this.parentRepository.GetAllq().Include(x => x.ParentsPupils).FirstOrDefault(x => x.Id == parentId);
+            var parent = this.parentRepository.GetAllq().Include(x => x.ParentsPupils).FirstOrDefault(x => x.UserId == parentId);
+            
+            //foreach(var pt in  parent.ParentsPupils) 
+            //{
+            //    this.parentsPupilRepository.Delete()
+            //}
 
-            this.parentRepository.Delete(parentId);
+            this.parentRepository.Delete(parent.Id);
             this.parentRepository.Save();
 
-            this.userRepository.Delete(parent.UserId);
-            this.userRepository.Save();
+            //this.userRepository.Delete(parent.UserId);
+           //this.userRepository.Save();
         }
 
         public List<User> ShowUsersForSubjectId(int subjectId)
@@ -142,8 +147,30 @@ namespace WPFScholifyApp.BLL
 
         public void SaveUser(User user)
         {
-            this.userRepository.Update(user);
-            this.userRepository.Save();
+            var existingUser = this.userRepository.GetAll().FirstOrDefault(x => x.Id == user.Id);
+            if (existingUser != null)
+            {
+                existingUser.Id = user.Id;
+                existingUser.Email = user.Email;
+
+                existingUser.Password = user.Password;
+                existingUser.FirstName = user.FirstName;
+                existingUser.LastName = user.LastName;
+                existingUser.MiddleName = user.MiddleName;
+                existingUser.Gender = user.Gender;
+                existingUser.Birthday = user.Birthday;
+                existingUser.Address = user.Address;
+                existingUser.PhoneNumber = user.PhoneNumber;
+                existingUser.Role = user.Role;
+                this.userRepository.Update(existingUser);
+                this.userRepository.Save();
+            }
+            else
+            {
+                this.userRepository.Insert(user);
+                this.userRepository.Save();
+            }
+            
         }
 
         public User GetUserById(int id)

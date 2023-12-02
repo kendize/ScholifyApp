@@ -37,8 +37,7 @@ namespace WPFScholifyApp
 
         public void Window_Closing(object sender, CancelEventArgs e)
         {
-            this.Hide();
-            this.Close();
+            Application.Current.Shutdown();
         }
 
         private void RegisterButton_Click(object sender, RoutedEventArgs e)
@@ -78,7 +77,6 @@ namespace WPFScholifyApp
                     {
                         this.windowService.Show<ParentsWindow>(window =>
                         {
-                            window.InitializeComponent();
                             window._authenticatedUser = authenticatedUser;
                             window.FirstNameTextBlock.Text = userService.Authenticate(email, password).FirstName;
                             window.LastNameTextBlock.Text = userService.Authenticate(email, password).LastName;

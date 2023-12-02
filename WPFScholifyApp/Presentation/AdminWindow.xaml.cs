@@ -53,11 +53,10 @@ namespace WPFScholifyApp
         private CreateUser createUser;
         private CreateTeacher createTeacher;
         private CreateSubject createSubject;
-        private CreateSchedule createSchedule1;
-        private int selectedClassId;
-        private int selectedTeacherId;
-        private int selectedSubjectId;
-        private int selectedPupilsId;
+        public int selectedClassId { get; set; }
+        public int selectedTeacherId { get; set; }
+        public int selectedSubjectId { get; set; }
+        public int selectedPupilsId { get; set; }
 
         public List<DateTime> Days { get; set; }
 
@@ -83,8 +82,7 @@ namespace WPFScholifyApp
                             CreateClass createClass,
                             CreateUser createUser,
                             CreateTeacher createTeacher,
-                            CreateSubject createSubject,
-                            CreateSchedule createSchedule1
+                            CreateSubject createSubject
                             )
         {
 
@@ -108,7 +106,6 @@ namespace WPFScholifyApp
             this.createUser = createUser;
             this.createTeacher = createTeacher;
             this.createSubject = createSubject;
-            this.createSchedule1 = createSchedule1;
 
             CultureInfo culture = new CultureInfo("uk-UA"); // Adjust culture as needed
 
@@ -141,8 +138,7 @@ namespace WPFScholifyApp
 
         public void Window_Closing(object sender, CancelEventArgs e)
         {
-            this.Hide();
-            this.mainWindow.Show();
+            Application.Current.Shutdown();
         }
         // Метод який викликається при натисканні кнопки "Класи" на панелі Адміністратора
         public void ClassButton_Click(object sender, RoutedEventArgs e)
@@ -222,6 +218,7 @@ namespace WPFScholifyApp
             ClearDays();
             var result = new List<Schedule>();
             var dayOfWeeks = this.dayOfWeekService.GetAll();
+            this.selectedClassId = classId;
             for (int i = 0; i <= 6; i++)
             {
 
@@ -347,7 +344,7 @@ namespace WPFScholifyApp
             this.DeleteFromAdminPanels();
             var puplis = this.adminService.GetAllPupils();
 
-            foreach (var p in puplis.OrderByDescending(x => x.LastName))
+            foreach (var p in puplis)
             {
                 var teacherPanel = new StackPanel { Orientation = Orientation.Horizontal };
                 var button = new Button { Content = $"{p!.LastName} {p!.FirstName}", Height = 60, Width = 290, FontSize = 30, Tag = p.Id };
@@ -605,8 +602,8 @@ namespace WPFScholifyApp
             this.ShowAllClasses();
             this.selectedClassId = classId;
             var pupils = this.adminService.GetAllPupilsForClass(classId);
-
-            foreach (var p in pupils)
+            var userPupils = this.adminService.GetAllPupils().Where(x => x.Pupil.ClassId == classId);
+            foreach (var p in userPupils)
             {
                 var pupilButton = new Button { Content = $"{p!.FirstName} {p!.LastName}", Height = 60, Width = 700, FontSize = 30, Tag = p.Id };
                 pupilButton.Click += new RoutedEventHandler(this.LookUsers);
@@ -666,9 +663,6 @@ namespace WPFScholifyApp
                 this.RightPanel.Children.Add(deleteButton);
             }
 
-            var createButton = new Button { Content = "Додати предмет в розклад", Height = 60, Width = 700, FontSize = 30, Tag = classId };
-            createButton.Click += new RoutedEventHandler(this.СreateSchedule);
-            this.RightAction.Children.Add(createButton);
             UpdateAdminPanels();
         }
 
@@ -712,17 +706,14 @@ namespace WPFScholifyApp
         }
 
         // Метод який викликається при натисканні кнопки "Додати Розклад"
-        private void СreateSchedule(object sender, RoutedEventArgs e)
+        private void CreateScheduleFunc(object sender, RoutedEventArgs e)
         {
-            var createButton = (Button)sender;
+
+            var classId = this.selectedClassId;
+
             this.windowService.Show<CreateSchedule>(window =>
             {
-                window.InitializeComponent();
-                object tag = createButton.Tag;
-                if (tag != null && int.TryParse(tag.ToString(), out int classId))
-                {
-                window.clas = this.classService.GetAllClasses().FirstOrDefault(x => x.Id == classId); //) this.subjectRepository.GetAllq().Include(x => x.Class).FirstOrDefault(x => x.ClassId == classId)?.Class;
-                }
+                window.SetClassId(classId);
             });
         }
 

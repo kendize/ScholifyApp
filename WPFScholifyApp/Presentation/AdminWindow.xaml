@@ -51,7 +51,7 @@
                 </StackPanel>
                 <StackPanel Height="58" Width="1370" HorizontalAlignment="Right">
                     <Button x:Name="previousWeek" FontSize="30" Width="427" HorizontalAlignment="Left" Tag="-7" Click="ChangeDate" >Попередній тиждень</Button>
-                    <Button x:Name="createSchedule" FontSize="30" Width="427" HorizontalAlignment="Center" Tag="-7" Click="СreateSchedule"  Margin="0,-45,0,0">Додати розклад</Button>
+                    <Button x:Name="createSchedule" FontSize="30" Width="427" HorizontalAlignment="Center" Tag="-7" Click="CreateScheduleFunc"  Margin="0,-45,0,0">Додати розклад</Button>
                     <Button x:Name="nextWeek" FontSize="30" Width="427" Content="Наступний тиждень" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-45,0,0" Tag="7" Click="ChangeDate" />
                 </StackPanel>
             </StackPanel>

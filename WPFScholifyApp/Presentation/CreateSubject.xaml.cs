@@ -108,7 +108,8 @@ namespace WPFScholifyApp.Presentation
                 window.RightAction.Children.Clear();
                 window.ShowAllSubjectsForTeacher(this.TeacherId);
             });
-                
+            
+
             this.Hide();
         }
 
