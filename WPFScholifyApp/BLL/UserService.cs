@@ -6,18 +6,20 @@ namespace WPFScholifyApp.BLL
 {
     using Microsoft.EntityFrameworkCore;
     using System;
+    using System.Collections.Generic;
     using System.Linq;
+    using System.Windows.Documents;
     using WPFScholifyApp.DAL.ClassRepository;
     using WPFScholifyApp.DAL.DBClasses;
 
     public class UserService
     {
-        private IGenericRepository<User> userRepository;
-        private IGenericRepository<Pupil> pupilRepository;
-        private IGenericRepository<Parents> parentRepository;
-        private IGenericRepository<ParentsPupil> parentsPupilRepository;
+        private GenericRepository<User> userRepository;
+        private GenericRepository<Pupil> pupilRepository;
+        private GenericRepository<Parents> parentRepository;
+        private GenericRepository<ParentsPupil> parentsPupilRepository;
 
-        public UserService(IGenericRepository<User> userRepos, IGenericRepository<Pupil> pupilRepos, IGenericRepository<Parents> parentRepository, IGenericRepository<ParentsPupil> parentsPupilRepository)
+        public UserService(GenericRepository<User> userRepos, GenericRepository<Pupil> pupilRepos, GenericRepository<Parents> parentRepository, GenericRepository<ParentsPupil> parentsPupilRepository)
         {
             this.pupilRepository = pupilRepos;
             this.userRepository = userRepos;
@@ -77,6 +79,13 @@ namespace WPFScholifyApp.BLL
             }
         }
 
+        public User AddUser(User user)
+        {
+            this.userRepository.Insert(user);
+            this.userRepository.Save();
+            return user;
+        }
+
         public User AddUser(User user, Pupil pupil)
         {
             this.userRepository.Insert(user);
@@ -84,6 +93,23 @@ namespace WPFScholifyApp.BLL
             this.userRepository.Save();
             this.pupilRepository.Save();
             return user;
+        }
+
+        public User AddUser(User user, Parents parents)
+        {
+                this.userRepository.Insert(user);
+                this.parentRepository.Insert(parents);
+                this.userRepository.Save();
+                this.pupilRepository.Save();
+                var ParentsPupil = new ParentsPupil
+                {
+                    pupilId = user!.Id,
+                    parentId = parents.Id
+                };
+
+                this.parentsPupilRepository.Insert(ParentsPupil);
+                this.parentsPupilRepository.Save();
+                return user;
         }
 
         public void DeletePupil(int userId)
@@ -101,6 +127,28 @@ namespace WPFScholifyApp.BLL
 
             this.userRepository.Delete(parent.UserId);
             this.userRepository.Save();
+        }
+
+        public List<User> ShowUsersForSubjectId(int subjectId)
+        {
+            var group = this.userRepository.GetAllq()
+                .Include(x => x.Pupil)
+                .ThenInclude(x => x.Class)
+                .ThenInclude(x => x.Subjects)
+                .Where(x => x.Pupil.Class.Subjects!.Select(y => y.Id).Contains(subjectId)).ToList();
+
+            return group;
+        }
+
+        public void SaveUser(User user)
+        {
+            this.userRepository.Update(user);
+            this.userRepository.Save();
+        }
+
+        public User GetUserById(int id)
+        {
+            return this.userRepository.GetAll().FirstOrDefault(x => x.Id == id)!;
         }
     }
 }

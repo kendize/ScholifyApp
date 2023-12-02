@@ -30,40 +30,64 @@ namespace WPFScholifyApp
     /// </summary>
     public partial class TeacherWindow : Window
     {
+        public User? _authenticatedUser { get; set; }
         private AdminService adminService;
+        private AdvertisementService advertisementService;
+        private ClassService classService;
+        //private DayBookService dayBookService;
+        private DayOfWeekService dayOfWeekService;
+        private JournalService journalService;
         private ParentsService parentsService;
         private TeacherService teacherService;
-        private JournalService journalService;
-        private GenericRepository<DayOfWeek> dayOfWeekRepository;
-        private GenericRepository<Teacher> teacherRepository;
-        private AdvertisementService advertisementService;
-        private GenericRepository<DayBook> journalRepository;
-        private GenericRepository<Class> classRepository;
-        private GenericRepository<User> userRepository;
-        private GenericRepository<DayBook> dayBookRepository;
-        private GenericRepository<Subject> subjectRepository;
-        private GenericRepository<Schedule> scheduleRepository;
+        private UserService userService;
+        private ScheduleService scheduleService;
+        private WindowService windowService;
+
+        private MainWindow mainWindow;
+        private AdminWindow adminWindow;
+        private CreateAdvertisements createAdvertisements;
+
         public int selectedClassId;
         public int selectedSubjectId;
         public int selectedPupilsId;
-        private User CurrentUser;
         public List<DateTime> Days { get; set; }
 
-        private GenericRepository<Parents> parentsRepository;
 
-        public TeacherWindow(User currentUser, GenericRepository<DayOfWeek> dayOfWeekRepository, GenericRepository<Teacher> teacherRepository, JournalService journalService, GenericRepository<DayBook> journalRepository, GenericRepository<Class> classRepository, GenericRepository<User> userRepository, GenericRepository<DayBook> dayBookRepository, GenericRepository<Subject> subjectRepository, GenericRepository<Schedule> scheduleRepository, GenericRepository<Parents> parentsRepository)
+        public TeacherWindow(AdminService adminService,
+                            AdvertisementService advertisementService,
+                            ClassService classService,
+                            //DayBookService dayBookService,
+                            DayOfWeekService dayOfWeekService,
+                            JournalService journalService,
+                            ParentsService parentsService,
+                            TeacherService teacherService,
+                            UserService userService,
+                            ScheduleService scheduleService,
+                            WindowService windowService,
+
+                            MainWindow mainWindow,
+                            AdminWindow adminWindow,
+                            CreateAdvertisements createAdvertisements
+
+                            )
         {
-            this.dayBookRepository = dayBookRepository;
+
+            this.adminService = adminService;
+            this.advertisementService = advertisementService;
+            this.classService = classService;
+            //this.dayBookService = dayBookService;
+            this.dayOfWeekService = dayOfWeekService;
             this.journalService = journalService;
-            this.journalRepository = journalRepository;
-            this.dayOfWeekRepository = dayOfWeekRepository;
-            this.teacherRepository = teacherRepository;
-            this.classRepository = classRepository;
-            this.userRepository = userRepository;
-            this.subjectRepository = subjectRepository;
-            this.scheduleRepository = scheduleRepository;
-            this.parentsRepository = parentsRepository;
-            this.parentsService = new ParentsService(new GenericRepository<User>(), new GenericRepository<Pupil>(), new GenericRepository<Parents>());
+            this.parentsService = parentsService;
+            this.teacherService = teacherService;
+            this.userService = userService;
+            this.scheduleService = scheduleService;
+            this.windowService = windowService;
+
+            this.mainWindow = mainWindow;
+            this.adminWindow = adminWindow;
+            this.createAdvertisements = createAdvertisements;
+
             this.InitializeComponent();
             CultureInfo culture = new CultureInfo("uk-UA"); // Adjust culture as needed
 
@@ -90,20 +114,6 @@ namespace WPFScholifyApp
                 daysOfWeek.Add(startDate.AddDays(i));
             }
             this.Days = daysOfWeek;
-            this.CurrentUser = currentUser;
-            this.adminService = new AdminService(
-                new GenericRepository<User>(), 
-                new GenericRepository<Class>(), 
-                new GenericRepository<Teacher>(), 
-                new GenericRepository<Pupil>(), 
-                new GenericRepository<Admin>(), 
-                new GenericRepository<Parents>(), 
-                new GenericRepository<Subject>(), 
-                new GenericRepository<Advertisement>());
-
-            this.teacherService = new TeacherService( new GenericRepository<Advertisement>(), new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Schedule>());
-            this.adminService = new AdminService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Advertisement>());
-            this.advertisementService = new AdvertisementService(new GenericRepository<Advertisement>(), new GenericRepository<Class>(), new GenericRepository<Pupil>());
             this.InitializeComponent();
         }
 
@@ -120,7 +130,6 @@ namespace WPFScholifyApp
 
         public void ShowAllPuplis()
         {
-            this.adminService = new AdminService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Advertisement>());
             var puplis = this.adminService.GetAllPupils();
 
             foreach (var p in puplis.OrderByDescending(x => x.LastName))
@@ -144,14 +153,13 @@ namespace WPFScholifyApp
             this.DeleteFromTeacherPanel();
             this.ShowAllPuplis();
             this.selectedPupilsId = pupilId;
-            this.parentsService = new ParentsService(new GenericRepository<User>(), new GenericRepository<Pupil>(), new GenericRepository<Parents>());
 
             var parents = this.parentsService.GetParentsForPupilId(pupilId);
             foreach (var f in parents)
             {
                 var teacherPanel = new StackPanel { Orientation = Orientation.Horizontal };
 
-                var button = new Button { Content = $" {f!.User!.LastName} {f!.User!.FirstName}", Height = 60, Width = 800, FontSize = 30, Tag = f.Id };
+                var button = new Button { Content = $" {f!.LastName} {f!.FirstName}", Height = 60, Width = 800, FontSize = 30, Tag = f.Id };
                button.Click += new RoutedEventHandler(this.LookParents);
                 RightPanel.Children.Add(button);
                 this.LeftPanel.Children.Add(teacherPanel);
@@ -172,7 +180,6 @@ namespace WPFScholifyApp
             this.RightAction.Children.Clear();
 
 
-            ParentsService parentsService = new ParentsService(new GenericRepository<User>(), new GenericRepository<Pupil>(),new GenericRepository<Parents>() );
             var parents = this.adminService.GetAllParents().FirstOrDefault(x => x.Id == (int)createButton.Tag);
             if (parents != null)
             {
@@ -314,10 +321,7 @@ namespace WPFScholifyApp
             this.SetSidePanelsVisible();
             this.DeleteFromTeacherPanel();
 
-            var subjects = this.subjectRepository.GetAllq()
-                .Include(x => x.Teachers)
-                .Include(x => x.Class)
-                .Where(x => x.Teachers!.Select(y => y.UserId).Contains(this.CurrentUser.Id)).ToList();
+            var subjects = teacherService.ShowAllSubjectsForTeacherId(this._authenticatedUser.Id);
 
             foreach (var s in subjects)
             {
@@ -359,20 +363,18 @@ namespace WPFScholifyApp
         {
             this.DeleteFromTeacherPanel();
             this.ShowAllSubjectsForTeacher();
-            var a = this.userRepository.GetAllq()
-                .Include(x => x.Pupil)
-                .ThenInclude(x => x.Class);
+            //var a = this.userRepository.GetAllq()
+            //    .Include(x => x.Pupil)
+            //    .ThenInclude(x => x.Class);
 
-            var group = this.userRepository.GetAllq()
-                .Include(x => x.Pupil)
-                .ThenInclude(x => x.Class)
-                .ThenInclude(x => x.Subjects)
-                .Where(x => x.Pupil.Class.Subjects!.Select(y => y.Id).Contains(id)).ToList();
-            var classId = this.classRepository.GetAllq().Include(x => x.Subjects).Where(x => x.Subjects!.Select(y => y.Id).Contains(id)).FirstOrDefault().Id;
+            var group = this.userService.ShowUsersForSubjectId(id);
+
+
+            var classId = this.classService.GetClassBySubjectId(id).Id;
 
 
             var grades = this.journalService.GetDayBooks(classId);
-            var dates = this.scheduleRepository.GetAllq().AsNoTracking().Include(x => x.DayOfWeek).Where(x => x.SubjectId == id).Select(x => x.DayOfWeek).Distinct().ToList();
+            var dates = this.scheduleService.GetDatesBySubjectId(id);
 
 
             dates = dates.OrderBy(x => x.Date).ToList();
@@ -461,7 +463,7 @@ namespace WPFScholifyApp
                             DayOfWeek = date,
                             DayBook = new DayBook
                             {
-                                Id = (this.dayBookRepository.GetAll().OrderByDescending(x => x.Id).FirstOrDefault()?.Id ?? 0) + 1,
+                                Id = this.adminService.GetNewDayBookId(),
                                 PupilId = (this.adminService.GetAllPupils().FirstOrDefault(x => x.Id == user.Id)?.Id ?? 0),
                                 Grade = int.TryParse(gradeInput.Text, out int result)  == true  ? result : 0,
                                 Attendance = !int.TryParse(gradeInput.Text, out int result2) == true ? gradeInput.Text : string.Empty,
@@ -518,7 +520,6 @@ namespace WPFScholifyApp
             this.RightPanel.Children.Clear();
             this.RightAction.Children.Clear();
 
-            AdvertisementService advertisementService = new AdvertisementService(new GenericRepository<Advertisement>(), new GenericRepository<Class>(), new GenericRepository<Pupil>());
             var advertisement = this.advertisementService.GetAllAdvertisementsForClassId(this.selectedClassId).FirstOrDefault(x => x.Id == (int)createButton.Tag);
             if (advertisement != null)
             {
@@ -541,7 +542,6 @@ namespace WPFScholifyApp
             this.RightPanel.Children.Clear();
             this.RightAction.Children.Clear();
 
-            AdvertisementService advertisementService = new AdvertisementService(new GenericRepository<Advertisement>(), new GenericRepository<Class>(), new GenericRepository<Pupil>());
             var advertisement = this.advertisementService.GetAllAdvertisementsForClassId(this.selectedClassId).FirstOrDefault(x => x.Id == (int)createButton.Tag);
             if (advertisement != null)
             {
@@ -572,9 +572,16 @@ namespace WPFScholifyApp
         private void AddAdvertisements(object sender, RoutedEventArgs e)
         {
             var createButton = (Button)sender;
-            var createPanel = new CreateAdvertisements(new GenericRepository<Teacher>(), new GenericRepository<Advertisement>(), new GenericRepository<User>(), this, new GenericRepository<Class>(), new GenericRepository<Pupil>());
+            var createPanel = this.createAdvertisements;
             createPanel.ClassId = this.selectedClassId;
             createPanel.Show();
+            this.windowService.Show<CreateAdvertisements>(window =>
+            {
+                window.InitializeComponent();
+                window.ClassId = this.selectedClassId;
+                window.Show();
+            });
+
         }
         private void PrivateInfoButton_Click(object sender, RoutedEventArgs e)
         {
@@ -594,7 +601,6 @@ namespace WPFScholifyApp
             };
             this.RightPanel.Children.Add(titleLabel);
 
-            UserService userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>(), new GenericRepository<Parents>(), new GenericRepository<ParentsPupil>());
             string name = this.FirstNameTextBlock.Text;
             string surname = this.LastNameTextBlock.Text;
             User teacher = userService.GetInfoByNameSurname(name, surname);
@@ -624,10 +630,9 @@ namespace WPFScholifyApp
             this.Schedule.Visibility = Visibility.Hidden;
             this.SetSidePanelsVisible();
 
-            MainWindow mainWindow = new MainWindow();
-            mainWindow.Show();
+            this.mainWindow.Show();
 
-            this.Close();
+            this.Hide();
         }
 
         private void ClassJournalButton_Click(object sender, RoutedEventArgs e)
@@ -643,8 +648,8 @@ namespace WPFScholifyApp
         {
             ClearDays();
             var result = new List<Schedule>();
-            var dayOfWeeks = this.dayOfWeekRepository.GetAll();
-            var teacherIds = this.teacherRepository.GetAll().Select(t => t.Id).ToList();
+            var dayOfWeeks = this.dayOfWeekService.GetAll();
+            var teacherIds = this.teacherService.GetAllTeacherIds();
             for (int i = 0; i <= 6; i++)
             {
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ using System.Windows.Shapes;
 using WPFScholifyApp.BLL;
 using WPFScholifyApp.DAL.ClassRepository;
 using WPFScholifyApp.DAL.DBClasses;
+using DayOfWeek = WPFScholifyApp.DAL.DBClasses.DayOfWeek;
 
 namespace WPFScholifyApp.Presentation
 {
@@ -22,28 +24,33 @@ namespace WPFScholifyApp.Presentation
     /// </summary>
     public partial class CreateAdvertisements : Window
     {
-        private IGenericRepository<Teacher> teacherRepository;
-        private IGenericRepository<Class> classRepository;
-        private IGenericRepository<Advertisement> advertisementRepository;
-        private IGenericRepository<Pupil> pupilRepository;
-        private TeacherWindow teacherWindow;
+        private AdminService adminService;
         private AdvertisementService advertisementService;
+        private WindowService windowService;
+        private MainWindow mainWindow;
+
         public int ClassId { get; set; }
 
-        public CreateAdvertisements(IGenericRepository<Teacher> teacherRepos, IGenericRepository<Advertisement> advertisementRepos, IGenericRepository<User> userRepository, TeacherWindow teacherWindow, IGenericRepository<Class>  classRepository, IGenericRepository<Pupil> pupilRepository)
+        public CreateAdvertisements(
+                            AdminService adminService,
+                            AdvertisementService advertisementService,
+                            WindowService windowService,
+                            MainWindow mainWindow
+
+                            )
         {
-            this.teacherRepository = teacherRepos;
-            this.classRepository = classRepository;
-            this.advertisementRepository = advertisementRepos;
-            this.teacherWindow = teacherWindow;
-            this.pupilRepository = pupilRepository;
-            this.advertisementService = new AdvertisementService(advertisementRepos, classRepository, pupilRepository);
+
+            this.adminService = adminService;
+            this.advertisementService = advertisementService;
+            this.windowService = windowService;
+            this.mainWindow = mainWindow;
             this.InitializeComponent();
         }
 
+
         private void Cancel(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            this.Hide();
         }
 
         private void Save(object sender, RoutedEventArgs e)
@@ -52,19 +59,22 @@ namespace WPFScholifyApp.Presentation
             string description = this.Description.Text;
             var advertisement = new Advertisement
             {
-                Id = (this.advertisementRepository.GetAll().OrderByDescending(x => x.Id).FirstOrDefault()?.Id ?? 0) + 1,
+                Id = this.adminService.GetNewAdvertisementId(),
                 Name = name,
                 Description = description,
                 ClassId = this.ClassId
             };
 
             this.advertisementService.AddAdvertisement(advertisement);
-            this.Close();
-
-            this.teacherWindow.DeleteFromTeacherPanel();
-            this.teacherWindow.ShowAllClasses();
-            this.teacherWindow.ShowAllAdvertisementsForClassId(ClassId);
-            this.teacherWindow.UpdateTeacherPanel();
+            this.Hide();
+            this.windowService.Show<TeacherWindow>(window =>
+            {
+                window.DeleteFromTeacherPanel();
+                window.ShowAllClasses();
+                window.ShowAllAdvertisementsForClassId(ClassId);
+                window.UpdateTeacherPanel();
+            });
+            
         }
 
     }

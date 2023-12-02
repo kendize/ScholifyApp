@@ -6,6 +6,7 @@ namespace WPFScholifyApp.Presentation
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
@@ -17,46 +18,80 @@ namespace WPFScholifyApp.Presentation
     using System.Windows.Media;
     using System.Windows.Media.Imaging;
     using System.Windows.Shapes;
+    using WPFScholifyApp.BLL;
     using WPFScholifyApp.DAL.ClassRepository;
     using WPFScholifyApp.DAL.DBClasses;
+    using DayOfWeek = DAL.DBClasses.DayOfWeek;
 
     /// <summary>
     /// Interaction logic for CreateClass.xaml.
     /// </summary>
     public partial class CreateClass : Window
     {
-        private IGenericRepository<Class> classRepository;
-        private AdminWindow adminWindow;
+        private AdminService adminService;
+        private AdvertisementService advertisementService;
+        private ClassService classService;
+        private JournalService journalService;
+        private ParentsService parentsService;
+        private PupilService pupilService;
+        private UserService userService;
+        private ScheduleService scheduleService;
+        private TeacherService teacherService;
+        private WindowService windowService;
+        private MainWindow mainWindow;
 
-        public CreateClass(IGenericRepository<Class> classRepos, AdminWindow adminWindow)
+        public CreateClass(AdminService adminService,
+                            AdvertisementService advertisementService,
+                            ClassService classService,
+                            JournalService journalService,
+                            ParentsService parentsService,
+                            PupilService pupilService,
+                            UserService userService,
+                            ScheduleService scheduleService,
+                            TeacherService teacherService,
+                            WindowService windowService,
+                            MainWindow mainWindow
+                            )
         {
-            this.classRepository = classRepos;
+
+            this.adminService = adminService;
+            this.advertisementService = advertisementService;
+            this.classService = classService;
+            this.journalService = journalService;
+            this.parentsService = parentsService;
+            this.pupilService = pupilService;
+            this.userService = userService;
+            this.scheduleService = scheduleService;
+            this.teacherService = teacherService;
+            this.windowService = windowService;
+            this.mainWindow = mainWindow;
             this.InitializeComponent();
-            this.adminWindow = adminWindow;
         }
 
         private void SaveSubject(object sender, RoutedEventArgs e)
         {
             string className = this.ClassName.Text;
-            this.Close();
+            this.Hide();
             var clases = new Class
             {
-                Id = this.classRepository.GetAll().Select(x => x.Id).Max() + 1,
+                Id = this.adminService.GetNewClassId(),
                 ClassName = className,
             };
 
-            this.classRepository.Insert(clases);
-            this.classRepository.Save();
-            this.adminWindow.LeftPanel.Children.Clear();
-            this.adminWindow.LeftAction.Children.Clear();
-            this.adminWindow.ShowAllClasses();
-            this.adminWindow.LeftPanel.UpdateLayout();
-            this.adminWindow.LeftAction.UpdateLayout();
+            this.classService.Save(clases);
+            this.windowService.Show<AdminWindow>(window =>
+            {
+                window.LeftPanel.Children.Clear();
+                window.LeftAction.Children.Clear();
+                window.ShowAllClasses();
+                window.LeftPanel.UpdateLayout();
+                window.LeftAction.UpdateLayout();
+            });
         }
 
         private void Cancel(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            this.Hide();
         }
     }
 }

@@ -5,6 +5,7 @@
 namespace WPFScholifyApp
 {
     using System;
+    using System.ComponentModel;
     using System.Windows;
     using System.Windows.Controls;
     using WPFScholifyApp.BLL;
@@ -17,16 +18,33 @@ namespace WPFScholifyApp
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        public User? _authenticatedUser { get; set; }
+        private UserService userService;
+        private WindowService windowService;
+
+        public MainWindow(
+                            UserService userService,
+                            WindowService windowService
+                            )
         {
+
+            this.userService = userService;
+            this.windowService = windowService;
+
+            this.Closing += new CancelEventHandler(this.Window_Closing!);
             this.InitializeComponent();
+        }
+
+        public void Window_Closing(object sender, CancelEventArgs e)
+        {
+            this.Hide();
+            this.Close();
         }
 
         private void RegisterButton_Click(object sender, RoutedEventArgs e)
         {
             string email = this.EmailTextBox.Text;
             string password = this.PasswordBox.Password;
-                UserService userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>(), new GenericRepository<Parents>(), new GenericRepository<ParentsPupil>());
                 User authenticatedUser = userService.Authenticate(email, password);
                 User authenticatedEmail = userService.AuthenticateEmail(email);
                 User authenticatedPassword = userService.AuthenticatePassword(password);
@@ -35,64 +53,53 @@ namespace WPFScholifyApp
                 {
                     if (authenticatedUser.Role == "учень")
                     {
-                        PupilWindow pupilWindow = new PupilWindow(
-                            authenticatedUser, 
-                            new PupilService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Schedule>()), 
-                            new GenericRepository<DayOfWeek>(), 
-                            new GenericRepository<Pupil>(), 
-                            new AdminService(
-                                new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>() , new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Advertisement>()),
-                            new GenericRepository<Class>(), new JournalService(new GenericRepository<DayBook>(), new GenericRepository<Subject>(), new GenericRepository<Class>(), new GenericRepository<DayOfWeek>(), new ScheduleService(new GenericRepository<User> (), new GenericRepository<Class>(), new GenericRepository<Schedule>(), new GenericRepository<Subject>())), new GenericRepository<DayBook>(), new GenericRepository<Schedule>(), new GenericRepository<Subject>());
-                        pupilWindow.FirstNameTextBlock.Text = userService.Authenticate(email, password).FirstName;
-                        pupilWindow.LastNameTextBlock.Text = userService.Authenticate(email, password).LastName;
-                        pupilWindow.Show();
-                    }
+
+                    this.windowService.Show<PupilWindow>(window =>
+                    {
+
+                        window.InitializeComponent();
+                        window._authenticatedUser = authenticatedUser;
+                        window.FirstNameTextBlock.Text = userService.Authenticate(email, password).FirstName;
+                        window.LastNameTextBlock.Text = userService.Authenticate(email, password).LastName;
+                    });
+                }
                     else if (authenticatedUser.Role == "вчитель")
                     {
-                        TeacherWindow teacherWindow = new TeacherWindow(authenticatedUser, 
-                            new GenericRepository<DayOfWeek>(), 
-                            new GenericRepository<Teacher>(), 
-                            new JournalService(
-                                new GenericRepository <DayBook> (),
-                                new  GenericRepository < Subject > (), 
-                                new GenericRepository < Class > (), 
-                                new GenericRepository<DayOfWeek>(), 
-                                new ScheduleService(
-                                    new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Schedule>(),  new GenericRepository<Subject>())), 
-                            new GenericRepository<DayBook>(),
-                                new GenericRepository<Class>(),
-                                new GenericRepository<User>(),
-                                new GenericRepository<DayBook>(),
-                                new GenericRepository<Subject>(),
-                                new GenericRepository<Schedule>(),
-                                new GenericRepository<Parents>());
 
-                        teacherWindow.FirstNameTextBlock.Text = userService.Authenticate(email, password).FirstName;
-                        teacherWindow.LastNameTextBlock.Text = userService.Authenticate(email, password).LastName;
-                        teacherWindow.Show();
-                    }
+                    this.windowService.Show<TeacherWindow>(window =>
+                    {
+                        window.InitializeComponent();
+                        window._authenticatedUser = authenticatedUser;
+                        window.FirstNameTextBlock.Text = userService.Authenticate(email, password).FirstName;
+                        window.LastNameTextBlock.Text = userService.Authenticate(email, password).LastName;
+                    });
+                }
                     else if (authenticatedUser.Role == "батьки")
                     {
-                        ParentsWindow parentsWindow = new ParentsWindow(authenticatedUser,
-                            new PupilService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Schedule>()),
-                            new GenericRepository<DayOfWeek>(),
-                            new GenericRepository<Pupil>(),
-                            new AdminService(
-                                new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Advertisement>()),
-                            new GenericRepository<Class>(), new JournalService(new GenericRepository<DayBook>(), new GenericRepository<Subject>(), new GenericRepository<Class>(), new GenericRepository<DayOfWeek>(), new ScheduleService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Schedule>(), new GenericRepository<Subject>())), new GenericRepository<DayBook>(), new GenericRepository<Schedule>(), new GenericRepository<Subject>());
-                    parentsWindow.FirstNameTextBlock.Text = userService.Authenticate(email, password).FirstName;
-                        parentsWindow.LastNameTextBlock.Text = userService.Authenticate(email, password).LastName;
-                        parentsWindow.Show();
+                        this.windowService.Show<ParentsWindow>(window =>
+                        {
+                            window.InitializeComponent();
+                            window._authenticatedUser = authenticatedUser;
+                            window.FirstNameTextBlock.Text = userService.Authenticate(email, password).FirstName;
+                            window.LastNameTextBlock.Text = userService.Authenticate(email, password).LastName;
+                            window.Show();
+                        });
+                   
+                    
                     }
                     else
                     {
-                        AdminWindow adminWindow = new AdminWindow(authenticatedUser);
-                        adminWindow.FirstNameTextBlock.Text = userService.Authenticate(email, password).FirstName;
-                        adminWindow.LastNameTextBlock.Text = userService.Authenticate(email, password).LastName;
-                        adminWindow.Show();
+                    this.windowService.Show<AdminWindow>(window =>
+                    {
+                        window.InitializeComponent();
+                        window._authenticatedUser = authenticatedUser;
+                        window.FirstNameTextBlock.Text = userService.Authenticate(email, password).FirstName;
+                        window.LastNameTextBlock.Text = userService.Authenticate(email, password).LastName;
+                    });
+                        
                     }
 
-                    this.Close();
+                this.Hide();
                 }
                 else
                 {

@@ -11,26 +11,14 @@ namespace WPFScholifyApp.BLL
 {
     public class PupilService
     {
-        private IGenericRepository<User> userRepository;
 
-        private IGenericRepository<Class> classRepository;
 
-        private IGenericRepository<Teacher> teacherRepository;
-        private IGenericRepository<Pupil> pupilRepository;
-        private IGenericRepository<Admin> adminRepository;
-        private IGenericRepository<Parents> parentsRepository;
-        private IGenericRepository<Subject> subjectRepository;
-        private IGenericRepository<Schedule> scheduleRepository;
+        private GenericRepository<Pupil> pupilRepository;
+        private GenericRepository<Schedule> scheduleRepository;
 
-        public PupilService(IGenericRepository<User> userRepos, IGenericRepository<Class> classRepository, IGenericRepository<Teacher> teacherRepository, IGenericRepository<Pupil> pupilRepository, IGenericRepository<Admin> adminRepository, IGenericRepository<Parents> parentsRepository, IGenericRepository<Subject> subjectRepository, IGenericRepository<Schedule> scheduleRepository)
+        public PupilService( GenericRepository<Pupil> pupilRepository, GenericRepository<Schedule> scheduleRepository)
         {
-            this.userRepository = userRepos;
-            this.classRepository = classRepository;
-            this.teacherRepository = teacherRepository;
-            this.parentsRepository = parentsRepository;
             this.pupilRepository = pupilRepository;
-            this.adminRepository = adminRepository;
-            this.subjectRepository = subjectRepository;
             this.scheduleRepository = scheduleRepository;
         }
 
@@ -45,9 +33,9 @@ namespace WPFScholifyApp.BLL
                 .Where(x => x.Class!.Id == classId && x.DayOfWeekId == dayOfWeek).ToList();
         }
 
-        public List<Pupil> GetAddPupils()
+        public List<Pupil> GetAllPupils()
         {
-            return this.pupilRepository.GetAll().ToList();
+            return this.pupilRepository.GetAllq().Include(x => x.ParentsPupil)!.ThenInclude(x => x.parent).ToList().ToList();
         }
     }
 }

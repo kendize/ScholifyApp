@@ -1,4 +1,4 @@
-﻿// <copyright file="IGenericRepository.cs" company="PlaceholderCompany">
+﻿// <copyright file="GenericRepository.cs" company="PlaceholderCompany">
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 

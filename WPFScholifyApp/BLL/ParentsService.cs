@@ -14,28 +14,33 @@ namespace WPFScholifyApp.BLL
 
     public class ParentsService
     {
-        private IGenericRepository<User> userRepository;
-        private IGenericRepository<Pupil> pupilRepository;
-        private IGenericRepository<Parents> parentsRepository;
+        private GenericRepository<User> userRepository;
+        private GenericRepository<Pupil> pupilRepository;
+        private GenericRepository<Parents> parentsRepository;
 
 
-        public ParentsService(IGenericRepository<User> userRepos, IGenericRepository<Pupil> pupilRepos, IGenericRepository<Parents> parentsRepos)
+        public ParentsService(GenericRepository<User> userRepos, GenericRepository<Pupil> pupilRepos, GenericRepository<Parents> parentsRepos)
         {
             this.pupilRepository = pupilRepos;
             this.userRepository = userRepos;
             this.parentsRepository = parentsRepos;
         }
  
-        public List<Parents> GetParentsForPupilId (int pupilId )
+        public List<User> GetParentsForPupilId (int pupilId )
         {
 #pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
-            var allParentsOfPupil = this.parentsRepository
-    .GetAllq()
-    .Where(x => x.ParentsPupils!.Any(y => y.pupilId == pupilId))
-    .Include(x => x.ParentsPupils)
-        .ThenInclude(pp => pp.pupil!)
-    .Include(x => x.User)
-    .ToList();
+            var allParentsOfPupil = this.userRepository.GetAllq()
+                .Include(x => x.Parents)
+                .ThenInclude(x => x.ParentsPupils)
+                .Where(x => x.Parents!.ParentsPupils!.Select(y => y.pupilId).Contains(pupilId)).ToList();
+
+    //        var allParentsOfPupil = this.parentsRepository
+    //.GetAllq()
+    //.Where(x => x.ParentsPupils!.Any(y => y.pupilId == pupilId))
+    //.Include(x => x.ParentsPupils)
+    //    .ThenInclude(pp => pp.pupil!)
+    //.Include(x => x.User)
+    //.ToList();
 #pragma warning restore CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
             return allParentsOfPupil;
         }

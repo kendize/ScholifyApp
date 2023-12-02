@@ -7,6 +7,7 @@ namespace WPFScholifyApp.Presentation
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.ComponentModel;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
@@ -21,29 +22,59 @@ namespace WPFScholifyApp.Presentation
     using WPFScholifyApp.BLL;
     using WPFScholifyApp.DAL.ClassRepository;
     using WPFScholifyApp.DAL.DBClasses;
+    using DayOfWeek = DAL.DBClasses.DayOfWeek;
 
     /// <summary>
     /// Interaction logic for CreateSubject.xaml.
     /// </summary>
     public partial class CreateSubject : Window
     {
-        private IGenericRepository<Teacher> teacherRepository;
-        private IGenericRepository<Subject> subjectRepository;
-        private IGenericRepository<Class> classRepository;
-        private AdminWindow adminWindow;
+        private AdminService adminService;
+        private AdvertisementService advertisementService;
+        private ClassService classService;
+        private JournalService journalService;
+        private ParentsService parentsService;
+        private PupilService pupilService;
+        private UserService userService;
+        private ScheduleService scheduleService;
+        private SubjectService subjectService;
+        private TeacherService teacherService;
+        private WindowService windowService;
+        private MainWindow mainWindow;
 
         public int TeacherId { get; set; }
         public ObservableCollection<ComboBoxItem> cbItems { get; set; }
 
-        public CreateSubject(IGenericRepository<Teacher> teacherRepos, IGenericRepository<Subject> subjectRepos, IGenericRepository<User> userRepository,  AdminWindow adminWindow, IGenericRepository<Class> classRepository)
+        public CreateSubject(AdminService adminService,
+                            AdvertisementService advertisementService,
+                            ClassService classService,
+                            JournalService journalService,
+                            ParentsService parentsService,
+                            PupilService pupilService,
+                            UserService userService,
+                            ScheduleService scheduleService,
+                            SubjectService subjectService,
+                            TeacherService teacherService,
+                            WindowService windowService,
+                            MainWindow mainWindow)
         {
-            this.teacherRepository = teacherRepos;
-            this.subjectRepository = subjectRepos;
-            this.adminWindow = adminWindow;
-            this.classRepository = classRepository;
             this.InitializeComponent();
+
+            this.adminService = adminService;
+            this.advertisementService = advertisementService;
+            this.classService = classService;
+            this.journalService = journalService;
+            this.parentsService = parentsService;
+            this.pupilService = pupilService;
+            this.userService = userService;
+            this.scheduleService = scheduleService;
+            this.subjectService = subjectService;
+            this.teacherService = teacherService;
+            this.windowService = windowService;
+            this.mainWindow = mainWindow;
+
             cbItems = new ObservableCollection<ComboBoxItem>();
-            var classes = this.classRepository.GetAll();
+            var classes = this.classService.GetAllClasses();
             foreach ( var c in classes )
             {
                 cbItems.Add(new ComboBoxItem { Content = c.ClassName, Tag = c.Id });
@@ -57,31 +88,33 @@ namespace WPFScholifyApp.Presentation
             string subjectName = this.SubjectName.Text;
             var teacher = new Teacher
             {
-                Id = (this.teacherRepository.GetAll().OrderByDescending(x => x.Id).FirstOrDefault()?.Id ?? 0) + 1,
+                Id = adminService.GetNewTeacherId(),
                 UserId = this.TeacherId,
-                SubjectId = (this.subjectRepository.GetAll().OrderByDescending(x => x.Id).FirstOrDefault()?.Id ?? 0) + 1,
+                SubjectId = adminService.GetNewSubjectId()
             };
 
             var subject = new Subject
             {
-                Id = (this.subjectRepository.GetAll().OrderByDescending(x => x.Id).FirstOrDefault()?.Id ?? 0) + 1,
+                Id = adminService.GetNewSubjectId(),
                 SubjectName = subjectName,
                 ClassId = (int)((ComboBoxItem)this.ClassComboBox.SelectedItem).Tag
         };
 
-            this.subjectRepository.Insert(subject);
-            this.subjectRepository.Save();
-            this.teacherRepository.Insert(teacher);
-            this.teacherRepository.Save();
-            this.adminWindow.RightPanel.Children.Clear();
-            this.adminWindow.RightAction.Children.Clear();
-            this.adminWindow.ShowAllSubjectsForTeacher(this.TeacherId);
-            this.Close();
+            this.subjectService.SaveSubject(subject, teacher);
+
+            this.windowService.Show<AdminWindow>(window =>
+            {
+                window.RightPanel.Children.Clear();
+                window.RightAction.Children.Clear();
+                window.ShowAllSubjectsForTeacher(this.TeacherId);
+            });
+                
+            this.Hide();
         }
 
         private void Cancel(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            this.Hide();
         }
 
         private void Save(object sender, RoutedEventArgs e)

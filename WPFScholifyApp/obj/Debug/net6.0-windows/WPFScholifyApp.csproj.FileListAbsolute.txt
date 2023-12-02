@@ -80,7 +80,6 @@ D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\CreateC
 D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\CreateSubject.g.cs
 D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\CreateTeacher.g.cs
 D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\CreateUser.g.cs
-D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\LookTeacher.g.cs
 D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\LookUsers.g.cs
 D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\MainWindow.g.cs
 D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\ParentsWindow.g.cs
@@ -143,7 +142,6 @@ D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\CreateC
 D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\CreateSubject.baml
 D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\CreateTeacher.baml
 D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\CreateUser.baml
-D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\LookTeacher.baml
 D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\LookUsers.baml
 D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\MainWindow.baml
 D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\ParentsWindow.baml
@@ -164,8 +162,6 @@ D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\CreateS
 D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\CreateSchedule.baml
 D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\CreateAdvertisements.g.cs
 D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\CreateAdvertisements.baml
-D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\LookClass.g.cs
-D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\LookClass.baml
 E:\Zoriana\Outsource\WPFScholifyApp\bin\Debug\net6.0-windows\WPFScholifyApp.exe
 E:\Zoriana\Outsource\WPFScholifyApp\bin\Debug\net6.0-windows\WPFScholifyApp.xml
 E:\Zoriana\Outsource\WPFScholifyApp\bin\Debug\net6.0-windows\WPFScholifyApp.deps.json
@@ -264,6 +260,4 @@ E:\Zoriana\Outsource\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\Create
 E:\Zoriana\Outsource\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\LookParents.g.cs
 E:\Zoriana\Outsource\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\LookParents.baml
 D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\CreateParents.g.cs
-D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\LookParents.g.cs
 D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\CreateParents.baml
-D:\Work\ScholifyApp\WPFScholifyApp\obj\Debug\net6.0-windows\Presentation\LookParents.baml

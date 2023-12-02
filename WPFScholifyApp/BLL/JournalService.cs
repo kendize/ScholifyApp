@@ -12,10 +12,10 @@ namespace WPFScholifyApp.BLL
 {
     public class JournalService
     {
-        public IGenericRepository<DayOfWeek> dayOfWeekRepository;
-        public IGenericRepository<DayBook> dayBookRepository;
-        public IGenericRepository<Subject> subjectRepository;
-        public IGenericRepository<Class> classRepository;
+        public GenericRepository<DayOfWeek> dayOfWeekRepository;
+        public GenericRepository<DayBook> dayBookRepository;
+        public GenericRepository<Subject> subjectRepository;
+        public GenericRepository<Class> classRepository;
         public ScheduleService scheduleService;
         public JournalService(GenericRepository<DayBook> dayBookRepository, GenericRepository<Subject> subjectRepository, GenericRepository<Class> classRepository, GenericRepository<DayOfWeek> dayOfWeekRepository, ScheduleService scheduleService) 
         {

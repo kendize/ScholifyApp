@@ -87,10 +87,10 @@ namespace WPFScholifyApp.DAL.ClassRepository
                 new User { Id = 14, Email = "14", Password = "14", FirstName = "Максим", LastName = "Семенов", MiddleName = "Віталійович", Birthday = new DateTime(2023, 11, 25).ToUniversalTime(), Role = "учень", Address = "м.Житомир,вул Перемоги, 14" },
                 new User { Id = 15, Email = "15", Password = "15", FirstName = "Юлія", LastName = "Горбач", MiddleName = "Ігорівна", Birthday = new DateTime(2023, 11, 25).ToUniversalTime(), Role = "учень", Address = "м.Житомир,вул Перемоги, 15" },
                 new User { Id = 16, Email = "16", Password = "16", FirstName = "Сергій", LastName = "Лисенко", MiddleName = "Олександрович", Birthday = new DateTime(2023, 11, 25).ToUniversalTime(), Role = "учень", Address = "м.Житомир,вул Перемоги, 16" },
-                new User { Id = 17, Email = "17", Password = "17", FirstName = "Марина", LastName = "Данилюк", MiddleName = "Василівна", Birthday = new DateTime(2023, 11, 25).ToUniversalTime(), Role = "учень", Address = "м.Житомир,вул Перемоги, 17" },
-                new User { Id = 18, Email = "18", Password = "18", FirstName = "Олександр", LastName = "Коваль", MiddleName = "Михайлович", Birthday = new DateTime(2023, 11, 25).ToUniversalTime(), Role = "учень", Address = "м.Житомир,вул Перемоги, 18" },
-                new User { Id = 19, Email = "19", Password = "19", FirstName = "Тетяна", LastName = "Мельник", MiddleName = "Андріївна", Birthday = new DateTime(2023, 11, 25).ToUniversalTime(), Role = "учень", Address = "м.Житомир,вул Перемоги, 19" },
-                new User { Id = 20, Email = "20", Password = "20", FirstName = "Ігор", LastName = "Білецький", MiddleName = "Петрович", Birthday = new DateTime(2023, 11, 25).ToUniversalTime(), Role = "учень", Address = "м.Житомир,вул Перемоги, 20" });
+                new User { Id = 17, Email = "17", Password = "17", FirstName = "Марина", LastName = "Данилюк", MiddleName = "Василівна", Birthday = new DateTime(2023, 11, 25).ToUniversalTime(), Role = "батьки", Address = "м.Житомир,вул Перемоги, 17" },
+                new User { Id = 18, Email = "18", Password = "18", FirstName = "Олександр", LastName = "Коваль", MiddleName = "Михайлович", Birthday = new DateTime(2023, 11, 25).ToUniversalTime(), Role = "батьки", Address = "м.Житомир,вул Перемоги, 18" },
+                new User { Id = 19, Email = "19", Password = "19", FirstName = "Тетяна", LastName = "Мельник", MiddleName = "Андріївна", Birthday = new DateTime(2023, 11, 25).ToUniversalTime(), Role = "батьки", Address = "м.Житомир,вул Перемоги, 19" },
+                new User { Id = 20, Email = "20", Password = "20", FirstName = "Ігор", LastName = "Білецький", MiddleName = "Петрович", Birthday = new DateTime(2023, 11, 25).ToUniversalTime(), Role = "батьки", Address = "м.Житомир,вул Перемоги, 20" });
             modelBuilder.Entity<Admin>().HasData(
                 new Admin { Id = 1 },
                 new Admin { Id = 3 },
@@ -140,16 +140,9 @@ namespace WPFScholifyApp.DAL.ClassRepository
                 new Pupil { Id = 14, UserId = 14, ClassId = 2 },
                 new Pupil { Id = 15, UserId = 15, ClassId = 2 },
                 new Pupil { Id = 16, UserId = 16, ClassId = 3 },
-                new Pupil { Id = 17, UserId = 17, ClassId = 3 },
-                new Pupil { Id = 18, UserId = 18, ClassId = 4 },
-                new Pupil { Id = 19, UserId = 19, ClassId = 4 });
+                new Pupil { Id = 18, UserId = 18, ClassId = 4 });
 
             modelBuilder.Entity<Parents>().HasData(
-                new Parents { Id = 6, UserId = 6 },
-                new Parents { Id = 13, UserId = 13 },
-                new Parents { Id = 14, UserId = 14 },
-                new Parents { Id = 15, UserId = 15 },
-                new Parents { Id = 16, UserId = 16 },
                 new Parents { Id = 17, UserId = 17  },
                 new Parents { Id = 18, UserId = 18  },
                 new Parents { Id = 19, UserId = 19 },
@@ -157,15 +150,14 @@ namespace WPFScholifyApp.DAL.ClassRepository
 
 
             modelBuilder.Entity<ParentsPupil>().HasData(
-                new ParentsPupil { parentId = 6, pupilId = 5 },
-                new ParentsPupil { parentId = 13, pupilId = 12 },
-                new ParentsPupil { parentId = 14, pupilId = 13 },
-                new ParentsPupil { parentId = 15, pupilId =14 },
-                new ParentsPupil { parentId = 16, pupilId = 15 },
-                new ParentsPupil { parentId = 17, pupilId = 16 },
-                new ParentsPupil { parentId = 18, pupilId = 17},
-                new ParentsPupil { parentId = 19, pupilId = 18 },
-                new ParentsPupil { parentId = 20, pupilId = 19 }
+                new ParentsPupil { parentId = 17, pupilId = 13 },
+                new ParentsPupil { parentId = 17, pupilId = 14 },
+                new ParentsPupil { parentId = 18, pupilId = 13 },
+                new ParentsPupil { parentId = 18, pupilId =14 },
+                new ParentsPupil { parentId = 19, pupilId = 15 },
+                new ParentsPupil { parentId = 19, pupilId = 16 },
+                new ParentsPupil { parentId = 20, pupilId = 5 },
+                new ParentsPupil { parentId = 20, pupilId = 16 }
 
                 );
 
@@ -187,20 +179,14 @@ namespace WPFScholifyApp.DAL.ClassRepository
                 new Schedule { Id = 8, TeacherId = 7, ClassId = 2, LessonTimeId = 1, DayOfWeekId = 1, SubjectId = 2 },
                 new Schedule { Id = 9, TeacherId = 8, ClassId = 3, LessonTimeId = 2, DayOfWeekId = 2, SubjectId = 3 },
                 new Schedule { Id = 10, TeacherId = 9, ClassId = 4, LessonTimeId = 3, DayOfWeekId = 3, SubjectId = 4 },
-                new Schedule { Id = 11, TeacherId = 10, ClassId = 5, LessonTimeId = 4, DayOfWeekId = 4, SubjectId = 5 },
-                new Schedule { Id = 12, TeacherId = 11, ClassId = 5, LessonTimeId = 5, DayOfWeekId = 5, SubjectId = 6 });
+                new Schedule { Id = 11, TeacherId = 10, ClassId = 5, LessonTimeId = 4, DayOfWeekId = 4, SubjectId = 5 });
 
             modelBuilder.Entity<DayBook>().HasData(
                 new DayBook { Id = 1, Grade = 10, PupilId = 5, Attendance = "Present", ScheduleId = 1 },
                 new DayBook { Id = 8, Grade = 9, PupilId = 12, Attendance = "Present", ScheduleId = 8 },
                 new DayBook { Id = 9, Grade = 8, PupilId = 13, Attendance = "Absent", ScheduleId = 9 },
                 new DayBook { Id = 10, Grade = 10, PupilId = 14, Attendance = "Present", ScheduleId = 10 },
-                new DayBook { Id = 11, Grade = 7, PupilId = 15, Attendance = "Present", ScheduleId = 11 },
-                new DayBook { Id = 12, Grade = 9, PupilId = 16, Attendance = "Absent", ScheduleId = 12 },
-                new DayBook { Id = 13, Grade = 8, PupilId = 17, Attendance = "Present", ScheduleId = 8 },
-                new DayBook { Id = 14, Grade = 10, PupilId = 18, Attendance = "Present", ScheduleId = 9 },
-                new DayBook { Id = 15, Grade = 7, PupilId = 19, Attendance = "Absent", ScheduleId = 10 },
-                new DayBook { Id = 17, Grade = 8, PupilId = 12, Attendance = "Absent", ScheduleId = 12 });
+                new DayBook { Id = 11, Grade = 7, PupilId = 15, Attendance = "Present", ScheduleId = 11 });
         }
     }
 

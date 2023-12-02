@@ -13,10 +13,10 @@ namespace WPFScholifyApp.BLL
 
     public class AdvertisementService
     {
-        private IGenericRepository<Advertisement> advertisementRepository;
-        private IGenericRepository<Class> classRepository;
-        private IGenericRepository<Pupil> pupilRepository;
-        public AdvertisementService(IGenericRepository<Advertisement> advertisementRepository, IGenericRepository<Class> classRepository, IGenericRepository<Pupil> pupilRepository)
+        private GenericRepository<Advertisement> advertisementRepository;
+        private GenericRepository<Class> classRepository;
+        private GenericRepository<Pupil> pupilRepository;
+        public AdvertisementService(GenericRepository<Advertisement> advertisementRepository, GenericRepository<Class> classRepository, GenericRepository<Pupil> pupilRepository)
         {
             this.advertisementRepository = advertisementRepository;
             this.classRepository = classRepository;

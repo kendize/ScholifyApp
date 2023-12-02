@@ -13,26 +13,17 @@ namespace WPFScholifyApp.BLL
 
     public class TeacherService
     {
-        private IGenericRepository<Advertisement> advertisementRepository;
-        private IGenericRepository<Class> classRepository;
+        private GenericRepository<Advertisement> advertisementRepository;
+        private GenericRepository<Teacher> teacherRepository;
+        private GenericRepository<Subject> subjectRepository;
+        private GenericRepository<Schedule> scheduleRepository;
+        private GenericRepository<User> userRepository;
 
-        private IGenericRepository<Teacher> teacherRepository;
-        private IGenericRepository<Pupil> pupilRepository;
-        private IGenericRepository<Admin> adminRepository;
-        private IGenericRepository<Parents> parentsRepository;
-        private IGenericRepository<Subject> subjectRepository;
-        private IGenericRepository<Schedule> scheduleRepository;
-        private IGenericRepository<User> userRepository;
-
-        public TeacherService(IGenericRepository<Advertisement> advertisementRepository, IGenericRepository<User> userRepos, IGenericRepository<Class> classRepository, IGenericRepository<Teacher> teacherRepository, IGenericRepository<Pupil> pupilRepository, IGenericRepository<Admin> adminRepository, IGenericRepository<Parents> parentsRepository, IGenericRepository<Subject> subjectRepository, IGenericRepository<Schedule> scheduleRepository)
+        public TeacherService(GenericRepository<Advertisement> advertisementRepository, GenericRepository<User> userRepos, GenericRepository<Teacher> teacherRepository, GenericRepository<Subject> subjectRepository, GenericRepository<Schedule> scheduleRepository)
         {
             this.advertisementRepository = advertisementRepository;
             this.userRepository = userRepos;
-            this.classRepository = classRepository;
             this.teacherRepository = teacherRepository;
-            this.parentsRepository = parentsRepository;
-            this.pupilRepository = pupilRepository;
-            this.adminRepository = adminRepository;
             this.subjectRepository = subjectRepository;
             this.scheduleRepository = scheduleRepository;
         }
@@ -71,5 +62,30 @@ namespace WPFScholifyApp.BLL
                 .Where(x => x.Teacher!.Id == teacherId && x.DayOfWeekId == dayOfWeek).ToList();
         }
 
+        public List<Subject> ShowAllSubjectsForTeacherId (int teacherId)
+        {
+            var subjects = this.subjectRepository.GetAllq()
+                .Include(x => x.Teachers)
+                .Include(x => x.Class)
+                .Where(x => x.Teachers!.Select(y => y.UserId).Contains(teacherId)).ToList();
+
+            return subjects;
+        }
+
+        public List<int> GetAllTeacherIds()
+        {
+            return this.teacherRepository.GetAll().Select(t => t.Id).ToList();
+        }
+
+        public Teacher GetTeacherBySubjectId(int subjectId)
+        {
+            return this.teacherRepository.GetAll().FirstOrDefault(x => x.SubjectId == subjectId)!;
+        }
+
+        public void Delete(int teacherId)
+        {
+            this.teacherRepository.Delete(teacherId);
+
+        }
     }
 }

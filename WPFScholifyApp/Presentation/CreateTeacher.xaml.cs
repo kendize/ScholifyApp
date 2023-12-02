@@ -6,6 +6,7 @@ namespace WPFScholifyApp.Presentation
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
@@ -20,21 +21,47 @@ namespace WPFScholifyApp.Presentation
     using WPFScholifyApp.BLL;
     using WPFScholifyApp.DAL.ClassRepository;
     using WPFScholifyApp.DAL.DBClasses;
+    using DayOfWeek = DAL.DBClasses.DayOfWeek;
 
     /// <summary>
     /// Interaction logic for CreateTecher.xaml.
     /// </summary>
     public partial class CreateTeacher : Window
     {
-        private IGenericRepository<User> userRepository;
+        private AdminService adminService;
+        private AdvertisementService advertisementService;
+        private JournalService journalService;
+        private ParentsService parentsService;
+        private PupilService pupilService;
+        private UserService userService;
+        private ScheduleService scheduleService;
         private TeacherService teacherService;
-        private AdminWindow adminWindow;
+        private WindowService windowService;
+        private MainWindow mainWindow;
 
-        public CreateTeacher(IGenericRepository<User> userRepos, AdminWindow adminWindow)
+        public CreateTeacher(AdminService adminService,
+                            AdvertisementService advertisementService,
+                            JournalService journalService,
+                            ParentsService parentsService,
+                            PupilService pupilService,
+                            UserService userService,
+                            ScheduleService scheduleService,
+                            TeacherService teacherService,
+                            WindowService windowService,
+                            MainWindow mainWindow
+                            )
         {
-            this.userRepository = userRepos;
-            this.teacherService = new TeacherService(new GenericRepository<Advertisement>(), new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Schedule>());
-            this.adminWindow = adminWindow;
+
+            this.adminService = adminService;
+            this.advertisementService = advertisementService;
+            this.journalService = journalService;
+            this.parentsService = parentsService;
+            this.pupilService = pupilService;
+            this.userService = userService;
+            this.scheduleService = scheduleService;
+            this.teacherService = teacherService;
+            this.windowService = windowService;
+            this.mainWindow = mainWindow;
             this.InitializeComponent();
         }
 
@@ -53,7 +80,7 @@ namespace WPFScholifyApp.Presentation
 
             var user = new User
             {
-                Id = this.userRepository.GetAll().Select(x => x.Id).Max() + 1,
+                Id = this.adminService.GetNewUserId(),
                 Email = email,
                 Password = password,
                 FirstName = firstName,
@@ -66,17 +93,22 @@ namespace WPFScholifyApp.Presentation
                 Role = "вчитель",
             };
 
-            this.teacherService.AddTeacher(user);
-            this.Close();
 
-            this.adminWindow.DeleteFromAdminPanels();
-            this.adminWindow.ShowAllTeachers();
-            this.adminWindow.UpdateAdminPanels();
+            this.teacherService.AddTeacher(user);
+            this.Hide();
+
+            this.windowService.Show<AdminWindow>(window =>
+            {
+                window.DeleteFromAdminPanels();
+                window.ShowAllTeachers();
+                window.UpdateAdminPanels();
+            });
+                
         }
 
         private void Cancel(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            this.Hide();
         }
     }
 }

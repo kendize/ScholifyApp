@@ -1,113 +1,91 @@
-﻿// <copyright file="LookUsers.xaml.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
-
-namespace WPFScholifyApp.Presentation
+﻿namespace WPFScholifyApp.Presentation
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Data;
-    using System.Windows.Documents;
-    using System.Windows.Input;
-    using System.Windows.Media;
-    using System.Windows.Media.Imaging;
-    using System.Windows.Shapes;
     using WPFScholifyApp.BLL;
     using WPFScholifyApp.DAL.ClassRepository;
     using WPFScholifyApp.DAL.DBClasses;
+    using DayOfWeek = DAL.DBClasses.DayOfWeek;
 
-    /// <summary>
-    /// Interaction logic for LookUsers.xaml.
-    /// </summary>
     public partial class LookUsers : Window
     {
+        private UserService userService;
+        private WindowService windowService;
+        private MainWindow mainWindow;
+
         public bool ShowAllTeachers { get; set; } = false;
         public bool ShowAllClasses { get; set; } = false;
-        private IGenericRepository<User> userRepository;
-        private IGenericRepository<Pupil> pupilRepository;
-        private UserService userService;
-        public AdminWindow AdminWindow { get; set; }
-
         public User? currentUser { get; set; }
-
         public int currentClassId { get; set; }
-
         public int currentPupilId { get; set; }
-
         public int parentId { get; set; }
-        public LookUsers(IGenericRepository<User> userRepos, IGenericRepository<Pupil> pupilRepos, AdminWindow adminWindow, IGenericRepository<Parents> parentsRepository, IGenericRepository<ParentsPupil> parentPupilRepository)
+
+        public LookUsers(
+            UserService userService,
+            WindowService windowService,
+            MainWindow mainWindow)
         {
-            this.pupilRepository = pupilRepos;
-            this.userRepository = userRepos;
-            this.userService = new UserService(userRepos, pupilRepos, parentsRepository, parentPupilRepository);
+            this.userService = userService;
+            this.windowService = windowService;
+            this.mainWindow = mainWindow;
             this.InitializeComponent();
-            AdminWindow = adminWindow;
         }
 
         private void SaveUser(object sender, RoutedEventArgs e)
         {
-            var user = new User
+            this.windowService.Show<AdminWindow>(window =>
             {
-                Id = currentUser!.Id,
-                Email = this.Email.Text,
-                Password = this.Password.Text,
-                FirstName = this.FirstName.Text,
-                LastName = this.LastName.Text,
-                MiddleName = this.MiddleName.Text,
-                Gender = this.Gender.Text,
-                Birthday = this.Birthday.SelectedDate!.Value.ToUniversalTime(),
-                Address = this.Adress.Text,
-                PhoneNumber = this.PhoneNumber.Text,
-                Role = currentUser.Role
-            };
-
-            this.userRepository.Update(user);
-            this.userRepository.Save();
-
-            if (currentUser.Role == "учень")
-            {
-
-                this.AdminWindow.DeleteFromAdminPanels();
-                if (this.ShowAllTeachers)
+                var user = new User
                 {
-                    this.AdminWindow.ShowAllTeachers();
+                    Id = currentUser!.Id,
+                    Email = Email.Text,
+                    Password = Password.Text,
+                    FirstName = FirstName.Text,
+                    LastName = LastName.Text,
+                    MiddleName = MiddleName.Text,
+                    Gender = Gender.Text,
+                    Birthday = Birthday.SelectedDate!.Value.ToUniversalTime(),
+                    Address = Adress.Text,
+                    PhoneNumber = PhoneNumber.Text,
+                    Role = currentUser.Role
+                };
+
+                this.userService.SaveUser(user);
+
+                window.DeleteFromAdminPanels();
+
+                if (currentUser.Role == "учень")
+                {
+                    if (ShowAllTeachers)
+                        window.ShowAllTeachers();
+
+                    if (ShowAllClasses)
+                    {
+                        window.ShowAllClasses();
+                        window.ShowAllPupilsForClassId(currentClassId);
+                    }
                 }
 
-                if (this.ShowAllClasses)
+                if (currentUser.Role == "батьки")
                 {
-                    this.AdminWindow.ShowAllClasses();
-                    this.AdminWindow.ShowAllPupilsForClassId(this.currentClassId);
+                    window.ShowAllPuplis();
+                    window.ShowParentsForPupilId(currentPupilId);
                 }
 
-                this.AdminWindow.UpdateAdminPanels();
-            }
+                if (currentUser.Role == "вчитель")
+                {
+                    window.ShowAllTeachers();
+                }
 
-            if (currentUser.Role == "батьки")
-            {
-                this.AdminWindow.DeleteFromAdminPanels();
-                this.AdminWindow.ShowAllPuplis();
-                this.AdminWindow.ShowParentsForPupilId(this.currentPupilId);
-                this.AdminWindow.UpdateAdminPanels();
-            }   
-            
-            if (currentUser.Role == "вчитель")
-            {
-                this.AdminWindow.DeleteFromAdminPanels();
-                this.AdminWindow.ShowAllTeachers();
+                window.UpdateAdminPanels();
+            });
 
-            }
-
-            this.Close();
+            Close();
         }
 
         private void Cancel(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
     }
 }

@@ -7,6 +7,7 @@ namespace WPFScholifyApp
     using Microsoft.EntityFrameworkCore;
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Globalization;
     using System.Linq;
     using System.Text;
@@ -31,54 +32,84 @@ namespace WPFScholifyApp
     /// </summary>
     public partial class AdminWindow : Window
     {
-        private PupilService pupilService;
+        public User? _authenticatedUser { get; set; }
         private AdminService adminService;
+        private AdvertisementService advertisementService;
+        private ClassService classService;
+        private DayOfWeekService dayOfWeekService;
+        private JournalService journalService;
         private ParentsService parentsService;
+        private PupilService pupilService;
         private UserService userService;
         private ScheduleService scheduleService;
-        private GenericRepository<User> userRepository;
-        private GenericRepository<Pupil> pupilRepository;
-        private GenericRepository<Subject> subjectRepository;
-        private GenericRepository<Teacher> teacherRepository;
-        private GenericRepository<Class> classRepository;
-        private GenericRepository<Schedule> scheduleRepository;
-        private GenericRepository<DayOfWeek> dayOfWeekRepository;
-        private GenericRepository<LessonTime> lessonTimeRepository;
-        private GenericRepository<Parents> parentsRepository;
+        private SubjectService subjectService;
         private TeacherService teacherService;
-        private AdvertisementService advertisementService;
+        private WindowService windowService;
+
+        private MainWindow mainWindow;
+        private LookUsers lookUsers;
+        private CreateParents createParents;
+        private CreateClass createClass;
+        private CreateUser createUser;
+        private CreateTeacher createTeacher;
+        private CreateSubject createSubject;
+        private CreateSchedule createSchedule1;
         private int selectedClassId;
         private int selectedTeacherId;
         private int selectedSubjectId;
         private int selectedPupilsId;
 
-        private IGenericRepository<Advertisement> advertisementsRepository;
-        private User? CurrentUser { get; set; }
         public List<DateTime> Days { get; set; }
 
         // private int selectedPupilId;
         // private int selectedParentId;
-        public AdminWindow(User CurrentUser)
+        public AdminWindow(
+                            AdminService adminService,
+                            AdvertisementService advertisementService,
+                            ClassService classService,
+                            DayOfWeekService dayOfWeekService,
+                            JournalService journalService,
+                            ParentsService parentsService,
+                            PupilService pupilService,
+                            UserService userService,
+                            ScheduleService scheduleService,
+                            SubjectService subjectService,
+                            TeacherService teacherService,
+                            WindowService windowService,
+
+                            MainWindow mainWindow,
+                            LookUsers lookUsers,
+                            CreateParents createParents,
+                            CreateClass createClass,
+                            CreateUser createUser,
+                            CreateTeacher createTeacher,
+                            CreateSubject createSubject,
+                            CreateSchedule createSchedule1
+                            )
         {
 
-            this.pupilService = new PupilService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Schedule>());
-            this.scheduleRepository = new GenericRepository<Schedule>();
-            this.dayOfWeekRepository = new GenericRepository<DayOfWeek>();
-            this.lessonTimeRepository = new GenericRepository<LessonTime>();
-            this.CurrentUser = CurrentUser;
-            this.parentsRepository = new GenericRepository<Parents>();
-            this.userRepository = new GenericRepository<User>();
-            this.subjectRepository = new GenericRepository<Subject>();
-            this.pupilRepository = new GenericRepository<Pupil>();
-            this.teacherRepository = new GenericRepository<Teacher>();
-            this.classRepository = new GenericRepository<Class>();
-            this.advertisementsRepository = new GenericRepository<Advertisement>();
-            this.userService = new UserService(new GenericRepository<User>(), new GenericRepository<Pupil>(), new GenericRepository<Parents>(), new GenericRepository<ParentsPupil>());
-            this.parentsService = new ParentsService(new GenericRepository<User>(), new GenericRepository<Pupil>(), new GenericRepository<Parents>());
-            this.scheduleService = new ScheduleService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Schedule>(), new GenericRepository<Subject>());
-            this.adminService = new AdminService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Advertisement>());
-            this.InitializeComponent();
-            this.teacherService = new TeacherService(new GenericRepository<Advertisement>(), new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Schedule>());
+            this.adminService = adminService;
+            this.advertisementService = advertisementService;
+            this.classService = classService;
+            this.dayOfWeekService = dayOfWeekService;
+            this.journalService = journalService;
+            this.parentsService = parentsService;
+            this.userService = userService;
+            this.scheduleService = scheduleService;
+            this.subjectService = subjectService;
+            this.teacherService = teacherService;
+            this.windowService = windowService;
+            this.pupilService = pupilService;
+
+            this.mainWindow = mainWindow;
+            this.lookUsers = lookUsers;
+            this.createParents = createParents;
+            this.createClass = createClass;
+            this.createUser = createUser;
+            this.createTeacher = createTeacher;
+            this.createSubject = createSubject;
+            this.createSchedule1 = createSchedule1;
+
             CultureInfo culture = new CultureInfo("uk-UA"); // Adjust culture as needed
 
             // Get the current date
@@ -104,20 +135,15 @@ namespace WPFScholifyApp
                 daysOfWeek.Add(startDate.AddDays(i));
             }
             this.Days = daysOfWeek;
-            this.CurrentUser = CurrentUser;
-            this.adminService = new AdminService(
-                new GenericRepository<User>(),
-                new GenericRepository<Class>(),
-                new GenericRepository<Teacher>(),
-                new GenericRepository<Pupil>(),
-                new GenericRepository<Admin>(),
-                new GenericRepository<Parents>(),
-                new GenericRepository<Subject>(),
-                new GenericRepository<Advertisement>());
-
-            this.advertisementService = new AdvertisementService(new GenericRepository<Advertisement>(), new GenericRepository<Class>(), new GenericRepository<Pupil>());
+            this.Closing += new CancelEventHandler(this.Window_Closing!);
+            this.InitializeComponent();
         }
 
+        public void Window_Closing(object sender, CancelEventArgs e)
+        {
+            this.Hide();
+            this.mainWindow.Show();
+        }
         // Метод який викликається при натисканні кнопки "Класи" на панелі Адміністратора
         public void ClassButton_Click(object sender, RoutedEventArgs e)
         {
@@ -195,7 +221,7 @@ namespace WPFScholifyApp
         {
             ClearDays();
             var result = new List<Schedule>();
-            var dayOfWeeks = this.dayOfWeekRepository.GetAll();
+            var dayOfWeeks = this.dayOfWeekService.GetAll();
             for (int i = 0; i <= 6; i++)
             {
 
@@ -319,7 +345,6 @@ namespace WPFScholifyApp
         public void ShowAllPuplis()
         {
             this.DeleteFromAdminPanels();
-            this.adminService = new AdminService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Advertisement>());
             var puplis = this.adminService.GetAllPupils();
 
             foreach (var p in puplis.OrderByDescending(x => x.LastName))
@@ -388,7 +413,6 @@ namespace WPFScholifyApp
         public void ShowAllTeachers()
         {
             this.DeleteFromAdminPanels();
-            this.adminService = new AdminService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Advertisement>());
             var teacher = this.adminService.GetAllTeacher();
             foreach (var t in teacher)
             {
@@ -421,8 +445,7 @@ namespace WPFScholifyApp
 
             this.DeleteFromAdminPanels();
 
-            var subjects = this.subjectRepository.GetAllq()
-                .Include(x => x.Class).Where(x => x.ClassId == classId).ToList();
+            var subjects = this.subjectService.GetSubjectsByClassId(classId);
 
             foreach (var s in subjects)
             {
@@ -447,14 +470,13 @@ namespace WPFScholifyApp
             this.DeleteFromAdminPanels();
             this.ShowAllPuplis();
             this.selectedPupilsId = pupilId;
-            this.parentsService = new ParentsService(new GenericRepository<User>(), new GenericRepository<Pupil>(), new GenericRepository<Parents>());
 
             var parents = this.parentsService.GetParentsForPupilId(pupilId);
             foreach (var f in parents)
             {
                 //var teacherPanel = new StackPanel { Orientation = Orientation.Horizontal };
 
-                var button = new Button { Content = $" {f!.User!.LastName} {f!.User!.FirstName}", Height = 60, Width = 500, FontSize = 30, Tag = f.UserId };
+                var button = new Button { Content = $" {f!.LastName} {f!.FirstName}", Height = 60, Width = 500, FontSize = 30, Tag = f.Id };
                 button.Click += new RoutedEventHandler(this.LookParents);
                 RightPanel.Children.Add(button);
 
@@ -486,32 +508,36 @@ namespace WPFScholifyApp
         {
             var createButton = (Button)sender;
             var parentsId = (int)createButton.Tag;
-            var createPanel = new LookUsers(new GenericRepository<User>(), new GenericRepository<Pupil>(), this, new GenericRepository<Parents>(), new GenericRepository<ParentsPupil>());
 
-            //var createPanel = new LookParents(new GenericRepository<User>(), new GenericRepository<Parents>(), new GenericRepository<Pupil>(), this, new GenericRepository<ParentsPupil>());
-            //  createPanel.ShowAllClasses = true;
+            this.windowService.Show<LookUsers>(window =>
+            {
+                window.currentPupilId = this.selectedPupilsId;
+                var parent = this.adminService.GetAllParents().FirstOrDefault(x => x.Id == (int)createButton.Tag);
 
-            createPanel.currentPupilId = this.selectedPupilsId;
-            var parent = this.adminService.GetAllParents().FirstOrDefault(x => x.Id == (int)createButton.Tag);
-            createPanel.currentUser = parent;
-            createPanel.Email.Text = parent!.Email!.ToString();
-            createPanel.Password.Text = parent!.Password!.ToString();
-            createPanel.FirstName.Text = parent!.FirstName!.ToString();
-            createPanel.LastName.Text = parent!.LastName!.ToString();
-            createPanel.MiddleName.Text = parent!.MiddleName!.ToString();
-            createPanel.Gender.Text = parent!.Gender!.ToString();
-            createPanel.Birthday.Text = parent!.Birthday!.ToString();
-            createPanel.Adress.Text = parent!.Address!.ToString();
-            createPanel.PhoneNumber.Text = parent!.PhoneNumber!.ToString();
+                if (parent != null)
+                {
+                    window.currentUser = parent;
+                    window.Email.Text = parent.Email?.ToString() ?? string.Empty;
+                    window.Password.Text = parent.Password?.ToString() ?? string.Empty;
+                    window.FirstName.Text = parent.FirstName?.ToString() ?? string.Empty;
+                    window.LastName.Text = parent.LastName?.ToString() ?? string.Empty;
+                    window.MiddleName.Text = parent.MiddleName?.ToString() ?? string.Empty;
+                    window.Gender.Text = parent.Gender?.ToString() ?? string.Empty;
+                    window.Birthday.Text = parent.Birthday?.ToString() ?? string.Empty;
+                    window.Adress.Text = parent.Address?.ToString() ?? string.Empty;
+                    window.PhoneNumber.Text = parent.PhoneNumber?.ToString() ?? string.Empty;
+                }
 
-            createPanel.Show();
+                window.Show();
+            });
+
             this.LeftPanel.UpdateLayout();
 
         }
         private void AddParents(object sender, RoutedEventArgs e)
         {
             var createButton = (Button)sender;
-            var createPanel = new CreateParents(this.userRepository, this.parentsRepository, this.pupilRepository, this, new GenericRepository<ParentsPupil>());
+            var createPanel = this.createParents;
             createPanel.PupilsId = this.selectedPupilsId;
             createPanel.Show();
         }
@@ -521,8 +547,7 @@ namespace WPFScholifyApp
         {
             var deleteButton = (Button)sender;
             this.selectedClassId = (int)deleteButton.Tag;
-            this.classRepository.Delete((int)deleteButton.Tag);
-            this.classRepository.Save();
+            this.classService.Delete((int)deleteButton.Tag);
             this.UpdateAdminPanels();
             this.DeleteFromAdminPanels();
             this.ShowAllClasses();
@@ -596,9 +621,6 @@ namespace WPFScholifyApp
             createButton.Click += new RoutedEventHandler(this.AddPupil);
             this.RightAction.Children.Add(createButton);
             this.UpdateAdminPanels();
-            this.userRepository = new GenericRepository<User>(); // Re-initialize the repository
-            this.pupilRepository = new GenericRepository<Pupil>();
-            this.adminService = new AdminService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>(), new GenericRepository<Advertisement>());
         }
 
       
@@ -609,7 +631,6 @@ namespace WPFScholifyApp
             this.ShowAllTeachers();
 
             this.selectedTeacherId = teacherId;
-            // this.adminService = new AdminService(new GenericRepository<User>(), new GenericRepository<Class>(), new GenericRepository<Teacher>(), new GenericRepository<Pupil>(), new GenericRepository<Admin>(), new GenericRepository<Parents>(), new GenericRepository<Subject>());
             var subjects = this.adminService.GetAllSubjectsForTeacher(teacherId);
             foreach (var p in subjects)
             {
@@ -633,7 +654,7 @@ namespace WPFScholifyApp
         public void ShowAllSchedulesForSubject(int subjectId)
         {
             DeleteFromAdminPanels();
-            var classId = this.subjectRepository.GetAll().FirstOrDefault(x => x.Id == subjectId).ClassId;
+            var classId = this.classService.GetClassBySubjectId(subjectId).Id;
             ShowAllSubjects(classId);
             var schedules = this.scheduleService.GetAllSchedulesForSubjectId(subjectId);
             foreach (var schedule in schedules)
@@ -657,7 +678,7 @@ namespace WPFScholifyApp
         private void AddClass(object sender, RoutedEventArgs e)
         {
             var subjectButton = (Button)sender;
-            var createPanel = new CreateClass(this.classRepository, this);
+            var createPanel = this.createClass;
             createPanel.Show();
             this.LeftPanel.UpdateLayout(); // воно не робе
         }
@@ -666,7 +687,7 @@ namespace WPFScholifyApp
         private void AddPupil(object sender, RoutedEventArgs e)
         {
             var createButton = (Button)sender;
-            var createPanel = new CreateUser(this.userRepository, this.pupilRepository, this);
+            var createPanel = this.createUser;
             createPanel.ClassId = this.selectedClassId;
             createPanel.Show();
         }
@@ -675,7 +696,7 @@ namespace WPFScholifyApp
         private void AddTeacher(object sender, RoutedEventArgs e)
         {
             var createButton = (Button)sender;
-            var createPanel = new CreateTeacher(this.userRepository, this);
+            var createPanel = this.createTeacher;
             createPanel.Show();
         }
         
@@ -683,7 +704,7 @@ namespace WPFScholifyApp
         private void AddSubjectToTeacher(object sender, RoutedEventArgs e)
         {
             var subjectButton = (Button)sender;
-            var createPanel = new CreateSubject(this.teacherRepository, this.subjectRepository, this.userRepository, this, this.classRepository);
+            var createPanel = this.createSubject;
             createPanel.TeacherId = this.selectedTeacherId;
             createPanel.Show();
             this.RightPanel.UpdateLayout();
@@ -693,17 +714,16 @@ namespace WPFScholifyApp
         // Метод який викликається при натисканні кнопки "Додати Розклад"
         private void СreateSchedule(object sender, RoutedEventArgs e)
         {
-            //var createButton = (Button)sender;
-            var createWindow = new CreateSchedule(
-                this.subjectRepository.GetAllq().Include(x => x.Class).FirstOrDefault(x => x.ClassId == this.selectedClassId)!.Class!,
-                new GenericRepository<Subject>(),
-                this.scheduleRepository,
-                this.dayOfWeekRepository,
-                this.lessonTimeRepository,
-                this.teacherRepository,
-                this);
-
-            createWindow.Show();
+            var createButton = (Button)sender;
+            this.windowService.Show<CreateSchedule>(window =>
+            {
+                window.InitializeComponent();
+                object tag = createButton.Tag;
+                if (tag != null && int.TryParse(tag.ToString(), out int classId))
+                {
+                window.clas = this.classService.GetAllClasses().FirstOrDefault(x => x.Id == classId); //) this.subjectRepository.GetAllq().Include(x => x.Class).FirstOrDefault(x => x.ClassId == classId)?.Class;
+                }
+            });
         }
 
         // Метод який викликається при натисканні кнопки "Видалити Учня"
@@ -732,10 +752,8 @@ namespace WPFScholifyApp
         private void DeleteSubject(object sender, RoutedEventArgs e)
         {
             var deleteButton = (Button)sender;
-            this.teacherRepository.Delete(this.teacherRepository.GetAll().FirstOrDefault(x => x.UserId == this.selectedTeacherId && x.SubjectId == (int)deleteButton.Tag)!.Id);
-            this.teacherRepository.Save();
-            this.subjectRepository.Delete((int)deleteButton.Tag);
-            this.subjectRepository.Save();
+            this.teacherService.Delete(this.teacherService.GetTeacherBySubjectId((int)deleteButton.Tag)!.Id);
+            this.subjectService.Delete((int)deleteButton.Tag);
             this.RightPanel.UpdateLayout();
             this.RightPanel.Children.Clear();
             this.RightAction.Children.Clear();
@@ -747,13 +765,15 @@ namespace WPFScholifyApp
         {
             var deleteButton = (Button)sender;
             this.DeleteFromAdminPanels();
-            this.scheduleRepository.Delete((int)deleteButton.Tag);
-            this.scheduleRepository.Save();
+            this.scheduleService.Delete((int)deleteButton.Tag);
             this.DeleteFromAdminPanels();
 
-            var subjectId = this.subjectRepository.GetAll().FirstOrDefault(x => x.Id == (int)deleteButton.Tag).Id;
+            //var subjectId = this.subjectRepository.GetAll().FirstOrDefault(x => x.Id == (int)deleteButton.Tag).Id;
 
-            var classId = this.subjectRepository.GetAll().FirstOrDefault(x => x.Id == subjectId).ClassId;
+            //var classId = this.subjectRepository.GetAll().FirstOrDefault(x => x.Id == subjectId).ClassId;
+            var subjectId = this.subjectService.GetSubjectById((int)deleteButton.Tag).Id;
+
+            var classId = this.classService.GetClassBySubjectId(subjectId).Id;
             ShowAllSubjects(classId);
             this.ShowAllSchedulesForSubject(this.selectedSubjectId);
             this.UpdateAdminPanels();
@@ -763,56 +783,66 @@ namespace WPFScholifyApp
         private void LookTeacher(object sender, RoutedEventArgs e)
         {
             var createButton = (Button)sender;
-            var createPanel = new LookUsers(new GenericRepository<User>(), new GenericRepository<Pupil>(), this, new GenericRepository<Parents>(), new GenericRepository<ParentsPupil>());
+            this.windowService.Show<LookUsers>(window =>
+            {
+                window.currentClassId = this.selectedClassId;
+
+                window.currentUser = this.adminService.GetAllTeacher().FirstOrDefault(x => x.Id == (int)createButton.Tag);
+                var teacher = this.adminService.GetAllTeacher().FirstOrDefault(x => x.Id == (int)createButton.Tag);
+                window.Email.Text = teacher!.Email?.ToString();
+                window.Password.Text = teacher!.Password?.ToString();
+                window.FirstName.Text = teacher!.FirstName?.ToString();
+                window.LastName.Text = teacher!.LastName?.ToString();
+                window.MiddleName.Text = teacher!.MiddleName?.ToString();
+                window.Gender.Text = teacher!.Gender?.ToString();
+                window.Birthday.Text = teacher!.Birthday?.ToString();
+                window.Adress.Text = teacher!.Address?.ToString();
+                window.PhoneNumber.Text = teacher!.PhoneNumber?.ToString();
+                window.InitializeComponent();
+            });
 
             //var createPanel = new LookTeacher(new GenericRepository<User>(), new GenericRepository<Teacher>(), this);
-            createPanel.currentClassId = this.selectedClassId;
 
-            createPanel.currentUser = this.adminService.GetAllTeacher().FirstOrDefault(x => x.Id == (int)createButton.Tag);
-            var teacher = this.adminService.GetAllTeacher().FirstOrDefault(x => x.Id == (int)createButton.Tag);
-            createPanel.Email.Text = teacher!.Email?.ToString();
-            createPanel.Password.Text = teacher!.Password?.ToString();
-            createPanel.FirstName.Text = teacher!.FirstName?.ToString();
-            createPanel.LastName.Text = teacher!.LastName?.ToString();
-            createPanel.MiddleName.Text = teacher!.MiddleName?.ToString();
-            createPanel.Gender.Text = teacher!.Gender?.ToString();
-            createPanel.Birthday.Text = teacher!.Birthday?.ToString();
-            createPanel.Adress.Text = teacher!.Address?.ToString();
-            createPanel.PhoneNumber.Text = teacher!.PhoneNumber?.ToString();
-
-            createPanel.Show();
             this.LeftPanel.UpdateLayout(); 
         }
 
         private void LookUsers(object sender, RoutedEventArgs e)
         {
             var createButton = (Button)sender;
+            this.windowService.Show<LookUsers>(window =>
+            {
+                window.ShowAllClasses = true;
+                window.currentClassId = this.selectedClassId;
+                var pupils = this.adminService.GetAllPupils().FirstOrDefault(x => x.Id == (int)createButton.Tag);
 
-            var createPanel = new LookUsers(new GenericRepository<User>(), new GenericRepository<Pupil>(), this, new GenericRepository<Parents>(), new GenericRepository<ParentsPupil>());
-            createPanel.ShowAllClasses = true;
-            createPanel.currentClassId = this.selectedClassId;
-            var pupils = this.adminService.GetAllPupils().FirstOrDefault(x => x.Id == (int)createButton.Tag);
-            createPanel.currentUser = pupils;
-            createPanel.Email.Text = pupils!.Email!.ToString();
-            createPanel.Password.Text = pupils!.Password!.ToString();
-            createPanel.FirstName.Text = pupils!.FirstName!.ToString();
-            createPanel.LastName.Text = pupils!.LastName!.ToString();
-            createPanel.MiddleName.Text = pupils!.MiddleName!.ToString();
-            createPanel.Gender.Text = pupils!.Gender!.ToString();
-            createPanel.Birthday.Text = pupils!.Birthday!.ToString();
-            createPanel.Adress.Text = pupils!.Address!.ToString();
-            createPanel.PhoneNumber.Text = pupils!.PhoneNumber!.ToString();
+                if (pupils != null)
+                {
+                    window.currentUser = pupils;
+                    window.Email.Text = pupils.Email?.ToString() ?? string.Empty;
+                    window.Password.Text = pupils.Password?.ToString() ?? string.Empty;
+                    window.FirstName.Text = pupils.FirstName?.ToString() ?? string.Empty;
+                    window.LastName.Text = pupils.LastName?.ToString() ?? string.Empty;
+                    window.MiddleName.Text = pupils.MiddleName?.ToString() ?? string.Empty;
+                    window.Gender.Text = pupils.Gender?.ToString() ?? string.Empty;
+                    window.Birthday.Text = pupils.Birthday?.ToString() ?? string.Empty;
+                    window.Adress.Text = pupils.Address?.ToString() ?? string.Empty;
+                    window.PhoneNumber.Text = pupils.PhoneNumber?.ToString() ?? string.Empty;
+                }
+            });
 
-            createPanel.Show();
-            this.LeftPanel.UpdateLayout(); 
+            this.LeftPanel.UpdateLayout();
         }
+
 
         private void ExitButton_Click(object sender, RoutedEventArgs e)
         {
-            MainWindow mainWindow = new MainWindow();
-            mainWindow.Show();
+            this.windowService.Show<MainWindow>(window =>
+            {
+                window.InitializeComponent();
+                window.Show();
+            });
+            this.Hide();
 
-            this.Close();
         }
 
 

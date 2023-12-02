@@ -157,49 +157,7 @@
             InitializeComponent
             </summary>
         </member>
-        <member name="T:WPFScholifyApp.Presentation.LookClass">
-            <summary>
-            Interaction logic for LookClass.xaml
-            </summary>
-            <summary>
-            LookClass
-            </summary>
-        </member>
-        <member name="M:WPFScholifyApp.Presentation.LookClass.InitializeComponent">
-            <summary>
-            InitializeComponent
-            </summary>
-        </member>
-        <member name="T:WPFScholifyApp.Presentation.LookParents">
-            <summary>
-            Interaction logic for LookParents.xaml
-            </summary>
-            <summary>
-            LookParents
-            </summary>
-        </member>
-        <member name="M:WPFScholifyApp.Presentation.LookParents.InitializeComponent">
-            <summary>
-            InitializeComponent
-            </summary>
-        </member>
-        <member name="T:WPFScholifyApp.Presentation.LookTeacher">
-            <summary>
-            Interaction logic for LookTeacher.xaml.
-            </summary>
-            <summary>
-            LookTeacher
-            </summary>
-        </member>
-        <member name="M:WPFScholifyApp.Presentation.LookTeacher.InitializeComponent">
-            <summary>
-            InitializeComponent
-            </summary>
-        </member>
         <member name="T:WPFScholifyApp.Presentation.LookUsers">
-            <summary>
-            Interaction logic for LookUsers.xaml.
-            </summary>
             <summary>
             LookUsers
             </summary>

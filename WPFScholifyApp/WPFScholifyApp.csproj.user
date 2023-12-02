@@ -27,15 +27,6 @@
     <Compile Update="Presentation\CreateUser.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Presentation\LookClass.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Presentation\LookParents.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Presentation\LookTeacher.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="Presentation\LookUsers.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -60,15 +51,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Presentation\CreateUser.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Presentation\LookClass.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Presentation\LookParents.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Presentation\LookTeacher.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Presentation\LookUsers.xaml">

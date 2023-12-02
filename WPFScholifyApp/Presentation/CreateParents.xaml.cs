@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ using System.Windows.Shapes;
 using WPFScholifyApp.BLL;
 using WPFScholifyApp.DAL.ClassRepository;
 using WPFScholifyApp.DAL.DBClasses;
+using DayOfWeek = WPFScholifyApp.DAL.DBClasses.DayOfWeek;
 
 namespace WPFScholifyApp.Presentation
 {
@@ -23,22 +25,42 @@ namespace WPFScholifyApp.Presentation
     /// </summary>
     public partial class CreateParents : Window
     {
-        private IGenericRepository<User> userRepository;
-        private IGenericRepository<Parents> parentsRepository;
-        private IGenericRepository<Pupil> pupilRepository;
-        private IGenericRepository<ParentsPupil> parentsPupilRepository;
+        private AdminService adminService;
+        private AdvertisementService advertisementService;
+        private JournalService journalService;
         private ParentsService parentsService;
-        private AdminWindow adminWindow;
+        private PupilService pupilService;
+        private UserService userService;
+        private ScheduleService scheduleService;
+        private TeacherService teacherService;
+        private WindowService windowService;
+        private MainWindow mainWindow;
+
         public int PupilsId { get; set; }
-        public CreateParents(IGenericRepository<User> userRepos, IGenericRepository<Parents> parentsRepos,IGenericRepository<Pupil> pupilRepos, AdminWindow adminWindow, IGenericRepository<ParentsPupil> parentsPupilRepository)
-            {
-            this.parentsPupilRepository = parentsPupilRepository;
-            this.pupilRepository = pupilRepos;
-            this.userRepository = userRepos;
-            this.parentsRepository = parentsRepos;
-            this.parentsService = new ParentsService(new GenericRepository<User>(), new GenericRepository<Pupil>(), new GenericRepository<Parents>());
+        public CreateParents(AdminService adminService,
+                            AdvertisementService advertisementService,
+                            JournalService journalService,
+                            ParentsService parentsService,
+                            PupilService pupilService,
+                            UserService userService,
+                            ScheduleService scheduleService,
+                            TeacherService teacherService,
+                            WindowService windowService,
+                            MainWindow mainWindow
+                            )
+        {
+
+            this.adminService = adminService;
+            this.advertisementService = advertisementService;
+            this.journalService = journalService;
+            this.parentsService = parentsService;
+            this.pupilService = pupilService;
+            this.userService = userService;
+            this.scheduleService = scheduleService;
+            this.teacherService = teacherService;
+            this.windowService = windowService;
+            this.mainWindow = mainWindow;
             this.InitializeComponent();
-            this.adminWindow = adminWindow;
         }
 
         private void SaveParents(object sender, RoutedEventArgs e)
@@ -55,7 +77,7 @@ namespace WPFScholifyApp.Presentation
 
             var user = new User
             {
-                Id = this.userRepository.GetAll().Select(x => x.Id).Max() + 1,
+                Id = this.adminService.GetNewUserId(),
                 Email = email,
                 Password = password,
                 FirstName = firstName,
@@ -68,45 +90,34 @@ namespace WPFScholifyApp.Presentation
                 Role = "батьки"
             };
 
-            var pupil = this.pupilRepository.GetAll().FirstOrDefault(x => x.Id == PupilsId);
+            var pupil = this.pupilService.GetAllPupils().FirstOrDefault(x => x.UserId == PupilsId);
 
-            this.userRepository.Insert(user);
-            this.userRepository.Save();
-            user = this.userRepository.GetAll().FirstOrDefault(x => x.Id == user.Id);
+            user = this.userService.GetUserById(user.Id);
 
             var parents = new Parents
             {
-                Id = (this.parentsRepository.GetAll().OrderByDescending(x => x.Id).FirstOrDefault()?.Id ?? 0) + 1,
+                Id = this.adminService.GetNewParentId(),
                 UserId = user!.Id
             };
 
+            this.userService.AddUser(user, parents);
 
-            this.parentsRepository.Insert(parents);
-            this.parentsRepository.Save();
-
-            var ParentsPupil = new ParentsPupil
+            this.windowService.Show<AdminWindow>(window =>
             {
-                pupilId = pupil!.Id,
-                parentId = parents.Id
-            };
+                window.DeleteFromAdminPanels();
 
-            this.parentsPupilRepository.Insert(ParentsPupil);
-            this.parentsPupilRepository.Save();
+                window.ShowAllPuplis();
+                window.ShowParentsForPupilId(this.PupilsId);
 
-
-            // this.parentsService.AddUser(user, parents);
-            this.Close();
-            this.adminWindow.DeleteFromAdminPanels();
-
-            this.adminWindow.ShowAllPuplis();
-            this.adminWindow.ShowParentsForPupilId(this.PupilsId);
-
-            this.adminWindow.UpdateAdminPanels();
+                window.UpdateAdminPanels();
+            });
+                this.Hide();
+            
         }
 
         private void Cancel(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            this.Hide();
         }
     }
 }
